@@ -43,6 +43,10 @@ detailPage:
     object:
       url:
         get: { cssSelector: "#image", attr: "src" }
+      bigUrl:
+        get: { cssSelector: "#highres", attr: "href" }
+      rawUrl:
+        get: { cssSelector: "#png", attr: "href" }
       tags:
         list:
           get: { cssSelector: "#image", attr: "alt" }
