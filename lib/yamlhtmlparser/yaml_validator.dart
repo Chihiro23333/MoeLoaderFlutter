@@ -8,21 +8,28 @@ abstract class Validator{
   Future<ValidateResult<String>> validateResult(String result);
 
   Future<ValidateResult<String>> validateException(Object exception) async{
-    if(exception is DioException){
-      String? message = exception.message;
+    print("exception=$exception");
+    if(exception is Exception){
+      String message = exception.toString();
       YamlMap doc = await YamlRuleFactory().create(Global.curWebPageName);
       YamlMap? validatorRule = doc["detailPage"]?["onValidateResult"];
-      if(message != null && validatorRule != null){
+      if(validatorRule != null){
         YamlMap? exceptionRule = validatorRule["exception"];
         if(exceptionRule != null){
           String action = exceptionRule["action"];
           String msgCode = exceptionRule["code"];
           if(message.contains(msgCode)){
             int code;
-            if(action == "login"){
-              code = ValidateResult.needLogin;
+            String message = "";
+            if(Global.supportWebView2){
+              if(action == "login"){
+                code = ValidateResult.needLogin;
+              }else{
+                code = ValidateResult.needChallenge;
+              }
             }else{
-              code = ValidateResult.needChallenge;
+              code = ValidateResult.notSupportWebView2;
+              message = "您的设备暂不支持或者未安装WebView2组件";
             }
             return ValidateResult(code, message: message);
           }
@@ -46,12 +53,18 @@ Future<ValidateResult<String>> _validateResult(String result) async{
       if(regExp.hasMatch(result)){
         String action = item["action"];
         int code;
-        if(action == "login"){
-          code = ValidateResult.needLogin;
+        String message = "";
+        if(Global.supportWebView2){
+          if(action == "login"){
+            code = ValidateResult.needLogin;
+          }else{
+            code = ValidateResult.needChallenge;
+          }
         }else{
-          code = ValidateResult.needChallenge;
+          code = ValidateResult.notSupportWebView2;
+          message = "您的设备暂不支持或者未安装WebView2组件";
         }
-        return ValidateResult(code, data: result);
+        return ValidateResult(code, data: result, message: message);
       }
     }
   }
@@ -80,6 +93,7 @@ class ValidateResult<T>{
   static const success = 1;
   static const needChallenge = 2;
   static const needLogin = 3;
+  static const notSupportWebView2 = 4;
 
   int code;
   String? message;
@@ -89,6 +103,7 @@ class ValidateResult<T>{
   bool get validateFail => code == fail;
   bool get validateNeedChallenge => code == needChallenge;
   bool get validateNeedLogin => code == needLogin;
+  bool get validateNotSupportWebView2 => code == notSupportWebView2;
 
   ValidateResult(this.code, {this.message, this.data});
 }

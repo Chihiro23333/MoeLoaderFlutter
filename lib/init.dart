@@ -6,7 +6,6 @@ import 'package:hive/hive.dart';
 import 'package:logging/logging.dart';
 import 'package:webview_windows/webview_windows.dart';
 import 'package:window_manager/window_manager.dart';
-// import 'package:webview_windows/webview_windows.dart';
 import 'package:yaml/yaml.dart';
 import 'package:path/path.dart' as path;
 
@@ -19,13 +18,18 @@ class Global{
     return _cache ?? (_cache = Global._create());
   }
 
-  static late WebPage curWebPage;
-  ProxyHttpOverrides? proxyHttpOverrides;
+  static late WebPage _curWebPage;
+  static late bool _supportWebView2 = false;
+  ProxyHttpOverrides? _proxyHttpOverrides;
 
   Future<void> init() async{
-    try{
-      await WebviewController.initializeEnvironment(userDataPath: browserCacheDirectory.path);
-    }catch(e){}
+    String? webViewVersion = await WebviewController.getWebViewVersion();
+    _supportWebView2 = webViewVersion != null;
+    if(_supportWebView2){
+      try{
+        await WebviewController.initializeEnvironment(userDataPath: browserCacheDirectory.path);
+      }catch(e){}
+    }
     _initHive();
     await updateProxy();
     await RequestManager().init();
@@ -40,16 +44,16 @@ class Global{
 
   Future<void> updateCurWebPage(Rule rule) async{
     YamlMap webPage = await YamlRuleFactory().create(rule.name);
-    curWebPage = WebPage(webPage, rule);
+    _curWebPage = WebPage(webPage, rule);
   }
 
   Future<void> updateProxy() async{
     String? proxy = await getProxy();
-    if(proxyHttpOverrides == null){
-      proxyHttpOverrides = ProxyHttpOverrides(proxy);
-      HttpOverrides.global = proxyHttpOverrides;
+    if(_proxyHttpOverrides == null){
+      _proxyHttpOverrides = ProxyHttpOverrides(proxy);
+      HttpOverrides.global = _proxyHttpOverrides;
     }else{
-      proxyHttpOverrides?.setProxy = proxy;
+      _proxyHttpOverrides?.setProxy = proxy;
     }
   }
 
@@ -57,13 +61,14 @@ class Global{
     Hive.init(Global.hiveDirectory.path);
   }
 
-  static get curWebPageName => curWebPage.rule.name;
-  static get columnCount => int.parse((curWebPage.webPage['display']?['columnCount'] ?? 6).toString());
-  static get aspectRatio => double.parse((curWebPage.webPage['display']?['aspectRatio'] ?? 1.78).toString());
+  static get curWebPageName => _curWebPage.rule.name;
+  static get columnCount => int.parse((_curWebPage.webPage['display']?['columnCount'] ?? 6).toString());
+  static get aspectRatio => double.parse((_curWebPage.webPage['display']?['aspectRatio'] ?? 1.78).toString());
   static get rulesDirectory => Directory(path.join(path.current ,"rules"));
   static get browserCacheDirectory => Directory(path.join(path.current ,"browserCache"));
   static get downloadsDirectory => Directory(path.join(path.current ,"downloads"));
   static get hiveDirectory => Directory(path.join(path.current ,"hive"));
+  static get supportWebView2 => _supportWebView2;
 
 }
 

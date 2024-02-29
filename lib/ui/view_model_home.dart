@@ -57,7 +57,7 @@ class HomeViewModel {
       streamHomeController.add(_homeState);
     }else{
       _homeState.error = true;
-      _homeState.errorMessage = "error:${result.message}";
+      _homeState.errorMessage = "Error:${result.message}";
       streamHomeController.add(_homeState);
     }
     changeLoading(false);

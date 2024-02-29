@@ -37,7 +37,7 @@ class DetailViewModel{
         streamDetailController.add(_detailState);
       }else{
         _detailState.error = true;
-        _detailState.errorMessage = "error:${result.message}";
+        _detailState.errorMessage = "Error:${result.message}";
         _detailState.code = result.code;
         streamDetailController.add(_detailState);
       }
