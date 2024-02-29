@@ -1,0 +1,44 @@
+meta:
+  name: "lolibooru.moe"
+  type: "assets"
+
+display:
+  columnCount: 6
+  aspectRatio: 1.65
+
+url:
+  home: { link: "https://lolibooru.moe/post?page=${page}" }
+  search: { link: "https://lolibooru.moe/post?tags=${tag}&page=${page}", tagConnector: "_" }
+
+homePage: &HOMEPAGE
+  onParseResult:
+    list:
+      getElements: { cssSelector: "#post-list-posts li" }
+      foreach:
+        coverUrl:
+          get: { cssSelector: "a[class=thumb] img", attr: "src" }
+        href:
+          get: { cssSelector: "a[class=thumb]", attr: "href" }
+          format:
+            - concat: { start: "https://lolibooru.moe", end: "" }
+        tags:
+          list:
+            get: { cssSelector: "a[class=thumb] img", attr: "alt" }
+            filter: { regex: 'User: Lolibot ([^|]+)', index: 1 }
+            toList: { separator: " " }
+        width:
+          get: { cssSelector: "a[class=thumb] img", attr: "width" }
+        height:
+          get: { cssSelector: "a[class=thumb] img", attr: "height" }
+
+searchPage:
+  *HOMEPAGE
+
+detailPage:
+  onParseResult:
+    url:
+      get: { cssSelector: "#image", attr: "src" }
+    tags:
+      list:
+        get: { cssSelector: "#image", attr: "alt" }
+        toList: { separator: " " }

@@ -1,0 +1,54 @@
+meta:
+  name: "javdb"
+  type: "custom"
+  headers:
+    User-Agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+
+display:
+  columnCount: 5
+  aspectRatio: 1.49
+
+url:
+  home: { link: "https://javdb.com/?page=${page}" }
+  search: { link: "https://javdb.com${tag}&page=${page}", tagConnector: "_" }
+
+homePage: &HOMEPAGE
+  onValidateResult:
+    exception: {code: "403",  action: "login"}
+    result:
+      - {regex: "迎登入", action: "login" }
+      - {regex: "包含露骨性", action: "challenge" }
+  onParseResult:
+    list:
+      getElements: { cssSelector: ".item" }
+      foreach:
+        coverUrl:
+          get: { cssSelector: ".cover img", attr: "src" }
+        href:
+          get: { cssSelector: "a", attr: "href" }
+          format:
+            - concat: { start: "https://javdb.com", end: "" }
+
+searchPage:
+  *HOMEPAGE
+
+detailPage:
+  onValidateResult:
+    exception: {code: "403",  action: "login"}
+    result:
+      - {regex: "迎登入", action: "login" }
+      - {regex: "包含露骨性", action: "challenge" }
+  onParseResult:
+    object:
+      url:
+        get: { cssSelector: ".column-video-cover img[class='video-cover']", attr: "src" }
+      tags:
+        list:
+          getElements: { cssSelector: ".value a[href^='/tags']" }
+          foreach:
+            desc:
+              get: { cssSelector: "", text: "" }
+            tag:
+              get: { cssSelector: "", attr: "href" }
+      preview:
+        get: { cssSelector: "a[class='tile-item'][data-fancybox]", attr: "href" }

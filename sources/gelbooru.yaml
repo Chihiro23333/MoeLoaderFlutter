@@ -1,0 +1,39 @@
+meta:
+  name: "gelbooru.com"
+  type: "assets"
+
+display:
+  columnCount: 7
+  aspectRatio: 0.72
+
+url:
+  home: {link: "https://gelbooru.com/index.php?page=post&s=list&tags=all&pid=${page}", pageBase: 21 }
+  search: {link: "https://gelbooru.com/index.php?page=post&s=list&tags=${tag}&pid=${page}", tagConnector: "_", pageBase: 21 }
+
+homePage: &HOMEPAGE
+  onParseResult:
+    list:
+      getElements: { cssSelector: ".thumbnail-preview" }
+      foreach:
+        coverUrl:
+          get: { cssSelector: "img", attr: "src" }
+        href:
+          get: { cssSelector: "a", attr: "href" }
+        tags:
+          list:
+            get: { cssSelector: "img", attr: "alt" }
+            filter: { regex: 'Rule 34 \| ([^|]+)', index: 1 }
+            toList: { separator: "," }
+
+searchPage:
+  *HOMEPAGE
+
+detailPage:
+  onParseResult:
+    object:
+      url:
+        get: { cssSelector: "#image", attr: "src" }
+      tags:
+        list:
+          get: { cssSelector: "section[class='image-container note-container']", attr: "data-tags" }
+          toList: { separator: " " }

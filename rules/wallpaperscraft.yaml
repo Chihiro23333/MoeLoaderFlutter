@@ -1,0 +1,42 @@
+meta:
+  name: "wallpaperscraft.com"
+  type: "assets"
+
+display:
+  columnCount: 5
+  aspectRatio: 1.65
+
+url:
+  home: {link: "https://wallpaperscraft.com/catalog/anime/page${page}" }
+  search: {link: "https://wallpaperscraft.com/tag/${tag}/page${page}", tagConnector: "-" }
+
+homePage: &HOMEPAGE
+  onParseResult:
+    list:
+      getElements: { cssSelector: "li.wallpapers__item" }
+      foreach:
+        coverUrl:
+          get: { cssSelector: "img", attr: "src" }
+        href:
+          get: { cssSelector: "a", attr: "href" }
+          format:
+            - concat: { start: "https://wallpaperscraft.com", end: "" }
+        tags:
+          list:
+            get: { cssSelector: "img", attr: "alt" }
+            format:
+              - replaceAll: { from: "Preview wallpaper", to: "" }
+            toList: { separator: "," }
+
+searchPage:
+  *HOMEPAGE
+
+detailPage:
+  onParseResult:
+    object:
+      url:
+        get: { cssSelector: ".wallpaper__placeholder img", attr: "src" }
+      tags:
+        list:
+          get: { cssSelector: ".wallpaper__tags", text: "" }
+          toList: { separator: "," }
