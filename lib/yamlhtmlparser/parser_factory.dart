@@ -1,4 +1,4 @@
-import 'package:FlutterMoeLoaderDesktop/yamlhtmlparser/yaml_parse_mix.dart';
+import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_parse_mix.dart';
 import 'package:logging/logging.dart';
 import 'package:yaml/yaml.dart';
 import 'models.dart';
@@ -20,7 +20,7 @@ class ParserFactory {
 }
 
 abstract class Parser {
-  final log = Logger('Parser');
+  final _log = Logger('Parser');
 
   Future<Map<String, String>?> getHeaders(YamlMap webPage) async {
     YamlMap meta = webPage['meta'];
@@ -30,39 +30,28 @@ abstract class Parser {
     headersRule.forEach((key, value) {
       result[key] = value;
     });
-    log.fine("getHeaders:result=$result");
+    _log.fine("getHeaders:result=$result");
     return result;
   }
 
-  Future<String> getHomeUrl(YamlMap webPage, String page) async {
+  Future<String> getHomeUrl(YamlMap webPage, String page, {YamlOption? yamlOption}) async {
     YamlMap urlRule = webPage['url'];
-    YamlMap homeRule;
-    YamlMap? safeHome = urlRule['safeHome'];
-    if(safeHome == null){
-      homeRule = urlRule['home'];
-    }else{
-      homeRule = safeHome;
-    }
+    YamlMap homeRule = urlRule['home'];
 
     String url = "";
     String link = homeRule["link"];
     int pageBase = homeRule["pageBase"] ?? 1;
     page = (int.parse(page) * pageBase).toString();
-    url = _formatUrl(link, page);
-    log.fine("getUrl:url=$url");
+    yamlOption ??= await _defaultOption(webPage);
+    url = await _formatUrl(link, page, yamlOption: yamlOption);
+    _log.fine("getUrl:url=$url");
     return url;
   }
 
   Future<String> getSearchUrl(YamlMap webPage,
-      {String? page, String? tags}) async {
+      {String? page, String? tags, YamlOption? yamlOption}) async {
     YamlMap urlRule = webPage['url'];
-    YamlMap searchRule;
-    YamlMap? safeSearch = urlRule['safeSearch'];
-    if(safeSearch == null){
-      searchRule = urlRule['search'];
-    }else{
-      searchRule = safeSearch;
-    }
+    YamlMap searchRule = urlRule['search'];
 
     String url = "";
     if (tags != null && page != null) {
@@ -74,10 +63,11 @@ abstract class Parser {
       String link = searchRule["link"];
       int pageBase = searchRule["pageBase"] ?? 1;
       page = (int.parse(page) * pageBase).toString();
-      url = _formatUrl(link, page, tags: tags);
+      yamlOption ??= await _defaultOption(webPage);
+      url = await _formatUrl(link, page, tags: tags, yamlOption: yamlOption);
     }
 
-    log.fine("getUrl:url=$url");
+    _log.fine("getUrl:url=$url");
     return url;
   }
 
@@ -85,7 +75,37 @@ abstract class Parser {
     return doc["meta"]?["name"] ?? "";
   }
 
-  String _formatUrl(String url, String? page, {String? tags}) {
+  Future<List<YamlOptionList>> optionList(YamlMap webPage) async{
+    List<YamlOptionList> result = [];
+    YamlList? optionsRule = webPage["options"];
+    _log.info("optionsRule=$optionsRule");
+    if(optionsRule != null){
+      for (var option in optionsRule) {
+        String id = option["id"];
+        String desc = option["desc"];
+        List<YamlOption> options = [];
+        YamlList optionItems = option["items"];
+        for (var optionItem in optionItems) {
+          String desc = optionItem["desc"];
+          String param = optionItem["param"];
+          YamlOption yamlOption = YamlOption(id, desc, param);
+          options.add(yamlOption);
+        }
+        YamlOptionList yamlOptionList = YamlOptionList(id, desc, options);
+        result.add(yamlOptionList);
+      }
+    }
+    return result;
+  }
+
+  Future<YamlOption?> _defaultOption(YamlMap webPage) async{
+    List<YamlOptionList> list =  await optionList(webPage);
+    if(list.isNotEmpty){
+      return list[0].options[0];
+    }
+  }
+
+  Future<String> _formatUrl(String url, String? page, {String? tags, YamlOption? yamlOption}) async {
     String pattern = r'\${(.*?)\}';
     // 使用正则表达式匹配被{}包围的内容
     RegExp regExp = RegExp(pattern);
@@ -93,13 +113,21 @@ abstract class Parser {
     // 遍历匹配结果并打印
     for (Match match in iterator) {
       String? text = match.group(1);
-      log.fine('找到匹配内容: $text');
+      _log.info('找到匹配内容: $text');
       if ("page" == text) {
         url = url.replaceAll("\${$text}", page ?? "");
+        continue;
       }
       if ("tag" == text) {
         url = url.replaceAll("\${$text}", tags ?? "");
+        continue;
       }
+      _log.info("yamlOption=$yamlOption");
+      if (yamlOption?.pId == text) {
+        url = url.replaceAll("\${$text}", yamlOption?.param ?? "");
+        continue;
+      }
+      url = url.replaceAll("\${$text}", "");
     }
     return url;
   }

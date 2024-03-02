@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:FlutterMoeLoaderDesktop/yamlhtmlparser/parser_factory.dart';
+import 'package:MoeLoaderFlutter/yamlhtmlparser/parser_factory.dart';
 import 'package:json_path/json_path.dart';
 import 'package:logging/logging.dart';
 import 'package:yaml/yaml.dart';

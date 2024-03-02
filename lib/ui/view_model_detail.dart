@@ -1,10 +1,10 @@
 import 'dart:async';
-import 'package:FlutterMoeLoaderDesktop/yamlhtmlparser/parser_factory.dart';
-import 'package:FlutterMoeLoaderDesktop/init.dart';
-import 'package:FlutterMoeLoaderDesktop/yamlhtmlparser/yaml_reposotory.dart';
-import 'package:FlutterMoeLoaderDesktop/yamlhtmlparser/yaml_rule_factory.dart';
-import 'package:FlutterMoeLoaderDesktop/net/request_manager.dart';
-import 'package:FlutterMoeLoaderDesktop/yamlhtmlparser/yaml_validator.dart';
+import 'package:MoeLoaderFlutter/yamlhtmlparser/parser_factory.dart';
+import 'package:MoeLoaderFlutter/init.dart';
+import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_reposotory.dart';
+import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_rule_factory.dart';
+import 'package:MoeLoaderFlutter/net/request_manager.dart';
+import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_validator.dart';
 import 'package:yaml/yaml.dart';
 import '../yamlhtmlparser/models.dart';
 

@@ -1,5 +1,4 @@
-import 'package:dio/dio.dart';
-import 'package:FlutterMoeLoaderDesktop/yamlhtmlparser/yaml_rule_factory.dart';
+import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_rule_factory.dart';
 import 'package:yaml/yaml.dart';
 import '../init.dart';
 

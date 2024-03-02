@@ -1,9 +1,9 @@
 import 'package:clipboard/clipboard.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
-import 'package:FlutterMoeLoaderDesktop/ui/webview2_page.dart';
-import 'package:FlutterMoeLoaderDesktop/ui/view_model_detail.dart';
-import 'package:FlutterMoeLoaderDesktop/yamlhtmlparser/yaml_validator.dart';
+import 'package:MoeLoaderFlutter/ui/webview2_page.dart';
+import 'package:MoeLoaderFlutter/ui/view_model_detail.dart';
+import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_validator.dart';
 import 'package:logging/logging.dart';
 import '../yamlhtmlparser/models.dart';
 import '../utils/utils.dart';
@@ -165,12 +165,19 @@ class _DetailState extends State<DetailPage> {
     }
     return FloatingActionButton(
         onPressed: () {
-          if (loading || downloading) return;
+          if (loading){
+            showToast("数据还没准备好");
+            return;
+          }
+          if(downloading){
+            showToast("已经有图片正在下载中，请等待");
+            return;
+          }
           if (_yamlDetailPage != null) {
             String? url = _yamlDetailPage!.url;
             String? bigUrl = _yamlDetailPage!.commonInfo?.bigUrl;
             String? rawUrl = _yamlDetailPage!.commonInfo?.rawUrl;
-            _log.info("url=$url;rawUrl=$rawUrl;bigUrl=$bigUrl");
+            _log.fine("url=$url;rawUrl=$rawUrl;bigUrl=$bigUrl");
             List<Widget> children = [];
             if (isImageUrl(url) && url.isNotEmpty) {
               children.add(_buildDownloadItem(context, url, "当前预览图片($url)", () {

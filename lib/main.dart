@@ -1,7 +1,7 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
-import 'package:FlutterMoeLoaderDesktop/init.dart';
-import 'package:FlutterMoeLoaderDesktop/ui/home_page.dart';
+import 'package:MoeLoaderFlutter/init.dart';
+import 'package:MoeLoaderFlutter/ui/home_page.dart';
 
 void main(List<String> args) {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,13 +13,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color defaultColor = const Color.fromARGB(255, 46, 176, 242);
+
     return MaterialApp(
-      title: 'FlutterMoeLoaderDesktop',
+      title: 'MoeLoaderFlutter',
       builder: BotToastInit(),
         navigatorObservers: [BotToastNavigatorObserver()],
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: defaultColor),
+        colorScheme: ColorScheme.fromSeed(seedColor: Global.defaultColor),
         useMaterial3: true,
       ),
       home: const HomePage()

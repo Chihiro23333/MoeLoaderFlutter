@@ -2,8 +2,8 @@
 // import 'dart:io';
 // import 'package:flutter/material.dart';
 // import 'package:flutter/services.dart';
-// import 'package:FlutterMoeLoaderDesktop/net/net_models.dart';
-// import 'package:FlutterMoeLoaderDesktop/yamlhtmlparser/yaml_validator.dart';
+// import 'package:MoeLoaderFlutter/net/net_models.dart';
+// import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_validator.dart';
 // import 'package:logging/logging.dart';
 // import 'package:webview_windows/webview_windows.dart';
 // import 'package:window_manager/window_manager.dart';

@@ -1,8 +1,8 @@
 import 'dart:async';
-import 'package:FlutterMoeLoaderDesktop/init.dart';
-import 'package:FlutterMoeLoaderDesktop/yamlhtmlparser/yaml_reposotory.dart';
-import 'package:FlutterMoeLoaderDesktop/yamlhtmlparser/yaml_rule_factory.dart';
-import 'package:FlutterMoeLoaderDesktop/yamlhtmlparser/yaml_validator.dart';
+import 'package:MoeLoaderFlutter/init.dart';
+import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_reposotory.dart';
+import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_rule_factory.dart';
+import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_validator.dart';
 import 'package:yaml/yaml.dart';
 import '../yamlhtmlparser/models.dart';
 import '../yamlhtmlparser/parser_factory.dart';
@@ -18,7 +18,7 @@ class HomeViewModel {
 
   HomeViewModel();
 
-  void requestData({String? tags, bool clearAll = false}) async {
+  void requestData({String? tags, bool clearAll = false, YamlOption? yamlOption}) async {
     changeLoading(true);
     if(clearAll){
       _clearAll();
@@ -30,12 +30,12 @@ class HomeViewModel {
     bool home = tags == null;
     String url;
     if(home){
-      url = await _parser().getHomeUrl(doc, page);
+      url = await _parser().getHomeUrl(doc, page, yamlOption: yamlOption);
     }else{
-      url = await _parser().getSearchUrl(doc, page: page, tags: tags);
+      url = await _parser().getSearchUrl(doc, page: page, tags: tags, yamlOption: yamlOption);
     }
 
-    _updateUri(url, page, tags);
+    _updateUri(url, page, tags, yamlOption);
 
     Map<String, String>? headers = await _parser().getHeaders(doc);
     _homeState.headers = headers;
@@ -72,6 +72,11 @@ class HomeViewModel {
     return repository.webPageList();
   }
 
+  Future<List<YamlOptionList>> optionList() async {
+    YamlMap doc = await YamlRuleFactory().create(Global.curWebPageName);
+    return _parser().optionList(doc);
+  }
+
   void changeGlobalWebPage(WebPageItem webPageItem) async{
     await Global().updateCurWebPage(webPageItem.rule);
     requestData(clearAll: true);
@@ -81,12 +86,13 @@ class HomeViewModel {
     _homeState.reset();
   }
 
-  void _updateUri(String url, String page, String? tags) {
+  void _updateUri(String url, String page, String? tags, YamlOption? yamlOption) {
     Uri uri = Uri.parse(url);
     _uriState.baseHref = "${uri.scheme}://${uri.host}${uri.path}";
     _uriState.page = page;
     _uriState.tag = tags ?? "";
     _uriState.url = url;
+    _uriState.yamlOption = yamlOption;
     streamUriController.add(_uriState);
   }
 
@@ -124,6 +130,7 @@ class UriState{
   String baseHref = "";
   String page = "";
   String tag = "";
+  YamlOption? yamlOption;
 
   UriState();
 }

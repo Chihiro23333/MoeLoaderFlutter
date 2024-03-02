@@ -10,7 +10,7 @@ void showAbout(BuildContext context) {
             child: Column(
               children: [
                 ListTile(
-                  title: const Text("FlutterMoeLoaderDesktop"),
+                  title: const Text("MoeLoaderFlutter"),
                   leading: Icon(
                     Icons.title,
                     color: Theme.of(context).iconTheme.color,

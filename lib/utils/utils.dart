@@ -1,5 +1,5 @@
 
-import 'package:FlutterMoeLoaderDesktop/yamlhtmlparser/yaml_validator.dart';
+import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_validator.dart';
 
 String unicodeToUTF16(String str){
   final Pattern unicodePattern = RegExp(r'\\u([0-9A-Fa-f]{4})');

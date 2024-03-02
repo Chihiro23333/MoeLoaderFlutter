@@ -38,6 +38,22 @@ class YamlTag{
   YamlTag(this.desc, this.tag);
 }
 
+class YamlOptionList{
+  String id = "";
+  String desc = "";
+  List<YamlOption> options = [];
+
+  YamlOptionList(this.id, this.desc, this.options);
+}
+
+class YamlOption{
+  String pId = "";
+  String desc = "";
+  String param = "";
+
+  YamlOption(this.pId, this.desc, this.param);
+}
+
 class YamlPreview{
   String url = "";
 

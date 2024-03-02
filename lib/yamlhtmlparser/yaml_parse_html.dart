@@ -1,4 +1,4 @@
-import 'package:FlutterMoeLoaderDesktop/yamlhtmlparser/parser_factory.dart';
+import 'package:MoeLoaderFlutter/yamlhtmlparser/parser_factory.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart';
 import 'package:logging/logging.dart';

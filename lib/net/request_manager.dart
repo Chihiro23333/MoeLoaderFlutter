@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:dio/dio.dart';
-import 'package:FlutterMoeLoaderDesktop/net/dio_http.dart';
-import 'package:FlutterMoeLoaderDesktop/yamlhtmlparser/yaml_validator.dart';
+import 'package:MoeLoaderFlutter/net/dio_http.dart';
+import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_validator.dart';
 
 class RequestManager{
 

@@ -1,6 +1,6 @@
-import 'package:FlutterMoeLoaderDesktop/yamlhtmlparser/parser_factory.dart';
-import 'package:FlutterMoeLoaderDesktop/yamlhtmlparser/yaml_parse_html.dart';
-import 'package:FlutterMoeLoaderDesktop/yamlhtmlparser/yaml_parse_json.dart';
+import 'package:MoeLoaderFlutter/yamlhtmlparser/parser_factory.dart';
+import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_parse_html.dart';
+import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_parse_json.dart';
 import 'package:yaml/yaml.dart';
 import 'models.dart';
 

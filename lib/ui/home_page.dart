@@ -3,14 +3,14 @@ import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:FlutterMoeLoaderDesktop/init.dart';
-import 'package:FlutterMoeLoaderDesktop/ui/about_dialog.dart';
-import 'package:FlutterMoeLoaderDesktop/ui/common_function.dart';
-import 'package:FlutterMoeLoaderDesktop/ui/settings_dialog.dart';
-import 'package:FlutterMoeLoaderDesktop/ui/webview2_page.dart';
-import 'package:FlutterMoeLoaderDesktop/yamlhtmlparser/models.dart';
-import 'package:FlutterMoeLoaderDesktop/ui/view_model_home.dart';
-import 'package:FlutterMoeLoaderDesktop/yamlhtmlparser/yaml_validator.dart';
+import 'package:MoeLoaderFlutter/init.dart';
+import 'package:MoeLoaderFlutter/ui/about_dialog.dart';
+import 'package:MoeLoaderFlutter/ui/common_function.dart';
+import 'package:MoeLoaderFlutter/ui/settings_dialog.dart';
+import 'package:MoeLoaderFlutter/ui/webview2_page.dart';
+import 'package:MoeLoaderFlutter/yamlhtmlparser/models.dart';
+import 'package:MoeLoaderFlutter/ui/view_model_home.dart';
+import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_validator.dart';
 import 'package:logging/logging.dart';
 import '../utils/utils.dart';
 import 'detail_page.dart';
@@ -30,6 +30,7 @@ class _HomeState extends State<HomePage> {
   late TextEditingController _textEditingControl;
 
   YamlTag? _tag;
+  YamlOption? _yamlOption;
   String _url = "";
 
   void _updateTag(YamlTag? tag) {
@@ -39,11 +40,7 @@ class _HomeState extends State<HomePage> {
   }
 
   void _requestData({bool clearAll = false}) {
-    _picHomeViewModel.requestData(tags: _tag?.tag, clearAll: clearAll);
-  }
-
-  void _requestByTag() {
-    _picHomeViewModel.requestData(tags: _tag?.tag, clearAll: true);
+    _picHomeViewModel.requestData(tags: _tag?.tag, yamlOption: _yamlOption, clearAll: clearAll);
   }
 
   @override
@@ -66,6 +63,7 @@ class _HomeState extends State<HomePage> {
               title: _buildAppBatTitle(context),
               actions: <Widget>[
                 _buildCopyAction(context),
+                _buildOptionsAction(context),
                 _buildSearchAction(context),
                 _buildSettingsAction(context),
                 _buildAboutAction(context)
@@ -94,10 +92,81 @@ class _HomeState extends State<HomePage> {
         icon: const Icon(Icons.grid_view_sharp));
   }
 
+  Widget _buildOptionsAction(BuildContext context) {
+    return IconButton(
+        onPressed: () async {
+          List<YamlOptionList> list = await _picHomeViewModel.optionList();
+          if(list.isEmpty)return;
+          _showOptionsSheet(context, list);
+        },
+        icon: const Icon(Icons.switch_access_shortcut));
+  }
+
+  void _showOptionsSheet(BuildContext context, List<YamlOptionList> list) {
+    showModalBottomSheet(
+        context: context,
+        builder: (context) => StatefulBuilder(builder: (context, setState) {
+              List<Widget> widgets = [];
+              for (YamlOptionList yamlOptionList in list) {
+                widgets.add(Padding(
+                  padding: const EdgeInsets.only(top: 10, bottom: 10),
+                  child: Text(
+                    yamlOptionList.desc,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ));
+                List<YamlOption> options = yamlOptionList.options;
+                List<Widget> choiceChips = [];
+                int selectedIndex = 0;
+                if(_yamlOption != null){
+                  for (int i = 0; i < options.length; i++) {
+                    YamlOption yamlOption = options[i];
+                      if(_yamlOption!.desc == yamlOption.desc){
+                        selectedIndex = i;
+                      }
+                  }
+                }
+                for (int i = 0; i < options.length; i++) {
+                  YamlOption yamlOption = options[i];
+                  choiceChips.add(ChoiceChip.elevated(
+                    label: Text(yamlOption.desc),
+                    selected: selectedIndex == i,
+                    onSelected: (bool selected) {
+                      _log.fine("index=$i;selected=$selected");
+                      _yamlOption = yamlOption;
+                      setState(() {});
+                      Navigator.of(context).pop();
+                      _requestData(clearAll: true);
+                    },
+                    selectedColor: Global.defaultColor,
+                    labelStyle: TextStyle(
+                      color: selectedIndex == i ? Colors.white : Colors.black,
+                    ),
+                    elevation: 10,
+                    showCheckmark: false,
+                  ));
+                }
+                widgets.add(Wrap(
+                  spacing: 8.0, // 主轴(水平)方向间距
+                  runSpacing: 4.0, // 纵轴（垂直）方向间距
+                  children: choiceChips,
+                ));
+              }
+              return SingleChildScrollView(
+                  padding: const EdgeInsets.only(left: 10, top: 10, right: 10, bottom: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: widgets,
+                  ));
+            }));
+  }
+
   Widget _buildCopyAction(BuildContext context) {
     return IconButton(
         onPressed: () async {
-          FlutterClipboard.copy(_url).then(( value ) => showToast("链接已复制"));
+          FlutterClipboard.copy(_url).then((value) => showToast("链接已复制"));
           // var result = await Navigator.push(
           //   context,
           //   MaterialPageRoute(builder: (context) {
@@ -151,7 +220,7 @@ class _HomeState extends State<HomePage> {
                                 filled: true),
                             onSubmitted: (String value) {
                               _updateTag(YamlTag(value, value));
-                              _requestByTag();
+                              _requestData(clearAll: true);
                               Navigator.of(context).pop();
                             }),
                       ]),
@@ -167,8 +236,9 @@ class _HomeState extends State<HomePage> {
           context: context,
           child: Column(
             children: [
-              const ListTile(title: Text(
-                  "△FlutterMoeLoaderDesktop△",
+              const ListTile(
+                  title: Text(
+                "△MoeLoaderFlutter△",
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                 ),
@@ -207,6 +277,7 @@ class _HomeState extends State<HomePage> {
                               ),
                               onTap: () {
                                 _updateTag(null);
+                                _yamlOption = null;
                                 _picHomeViewModel
                                     .changeGlobalWebPage(list[index]);
                                 _scaffoldGlobalKey.currentState?.closeDrawer();
@@ -367,7 +438,7 @@ class _HomeState extends State<HomePage> {
                   print("naviResult=$naviResult");
                   if (naviResult?.data != null) {
                     _updateTag(naviResult?.data);
-                    _requestByTag();
+                    _requestData(clearAll: true);
                   }
                 })),
         Positioned(
@@ -384,7 +455,7 @@ class _HomeState extends State<HomePage> {
                   onTagTap: (yamlTag) {
                 _log.fine("yamlTag:tag=${yamlTag.tag};desc=${yamlTag.desc}");
                 _updateTag(yamlTag);
-                _requestByTag();
+                _requestData(clearAll: true);
                 Navigator.of(context).pop();
               });
             },
@@ -484,7 +555,34 @@ class _HomeState extends State<HomePage> {
                 deleteButtonTooltipMessage: "",
                 onDeleted: () {
                   _updateTag(null);
-                  _requestByTag();
+                  _requestData(clearAll: true);
+                },
+              ));
+            }
+            if(uriState.yamlOption != null){
+              children.add(
+                const SizedBox(
+                  width: 5,
+                ),
+              );
+              children.add(Chip(
+                avatar: ClipOval(
+                  child: Icon(
+                    Icons.eighteen_up_rating,
+                    color: Theme.of(context).iconTheme.color,
+                  ),
+                ),
+                label: Text(_yamlOption?.desc ?? ""),
+                deleteIcon: ClipOval(
+                  child: Icon(
+                    Icons.delete,
+                    color: Theme.of(context).iconTheme.color,
+                  ),
+                ),
+                deleteButtonTooltipMessage: "",
+                onDeleted: () {
+                  _yamlOption = null;
+                  _requestData(clearAll: true);
                 },
               ));
             }

@@ -1,5 +1,5 @@
-## About FlutterMoeLoaderDesktop
-**FlutterMoeLoaderDesktop**是基于**Flutter**开发的Windows桌面ACG图片浏览工具，灵感来自[moe-loader-v7](https://github.com/esonic/moe-loader-v7)
+## About MoeLoaderFlutter
+**MoeLoaderFlutter**是基于**Flutter**开发的Windows桌面ACG图片浏览工具，灵感来自[moe-loader-v7](https://github.com/esonic/moe-loader-v7)
 ## 支持的图片站点（部分站点访问需要前往设置配置代理）
 * [yande.re](https://yande.re) (萌妹)
 * [konachan.com](https://konachan.com)
@@ -16,8 +16,8 @@
 
 - 首页
 
-![home](https://github.com/Chihiro23333/FlutterMoeLoaderDesktop/blob/master/screenshot/home.png?raw=true)
+![home](https://github.com/Chihiro23333/MoeLoaderFlutter/blob/master/screenshot/home.png?raw=true)
 
 - 站点列表
 
-![home](https://github.com/Chihiro23333/FlutterMoeLoaderDesktop/blob/master/screenshot/page_list.png?raw=true)
+![home](https://github.com/Chihiro23333/MoeLoaderFlutter/blob/master/screenshot/page_list.png?raw=true)

@@ -1,7 +1,8 @@
 import 'dart:io';
-import 'package:FlutterMoeLoaderDesktop/utils/sharedpreferences_utils.dart';
-import 'package:FlutterMoeLoaderDesktop/yamlhtmlparser/yaml_rule_factory.dart';
-import 'package:FlutterMoeLoaderDesktop/net/request_manager.dart';
+import 'dart:ui';
+import 'package:MoeLoaderFlutter/utils/sharedpreferences_utils.dart';
+import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_rule_factory.dart';
+import 'package:MoeLoaderFlutter/net/request_manager.dart';
 import 'package:hive/hive.dart';
 import 'package:logging/logging.dart';
 import 'package:webview_windows/webview_windows.dart';
@@ -69,6 +70,7 @@ class Global{
   static get downloadsDirectory => Directory(path.join(path.current ,"downloads"));
   static get hiveDirectory => Directory(path.join(path.current ,"hive"));
   static get supportWebView2 => _supportWebView2;
+  static get defaultColor => const Color.fromARGB(255, 46, 176, 242);
 
 }
 

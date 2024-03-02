@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:FlutterMoeLoaderDesktop/init.dart';
-import 'package:FlutterMoeLoaderDesktop/utils/sharedpreferences_utils.dart';
+import 'package:MoeLoaderFlutter/init.dart';
+import 'package:MoeLoaderFlutter/utils/sharedpreferences_utils.dart';
 import 'package:logging/logging.dart';
 import 'common_function.dart';
 

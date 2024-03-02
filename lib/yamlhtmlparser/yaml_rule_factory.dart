@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/services.dart';
-import 'package:FlutterMoeLoaderDesktop/init.dart';
-import 'package:FlutterMoeLoaderDesktop/yamlhtmlparser/parser_factory.dart';
+import 'package:MoeLoaderFlutter/init.dart';
+import 'package:MoeLoaderFlutter/yamlhtmlparser/parser_factory.dart';
 import 'package:yaml/yaml.dart';
 import 'package:path/path.dart' as path;
 import 'models.dart';

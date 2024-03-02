@@ -1,7 +1,7 @@
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:FlutterMoeLoaderDesktop/yamlhtmlparser/models.dart';
+import 'package:MoeLoaderFlutter/yamlhtmlparser/models.dart';
 
 typedef TagTapCallback = void Function(YamlTag yamlTag);
 
@@ -95,7 +95,7 @@ void _fillInfoChip(String prefix, String info, List<Widget> infoChildren){
 
 List<Widget> _buildTags(BuildContext context, CommonInfo commonInfo, {TagTapCallback? onTagTap}) {
   List<Widget> result = [];
-  commonInfo.tags.forEach((yamlTag) {
+  for (var yamlTag in commonInfo.tags) {
     result.add(GestureDetector(
       child: Chip(
         avatar: const ClipOval(
@@ -109,7 +109,7 @@ List<Widget> _buildTags(BuildContext context, CommonInfo commonInfo, {TagTapCall
         }
       },
     ));
-  });
+  }
   return result;
 }
 
