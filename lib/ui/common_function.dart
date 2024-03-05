@@ -107,7 +107,7 @@ void showDownloadTask(BuildContext context) {
                     }
                     return ListTile(
                       leading: Icon(
-                        Icons.image_outlined,
+                        Icons.image,
                         color: Theme.of(context).iconTheme.color,
                       ),
                       title: Text(downloadTask.name),
@@ -122,18 +122,6 @@ void showDownloadTask(BuildContext context) {
           },
         );
       });
-}
-
-class TestWidget<T> extends StreamBuilder<T>{
-  TestWidget({required super.stream, required super.builder});
-
-  @override
-  State<StreamBuilderBase<T, AsyncSnapshot<T>>> createState() {
-    print("StreamBuilderBase createState");
-    var createState = super.createState();
-    return createState;
-  }
-
 }
 
 void _fillInfoChip(String prefix, String info, List<Widget> infoChildren) {

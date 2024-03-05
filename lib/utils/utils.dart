@@ -1,5 +1,3 @@
-
-import 'package:MoeLoaderFlutter/yamlhtmlparser/models.dart';
 import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_validator.dart';
 
 String unicodeToUTF16(String str){
@@ -52,5 +50,5 @@ String validateCompleteTipsByCode(int code){
 String getDownloadName(String url, String id){
   Uri uri = Uri.parse(url);
   String host = uri.host;
-  return "${host}_$id";
+  return "${host}_id_${id}_date_${DateTime.now().millisecondsSinceEpoch}";
 }

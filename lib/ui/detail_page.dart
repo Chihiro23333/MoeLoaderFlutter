@@ -68,10 +68,13 @@ class _DetailState extends State<DetailPage> {
       elevation: 10,
       actions: <Widget>[
         _buildCopyAction(context),
+        _buildDownloadAction(context),
         _buildInfoAction(context, snapshot.data)
       ],
     );
   }
+
+
 
   Widget _buildBody(BuildContext context, AsyncSnapshot snapshot) {
     if (snapshot.connectionState == ConnectionState.active) {
@@ -377,6 +380,14 @@ class _DetailState extends State<DetailPage> {
               .then((value) => showToast("链接已复制"));
         },
         icon: const Icon(Icons.copy));
+  }
+
+  Widget _buildDownloadAction(BuildContext context) {
+    return IconButton(
+        onPressed: () {
+          showDownloadTask(context);
+        },
+        icon: const Icon(Icons.download));
   }
 
   Widget _buildInfoAction(BuildContext context, DetailState detailState) {

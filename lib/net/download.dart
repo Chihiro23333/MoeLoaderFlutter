@@ -9,9 +9,8 @@ class DownloadManager{
     return _cache ?? (_cache = DownloadManager._create());
   }
 
-  final StreamController<DownloadState> _streamDownloadController = StreamController();
+  final StreamController<DownloadState> _streamDownloadController = StreamController.broadcast();
   final DownloadState _downloadState = DownloadState();
-  Stream<DownloadState>? _broadcastStream;
 
   void addTask(DownloadTask downloadTask){
     _tasks().add(downloadTask);
@@ -24,12 +23,11 @@ class DownloadManager{
   }
 
   void _update(){
-    _streamDownloadController.sink.add(_downloadState);
+    _streamDownloadController.add(_downloadState);
   }
 
   Stream<DownloadState> downloadStream(){
-    _broadcastStream ??= _streamDownloadController.stream.asBroadcastStream();
-    return _broadcastStream!;
+    return _streamDownloadController.stream;
   }
 
   DownloadState curState(){

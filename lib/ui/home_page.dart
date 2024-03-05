@@ -176,7 +176,7 @@ class _HomeState extends State<HomePage> {
   Widget _buildCopyAction(BuildContext context) {
     return IconButton(
         onPressed: () async {
-          // FlutterClipboard.copy(_url).then((value) => showToast("链接已复制"));
+          FlutterClipboard.copy(_url).then((value) => showToast("链接已复制"));
           // var result = await Navigator.push(
           //   context,
           //   MaterialPageRoute(builder: (context) {
@@ -454,21 +454,41 @@ class _HomeState extends State<HomePage> {
         Positioned(
           right: 0,
           bottom: 0,
-          child: GestureDetector(
-            child: const Padding(
-              padding:
+          child: Row(
+            children: [
+              GestureDetector(
+                child: const Padding(
+                  padding:
                   EdgeInsets.only(top: 15, bottom: 15, left: 10, right: 10),
-              child: Icon(Icons.info),
-            ),
-            onTap: () {
-              showInfoSheet(context, yamlHomePageItem.commonInfo,
-                  onTagTap: (yamlTag) {
-                _log.fine("yamlTag:tag=${yamlTag.tag};desc=${yamlTag.desc}");
-                _updateTag(yamlTag);
-                _requestData(clearAll: true);
-                Navigator.of(context).pop();
-              });
-            },
+                  child: Icon(Icons.download),
+                ),
+                onTap: () {
+                  showInfoSheet(context, yamlHomePageItem.commonInfo,
+                      onTagTap: (yamlTag) {
+                        _log.fine("yamlTag:tag=${yamlTag.tag};desc=${yamlTag.desc}");
+                        _updateTag(yamlTag);
+                        _requestData(clearAll: true);
+                        Navigator.of(context).pop();
+                      });
+                },
+              ),
+              GestureDetector(
+                child: const Padding(
+                  padding:
+                  EdgeInsets.only(top: 15, bottom: 15, left: 10, right: 10),
+                  child: Icon(Icons.info),
+                ),
+                onTap: () {
+                  showInfoSheet(context, yamlHomePageItem.commonInfo,
+                      onTagTap: (yamlTag) {
+                        _log.fine("yamlTag:tag=${yamlTag.tag};desc=${yamlTag.desc}");
+                        _updateTag(yamlTag);
+                        _requestData(clearAll: true);
+                        Navigator.of(context).pop();
+                      });
+                },
+              ),
+            ],
           ),
         ),
       ],
