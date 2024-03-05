@@ -36,8 +36,8 @@ class RequestManager{
     await _dioHttp.saveCookiesString(uri, cookiesString);
   }
 
-  Future<Response> download(String url, {ProgressCallback? onReceiveProgress}) async {
-   return await _dioHttp.download(url, onReceiveProgress: onReceiveProgress);
+  Future<Response> download(String url, String name, {ProgressCallback? onReceiveProgress}) async {
+   return await _dioHttp.download(url, name, onReceiveProgress: onReceiveProgress);
   }
 
 }

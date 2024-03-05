@@ -52,14 +52,14 @@ class DioHttp {
     await updateCookies(uri, cookiesString);
   }
 
-  Future<Response> download(String url,
+  Future<Response> download(String url, String name,
       {ProgressCallback? onReceiveProgress}) async {
     int index = url.lastIndexOf(".");
     String suffix = url.substring(index, url.length);
     Directory directory = Global.downloadsDirectory;
-    _log.fine("suffix=$suffix;path=${directory.path}");
+    _log.info("suffix=$suffix;path=${directory.path}");
     return await _dio.download(url,
-        "${directory.path}\\${DateTime.now().millisecondsSinceEpoch.toString()}$suffix",
+        "${directory.path}\\$name$suffix",
         onReceiveProgress: onReceiveProgress);
   }
 

@@ -1,3 +1,4 @@
+import 'package:MoeLoaderFlutter/net/download.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
@@ -63,6 +64,7 @@ class _HomeState extends State<HomePage> {
               title: _buildAppBatTitle(context),
               actions: <Widget>[
                 _buildCopyAction(context),
+                _buildDownloadAction(context),
                 _buildOptionsAction(context),
                 _buildSearchAction(context),
                 _buildSettingsAction(context),
@@ -89,7 +91,7 @@ class _HomeState extends State<HomePage> {
         onPressed: () {
           showAbout(context);
         },
-        icon: const Icon(Icons.grid_view_sharp));
+        icon: const Icon(Icons.info));
   }
 
   Widget _buildOptionsAction(BuildContext context) {
@@ -99,7 +101,7 @@ class _HomeState extends State<HomePage> {
           if(list.isEmpty)return;
           _showOptionsSheet(context, list);
         },
-        icon: const Icon(Icons.switch_access_shortcut));
+        icon: const Icon(Icons.playlist_add_outlined));
   }
 
   void _showOptionsSheet(BuildContext context, List<YamlOptionList> list) {
@@ -163,10 +165,18 @@ class _HomeState extends State<HomePage> {
             }));
   }
 
+  Widget _buildDownloadAction(BuildContext context) {
+    return IconButton(
+        onPressed: () {
+          showDownloadTask(context);
+        },
+        icon: const Icon(Icons.download));
+  }
+
   Widget _buildCopyAction(BuildContext context) {
     return IconButton(
         onPressed: () async {
-          FlutterClipboard.copy(_url).then((value) => showToast("链接已复制"));
+          // FlutterClipboard.copy(_url).then((value) => showToast("链接已复制"));
           // var result = await Navigator.push(
           //   context,
           //   MaterialPageRoute(builder: (context) {
@@ -596,4 +606,5 @@ class _HomeState extends State<HomePage> {
           }
         });
   }
+
 }

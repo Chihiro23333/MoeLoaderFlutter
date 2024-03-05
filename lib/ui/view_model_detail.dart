@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:MoeLoaderFlutter/net/download.dart';
 import 'package:MoeLoaderFlutter/yamlhtmlparser/parser_factory.dart';
 import 'package:MoeLoaderFlutter/init.dart';
 import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_reposotory.dart';
@@ -6,6 +7,7 @@ import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_rule_factory.dart';
 import 'package:MoeLoaderFlutter/net/request_manager.dart';
 import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_validator.dart';
 import 'package:yaml/yaml.dart';
+import '../utils/utils.dart';
 import '../yamlhtmlparser/models.dart';
 
 class DetailViewModel{
@@ -50,25 +52,8 @@ class DetailViewModel{
     streamDetailController.add(_detailState);
   }
 
-  void download(String url) async {
-    if (_isDownloading()) return;
-    changeDetailDownloading(true);
-    await RequestManager().download(url,
-        onReceiveProgress: (int count, int total) {
-          _detailState.count = count;
-          _detailState.total = total;
-          streamDetailController.add(_detailState);
-        });
-    changeDetailDownloading(false);
-  }
-
-  void changeDetailDownloading(bool downloading) {
-    _detailState.downloading = downloading;
-    streamDetailController.add(_detailState);
-  }
-
-  bool _isDownloading() {
-    return _detailState.downloading;
+  void download(String url, String id) {
+    DownloadManager().addTask(DownloadTask(url, getDownloadName(url, id)));
   }
 
   void _updateUri(String url) {

@@ -1,4 +1,5 @@
 
+import 'package:MoeLoaderFlutter/yamlhtmlparser/models.dart';
 import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_validator.dart';
 
 String unicodeToUTF16(String str){
@@ -46,4 +47,10 @@ String validateCompleteTipsByCode(int code){
     return "已完成登录";
   }
   return "";
+}
+
+String getDownloadName(String url, String id){
+  Uri uri = Uri.parse(url);
+  String host = uri.host;
+  return "${host}_$id";
 }

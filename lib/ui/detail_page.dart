@@ -182,7 +182,7 @@ class _DetailState extends State<DetailPage> {
             if (isImageUrl(url) && url.isNotEmpty) {
               children.add(_buildDownloadItem(context, url, "当前预览图片($url)", () {
                 Navigator.of(context).pop();
-                _detailViewModel.download(url);
+                _detailViewModel.download(url, _yamlDetailPage!.commonInfo!.id ?? "");
               }));
             }
             if (bigUrl != null && bigUrl.isNotEmpty) {
@@ -191,7 +191,7 @@ class _DetailState extends State<DetailPage> {
               ));
               children.add(_buildDownloadItem(context, bigUrl, "大图($bigUrl)", () {
                 Navigator.of(context).pop();
-                _detailViewModel.download(bigUrl);
+                _detailViewModel.download(bigUrl, _yamlDetailPage!.commonInfo!.id ?? "");
               }));
             }
             if (rawUrl != null && rawUrl.isNotEmpty) {
@@ -200,7 +200,7 @@ class _DetailState extends State<DetailPage> {
               ));
               children.add(_buildDownloadItem(context, rawUrl, "原图($rawUrl)", () {
                 Navigator.of(context).pop();
-                _detailViewModel.download(rawUrl);
+                _detailViewModel.download(rawUrl, _yamlDetailPage!.commonInfo!.id ?? "");
               }));
             }
             if (children.isEmpty) {

@@ -1,3 +1,4 @@
+import 'package:MoeLoaderFlutter/net/download.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -5,10 +6,11 @@ import 'package:MoeLoaderFlutter/yamlhtmlparser/models.dart';
 
 typedef TagTapCallback = void Function(YamlTag yamlTag);
 
-void showInfoSheet(BuildContext context, CommonInfo? commonInfo, {TagTapCallback? onTagTap}) {
+void showInfoSheet(BuildContext context, CommonInfo? commonInfo,
+    {TagTapCallback? onTagTap}) {
   List<Widget> children = [];
   List<Widget> infoChildren = [];
-  if(commonInfo != null) {
+  if (commonInfo != null) {
     _fillInfoChip("Id：", commonInfo.id, infoChildren);
     _fillInfoChip("Author：", commonInfo.author, infoChildren);
     _fillInfoChip("Characters：", commonInfo.characters, infoChildren);
@@ -54,7 +56,7 @@ void showInfoSheet(BuildContext context, CommonInfo? commonInfo, {TagTapCallback
         return SingleChildScrollView(
           child: Padding(
             padding:
-            const EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
+                const EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: children,
@@ -65,15 +67,77 @@ void showInfoSheet(BuildContext context, CommonInfo? commonInfo, {TagTapCallback
 }
 
 CancelFunc? cancel;
-void showToast(String toastString){
-  if(cancel != null){
+
+void showToast(String toastString) {
+  if (cancel != null) {
     cancel!();
   }
-  cancel = BotToast.showText(text:toastString);
+  cancel = BotToast.showText(text: toastString);
 }
 
-void _fillInfoChip(String prefix, String info, List<Widget> infoChildren){
-  if(info.isNotEmpty){
+void showDownloadTask(BuildContext context) {
+  showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return StreamBuilder<DownloadState>(
+          initialData: DownloadManager().curState(),
+          stream: DownloadManager().downloadStream(),
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            bool hasData = snapshot.hasData;
+            if (hasData) {
+              DownloadState downloadState = snapshot.data;
+              List<DownloadTask> list = downloadState.tasks;
+              return ListView.separated(
+                  itemCount: list.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    DownloadTask downloadTask = list[index];
+                    int downloadState = downloadTask.downloadState;
+                    Widget subtitle = const Text("等待下载");
+                    if(downloadState == DownloadTask.downloading){
+                      int count = downloadTask.count;
+                      int total = downloadTask.total;
+                      print("count=$count;total=$total");
+                      double progress = 0;
+                      if(total > 0){
+                        progress = count/total;
+                      }
+                      subtitle = LinearProgressIndicator(value: progress);
+                    }else if(downloadState == DownloadTask.complete){
+                      subtitle = const Text("已下载");
+                    }
+                    return ListTile(
+                      leading: Icon(
+                        Icons.image_outlined,
+                        color: Theme.of(context).iconTheme.color,
+                      ),
+                      title: Text(downloadTask.name),
+                      subtitle: subtitle,
+                    );
+                  }, separatorBuilder: (BuildContext context, int index) {
+                    return const Divider(height: 10);
+              },);
+            } else {
+              return const CircularProgressIndicator();
+            }
+          },
+        );
+      });
+}
+
+class TestWidget<T> extends StreamBuilder<T>{
+  TestWidget({required super.stream, required super.builder});
+
+  @override
+  State<StreamBuilderBase<T, AsyncSnapshot<T>>> createState() {
+    print("StreamBuilderBase createState");
+    var createState = super.createState();
+    return createState;
+  }
+
+}
+
+void _fillInfoChip(String prefix, String info, List<Widget> infoChildren) {
+  if (info.isNotEmpty) {
     infoChildren.add(Chip(
       avatar: const ClipOval(
         child: Icon(Icons.tag),
@@ -83,9 +147,8 @@ void _fillInfoChip(String prefix, String info, List<Widget> infoChildren){
         children: [
           Text(
             prefix,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold
-          ),),
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
           Text(info)
         ],
       ),
@@ -93,7 +156,8 @@ void _fillInfoChip(String prefix, String info, List<Widget> infoChildren){
   }
 }
 
-List<Widget> _buildTags(BuildContext context, CommonInfo commonInfo, {TagTapCallback? onTagTap}) {
+List<Widget> _buildTags(BuildContext context, CommonInfo commonInfo,
+    {TagTapCallback? onTagTap}) {
   List<Widget> result = [];
   for (var yamlTag in commonInfo.tags) {
     result.add(GestureDetector(
@@ -103,8 +167,8 @@ List<Widget> _buildTags(BuildContext context, CommonInfo commonInfo, {TagTapCall
         ),
         label: Text(yamlTag.desc),
       ),
-      onTap: (){
-        if(onTagTap != null){
+      onTap: () {
+        if (onTagTap != null) {
           onTagTap(yamlTag);
         }
       },
@@ -112,4 +176,3 @@ List<Widget> _buildTags(BuildContext context, CommonInfo commonInfo, {TagTapCall
   }
   return result;
 }
-
