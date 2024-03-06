@@ -34,7 +34,8 @@ abstract class Parser {
     return result;
   }
 
-  Future<String> getHomeUrl(YamlMap webPage, String page, {YamlOption? yamlOption}) async {
+  Future<String> getHomeUrl(YamlMap webPage, String page,
+      {List<YamlOption>? optionList}) async {
     YamlMap urlRule = webPage['url'];
     YamlMap homeRule = urlRule['home'];
 
@@ -42,14 +43,14 @@ abstract class Parser {
     String link = homeRule["link"];
     int pageBase = homeRule["pageBase"] ?? 1;
     page = (int.parse(page) * pageBase).toString();
-    yamlOption ??= await _defaultOption(webPage);
-    url = await _formatUrl(link, page, yamlOption: yamlOption);
+    await _defaultOption(webPage, optionList);
+    url = await _formatUrl(link, page, optionList: optionList);
     _log.fine("getUrl:url=$url");
     return url;
   }
 
   Future<String> getSearchUrl(YamlMap webPage,
-      {String? page, String? tags, YamlOption? yamlOption}) async {
+      {String? page, String? tags, List<YamlOption>? optionList}) async {
     YamlMap urlRule = webPage['url'];
     YamlMap searchRule = urlRule['search'];
 
@@ -63,8 +64,8 @@ abstract class Parser {
       String link = searchRule["link"];
       int pageBase = searchRule["pageBase"] ?? 1;
       page = (int.parse(page) * pageBase).toString();
-      yamlOption ??= await _defaultOption(webPage);
-      url = await _formatUrl(link, page, tags: tags, yamlOption: yamlOption);
+      await _defaultOption(webPage, optionList);
+      url = await _formatUrl(link, page, tags: tags, optionList: optionList);
     }
 
     _log.fine("getUrl:url=$url");
@@ -75,11 +76,11 @@ abstract class Parser {
     return doc["meta"]?["name"] ?? "";
   }
 
-  Future<List<YamlOptionList>> optionList(YamlMap webPage) async{
+  Future<List<YamlOptionList>> optionList(YamlMap webPage) async {
     List<YamlOptionList> result = [];
     YamlList? optionsRule = webPage["options"];
     _log.info("optionsRule=$optionsRule");
-    if(optionsRule != null){
+    if (optionsRule != null) {
       for (var option in optionsRule) {
         String id = option["id"];
         String desc = option["desc"];
@@ -98,14 +99,30 @@ abstract class Parser {
     return result;
   }
 
-  Future<YamlOption?> _defaultOption(YamlMap webPage) async{
-    List<YamlOptionList> list =  await optionList(webPage);
-    if(list.isNotEmpty){
-      return list[0].options[0];
+  Future<void> _defaultOption(
+      YamlMap webPage, List<YamlOption>? inOptionList) async {
+    if (inOptionList == null) return;
+    List<YamlOptionList> list = await optionList(webPage);
+    List<YamlOption> resultList = [];
+    if (list.isNotEmpty) {
+      for (var item in list) {
+        bool find = false;
+        for (var inItem in inOptionList) {
+          if (inItem.pId == item.id) {
+            find = true;
+            break;
+          }
+        }
+        if (!find) {
+          resultList.add(item.options[0]);
+        }
+      }
+      ;
     }
   }
 
-  Future<String> _formatUrl(String url, String? page, {String? tags, YamlOption? yamlOption}) async {
+  Future<String> _formatUrl(String url, String? page,
+      {String? tags, List<YamlOption>? optionList}) async {
     String pattern = r'\${(.*?)\}';
     // 使用正则表达式匹配被{}包围的内容
     RegExp regExp = RegExp(pattern);
@@ -122,12 +139,21 @@ abstract class Parser {
         url = url.replaceAll("\${$text}", tags ?? "");
         continue;
       }
-      _log.info("yamlOption=$yamlOption");
-      if (yamlOption?.pId == text) {
-        url = url.replaceAll("\${$text}", yamlOption?.param ?? "");
-        continue;
+      _log.info("optionList=$optionList");
+      YamlOption? yamlOption;
+      if (optionList != null) {
+        for (var item in optionList) {
+          if (item.pId == text) {
+            yamlOption = item;
+            break;
+          }
+        }
       }
-      url = url.replaceAll("\${$text}", "");
+      if (yamlOption != null) {
+        url = url.replaceAll("\${$text}", yamlOption.param);
+      } else {
+        url = url.replaceAll("\${$text}", "");
+      }
     }
     return url;
   }

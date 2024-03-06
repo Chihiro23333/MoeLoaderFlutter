@@ -18,7 +18,7 @@ class HomeViewModel {
 
   HomeViewModel();
 
-  void requestData({String? tags, bool clearAll = false, YamlOption? yamlOption}) async {
+  void requestData({String? tags, bool clearAll = false, List<YamlOption>? optionList}) async {
     changeLoading(true);
     if(clearAll){
       _clearAll();
@@ -30,12 +30,13 @@ class HomeViewModel {
     bool home = tags == null;
     String url;
     if(home){
-      url = await _parser().getHomeUrl(doc, page, yamlOption: yamlOption);
+      url = await _parser().getHomeUrl(doc, page, optionList: optionList);
     }else{
-      url = await _parser().getSearchUrl(doc, page: page, tags: tags, yamlOption: yamlOption);
+      url = await _parser().getSearchUrl(doc, page: page, tags: tags, optionList: optionList);
     }
 
-    _updateUri(url, page, tags, yamlOption);
+    String siteName = await _parser().getName(doc);
+    _updateUri(siteName, url, page, tags, optionList);
 
     Map<String, String>? headers = await _parser().getHeaders(doc);
     _homeState.headers = headers;
@@ -86,13 +87,14 @@ class HomeViewModel {
     _homeState.reset();
   }
 
-  void _updateUri(String url, String page, String? tags, YamlOption? yamlOption) {
+  void _updateUri(String siteName, String url, String page, String? tags, List<YamlOption>? optionList) {
     Uri uri = Uri.parse(url);
     _uriState.baseHref = "${uri.scheme}://${uri.host}${uri.path}";
     _uriState.page = page;
     _uriState.tag = tags ?? "";
     _uriState.url = url;
-    _uriState.yamlOption = yamlOption;
+    _uriState.siteName = siteName;
+    _uriState.optionList = optionList;
     streamUriController.add(_uriState);
   }
 
@@ -126,11 +128,12 @@ class HomeState {
 }
 
 class UriState{
+  String siteName = "";
   String url = "";
   String baseHref = "";
   String page = "";
   String tag = "";
-  YamlOption? yamlOption;
+  List<YamlOption>? optionList;
 
   UriState();
 }

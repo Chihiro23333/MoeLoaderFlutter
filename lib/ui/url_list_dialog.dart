@@ -53,7 +53,8 @@ void showUrlList(BuildContext context, String href, CommonInfo? commonInfo) {
                           );
                           _log.fine("push result=${result}");
                           if (result != null && result) {
-                            // _requestDetailData();
+                            detailViewModel.requestDetailData(href,
+                                commonInfo: commonInfo);
                           }
                         },
                       ),
@@ -70,9 +71,10 @@ void showUrlList(BuildContext context, String href, CommonInfo? commonInfo) {
                   _log.fine("url=$url;rawUrl=$rawUrl;bigUrl=$bigUrl");
                   List<Widget> children = [];
                   if (isImageUrl(url) && url.isNotEmpty) {
-                    children.add(buildDownloadItem(context, url, "当前预览图片($url)", () {
+                    children.add(buildDownloadItem(context, url, "预览图($url)", () {
                       Navigator.of(context).pop();
                       detailViewModel.download(url, yamlDetailPage.commonInfo!.id ?? "");
+                      showToast("已将图片加入下载列表");
                     }));
                   }
                   if (bigUrl != null && bigUrl.isNotEmpty) {
@@ -82,6 +84,7 @@ void showUrlList(BuildContext context, String href, CommonInfo? commonInfo) {
                     children.add(buildDownloadItem(context, bigUrl, "大图($bigUrl)", () {
                       Navigator.of(context).pop();
                       detailViewModel.download(bigUrl, yamlDetailPage.commonInfo!.id ?? "");
+                      showToast("已将图片加入下载列表");
                     }));
                   }
                   if (rawUrl != null && rawUrl.isNotEmpty) {
@@ -91,6 +94,7 @@ void showUrlList(BuildContext context, String href, CommonInfo? commonInfo) {
                     children.add(buildDownloadItem(context, rawUrl, "原图($rawUrl)", () {
                       Navigator.of(context).pop();
                       detailViewModel.download(rawUrl, yamlDetailPage.commonInfo!.id ?? "");
+                      showToast("已将图片加入下载列表");
                     }));
                   }
                   if (children.isEmpty) {

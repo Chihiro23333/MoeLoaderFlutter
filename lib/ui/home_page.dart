@@ -33,7 +33,7 @@ class _HomeState extends State<HomePage> {
   late TextEditingController _textEditingControl;
 
   YamlTag? _tag;
-  YamlOption? _yamlOption;
+  final Map<String, YamlOption> _yamlOptionMap = {};
   String _url = "";
 
   void _updateTag(YamlTag? tag) {
@@ -42,9 +42,19 @@ class _HomeState extends State<HomePage> {
     });
   }
 
+  void _clearOptions() {
+    _yamlOptionMap.clear();
+  }
+
+  void _removeOptions(String id) {
+    _yamlOptionMap.remove(id);
+  }
+
   void _requestData({bool clearAll = false}) {
     _picHomeViewModel.requestData(
-        tags: _tag?.tag, yamlOption: _yamlOption, clearAll: clearAll);
+        tags: _tag?.tag,
+        optionList: _yamlOptionMap.values.toList(),
+        clearAll: clearAll);
   }
 
   @override
@@ -104,7 +114,7 @@ class _HomeState extends State<HomePage> {
           if (list.isEmpty) return;
           _showOptionsSheet(context, list);
         },
-        icon: const Icon(Icons.playlist_add_outlined));
+        icon: const Icon(Icons.filter_alt));
   }
 
   void _showOptionsSheet(BuildContext context, List<YamlOptionList> list) {
@@ -125,12 +135,12 @@ class _HomeState extends State<HomePage> {
                 List<YamlOption> options = yamlOptionList.options;
                 List<Widget> choiceChips = [];
                 int selectedIndex = 0;
-                if (_yamlOption != null) {
-                  for (int i = 0; i < options.length; i++) {
-                    YamlOption yamlOption = options[i];
-                    if (_yamlOption!.desc == yamlOption.desc) {
-                      selectedIndex = i;
-                    }
+                for (int i = 0; i < options.length; i++) {
+                  YamlOption yamlOption = options[i];
+                  YamlOption? chooseOption = _yamlOptionMap[yamlOption.pId];
+                  if (chooseOption != null &&
+                      chooseOption.desc == yamlOption.desc) {
+                    selectedIndex = i;
                   }
                 }
                 for (int i = 0; i < options.length; i++) {
@@ -140,7 +150,7 @@ class _HomeState extends State<HomePage> {
                     selected: selectedIndex == i,
                     onSelected: (bool selected) {
                       _log.fine("index=$i;selected=$selected");
-                      _yamlOption = yamlOption;
+                      _yamlOptionMap[yamlOption.pId] = yamlOption;
                       setState(() {});
                       Navigator.of(context).pop();
                       _requestData(clearAll: true);
@@ -252,7 +262,7 @@ class _HomeState extends State<HomePage> {
             children: [
               const ListTile(
                   title: Text(
-                "△MoeLoaderFlutter△",
+                "MoeLoaderFlutter",
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                 ),
@@ -291,7 +301,7 @@ class _HomeState extends State<HomePage> {
                               ),
                               onTap: () {
                                 _updateTag(null);
-                                _yamlOption = null;
+                                _clearOptions();
                                 _picHomeViewModel
                                     .changeGlobalWebPage(list[index]);
                                 _scaffoldGlobalKey.currentState?.closeDrawer();
@@ -458,7 +468,6 @@ class _HomeState extends State<HomePage> {
         Positioned(
           right: 0,
           bottom: 0,
-          left: 0,
           child: Container(
             color: Colors.white70,
             child: Row(
@@ -537,11 +546,11 @@ class _HomeState extends State<HomePage> {
             children.add(Chip(
               avatar: ClipOval(
                 child: Icon(
-                  Icons.link,
+                  Icons.title,
                   color: Theme.of(context).iconTheme.color,
                 ),
               ),
-              label: Text(uriState.baseHref),
+              label: Text(uriState.siteName),
             ));
             children.add(
               const SizedBox(
@@ -584,32 +593,35 @@ class _HomeState extends State<HomePage> {
                 },
               ));
             }
-            if (uriState.yamlOption != null) {
-              children.add(
-                const SizedBox(
-                  width: 5,
-                ),
-              );
-              children.add(Chip(
-                avatar: ClipOval(
-                  child: Icon(
-                    Icons.eighteen_up_rating,
-                    color: Theme.of(context).iconTheme.color,
+            final optionList = uriState.optionList;
+            if (optionList != null) {
+              for (var item in optionList) {
+                children.add(
+                  const SizedBox(
+                    width: 5,
                   ),
-                ),
-                label: Text(_yamlOption?.desc ?? ""),
-                deleteIcon: ClipOval(
-                  child: Icon(
-                    Icons.delete,
-                    color: Theme.of(context).iconTheme.color,
+                );
+                children.add(Chip(
+                  avatar: ClipOval(
+                    child: Icon(
+                      Icons.filter_alt,
+                      color: Theme.of(context).iconTheme.color,
+                    ),
                   ),
-                ),
-                deleteButtonTooltipMessage: "",
-                onDeleted: () {
-                  _yamlOption = null;
-                  _requestData(clearAll: true);
-                },
-              ));
+                  label: Text(item.desc),
+                  deleteIcon: ClipOval(
+                    child: Icon(
+                      Icons.delete,
+                      color: Theme.of(context).iconTheme.color,
+                    ),
+                  ),
+                  deleteButtonTooltipMessage: "",
+                  onDeleted: () {
+                    _removeOptions(item.pId);
+                    _requestData(clearAll: true);
+                  },
+                ));
+              }
             }
             return FittedBox(
               child: Row(
