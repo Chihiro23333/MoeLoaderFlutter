@@ -35,8 +35,7 @@ class _DetailState extends State<DetailPage> {
 
   void _requestDetailData() {
     print("widget.href=${widget.href}");
-    _detailViewModel.requestDetailData(widget.href,
-        isImageUrl: isImageUrl(widget.href), commonInfo: widget.commonInfo);
+    _detailViewModel.requestDetailData(widget.href,commonInfo: widget.commonInfo);
   }
 
   @override
@@ -73,8 +72,6 @@ class _DetailState extends State<DetailPage> {
       ],
     );
   }
-
-
 
   Widget _buildBody(BuildContext context, AsyncSnapshot snapshot) {
     if (snapshot.connectionState == ConnectionState.active) {
@@ -183,7 +180,7 @@ class _DetailState extends State<DetailPage> {
             _log.fine("url=$url;rawUrl=$rawUrl;bigUrl=$bigUrl");
             List<Widget> children = [];
             if (isImageUrl(url) && url.isNotEmpty) {
-              children.add(_buildDownloadItem(context, url, "当前预览图片($url)", () {
+              children.add(buildDownloadItem(context, url, "当前预览图片($url)", () {
                 Navigator.of(context).pop();
                 _detailViewModel.download(url, _yamlDetailPage!.commonInfo!.id ?? "");
               }));
@@ -192,7 +189,7 @@ class _DetailState extends State<DetailPage> {
               children.add(const Divider(
                 height: 10,
               ));
-              children.add(_buildDownloadItem(context, bigUrl, "大图($bigUrl)", () {
+              children.add(buildDownloadItem(context, bigUrl, "大图($bigUrl)", () {
                 Navigator.of(context).pop();
                 _detailViewModel.download(bigUrl, _yamlDetailPage!.commonInfo!.id ?? "");
               }));
@@ -201,7 +198,7 @@ class _DetailState extends State<DetailPage> {
               children.add(const Divider(
                 height: 10,
               ));
-              children.add(_buildDownloadItem(context, rawUrl, "原图($rawUrl)", () {
+              children.add(buildDownloadItem(context, rawUrl, "原图($rawUrl)", () {
                 Navigator.of(context).pop();
                 _detailViewModel.download(rawUrl, _yamlDetailPage!.commonInfo!.id ?? "");
               }));
@@ -226,7 +223,7 @@ class _DetailState extends State<DetailPage> {
         child: child);
   }
 
-  Widget _buildDownloadItem(
+  Widget buildDownloadItem(
       BuildContext context, String url, String desc, VoidCallback? callback) {
     return ListTile(
       leading:
@@ -385,7 +382,7 @@ class _DetailState extends State<DetailPage> {
   Widget _buildDownloadAction(BuildContext context) {
     return IconButton(
         onPressed: () {
-          showDownloadTask(context);
+          showDownloadTasks(context);
         },
         icon: const Icon(Icons.download));
   }

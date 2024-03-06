@@ -11,7 +11,7 @@ url:
   search: {link: "https://yande.re/post?page=${page}&tags=${rating}${tag}", tagConnector: "_" }
 
 options:
-  - {id: "rating", desc: "评级", items: [{desc: "all", param: ""}, {desc: "safe", param: "rating%3Asafe+"}, {desc: "questionable", param: "rating%3Aquestionable+"}, {desc: "explicit", param: "rating%3Aexplicit+"}]}
+  - {id: "rating", desc: "评级", items: [{desc: "safe", param: "rating%3Asafe+"}, {desc: "questionable", param: "rating%3Aquestionable+"}, {desc: "explicit", param: "rating%3Aexplicit+"}]}
 
 homePage: &HOMEPAGE
   onParseResult:

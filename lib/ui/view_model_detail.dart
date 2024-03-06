@@ -13,17 +13,18 @@ import '../yamlhtmlparser/models.dart';
 class DetailViewModel{
   final YamlRepository repository = YamlRepository();
 
-  final StreamController<DetailState> streamDetailController = StreamController();
+  final StreamController<DetailState> streamDetailController = StreamController.broadcast();
   final DetailState _detailState = DetailState();
-  final StreamController<DetailUriState> streamDetailUriController = StreamController();
+  final StreamController<DetailUriState> streamDetailUriController = StreamController.broadcast();
   final DetailUriState _detailUriState = DetailUriState();
 
   DetailViewModel();
 
-  void requestDetailData(String url,{bool isImageUrl = false, CommonInfo? commonInfo}) async {
+  void requestDetailData(String url,{CommonInfo? commonInfo}) async {
     changeDetailLoading(true);
     _updateUri(url);
-    if(isImageUrl){
+    bool imageUrl = isImageUrl(url);
+    if(imageUrl){
       _detailState.yamlDetailPage.url = url;
       _detailState.yamlDetailPage.commonInfo = commonInfo;
       streamDetailController.add(_detailState);

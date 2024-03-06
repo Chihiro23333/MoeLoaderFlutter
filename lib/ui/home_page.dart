@@ -41,7 +41,8 @@ class _HomeState extends State<HomePage> {
   }
 
   void _requestData({bool clearAll = false}) {
-    _picHomeViewModel.requestData(tags: _tag?.tag, yamlOption: _yamlOption, clearAll: clearAll);
+    _picHomeViewModel.requestData(
+        tags: _tag?.tag, yamlOption: _yamlOption, clearAll: clearAll);
   }
 
   @override
@@ -98,7 +99,7 @@ class _HomeState extends State<HomePage> {
     return IconButton(
         onPressed: () async {
           List<YamlOptionList> list = await _picHomeViewModel.optionList();
-          if(list.isEmpty)return;
+          if (list.isEmpty) return;
           _showOptionsSheet(context, list);
         },
         icon: const Icon(Icons.playlist_add_outlined));
@@ -115,19 +116,19 @@ class _HomeState extends State<HomePage> {
                   child: Text(
                     yamlOptionList.desc,
                     style: const TextStyle(
-                        fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ));
                 List<YamlOption> options = yamlOptionList.options;
                 List<Widget> choiceChips = [];
                 int selectedIndex = 0;
-                if(_yamlOption != null){
+                if (_yamlOption != null) {
                   for (int i = 0; i < options.length; i++) {
                     YamlOption yamlOption = options[i];
-                      if(_yamlOption!.desc == yamlOption.desc){
-                        selectedIndex = i;
-                      }
+                    if (_yamlOption!.desc == yamlOption.desc) {
+                      selectedIndex = i;
+                    }
                   }
                 }
                 for (int i = 0; i < options.length; i++) {
@@ -157,7 +158,8 @@ class _HomeState extends State<HomePage> {
                 ));
               }
               return SingleChildScrollView(
-                  padding: const EdgeInsets.only(left: 10, top: 10, right: 10, bottom: 10),
+                  padding: const EdgeInsets.only(
+                      left: 10, top: 10, right: 10, bottom: 10),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: widgets,
@@ -168,7 +170,7 @@ class _HomeState extends State<HomePage> {
   Widget _buildDownloadAction(BuildContext context) {
     return IconButton(
         onPressed: () {
-          showDownloadTask(context);
+          showDownloadTasks(context);
         },
         icon: const Icon(Icons.download));
   }
@@ -454,41 +456,32 @@ class _HomeState extends State<HomePage> {
         Positioned(
           right: 0,
           bottom: 0,
-          child: Row(
-            children: [
-              GestureDetector(
-                child: const Padding(
-                  padding:
-                  EdgeInsets.only(top: 15, bottom: 15, left: 10, right: 10),
-                  child: Icon(Icons.download),
-                ),
-                onTap: () {
-                  showInfoSheet(context, yamlHomePageItem.commonInfo,
-                      onTagTap: (yamlTag) {
-                        _log.fine("yamlTag:tag=${yamlTag.tag};desc=${yamlTag.desc}");
+          left: 0,
+          child: Container(
+            color: Colors.white70,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                IconButton(
+                    onPressed: () {
+                      showUrlList(context, yamlHomePageItem.href,
+                          yamlHomePageItem.commonInfo);
+                    },
+                    icon: const Icon(Icons.download)),
+                IconButton(
+                    onPressed: () {
+                      showInfoSheet(context, yamlHomePageItem.commonInfo,
+                          onTagTap: (yamlTag) {
+                        _log.fine(
+                            "yamlTag:tag=${yamlTag.tag};desc=${yamlTag.desc}");
                         _updateTag(yamlTag);
                         _requestData(clearAll: true);
                         Navigator.of(context).pop();
                       });
-                },
-              ),
-              GestureDetector(
-                child: const Padding(
-                  padding:
-                  EdgeInsets.only(top: 15, bottom: 15, left: 10, right: 10),
-                  child: Icon(Icons.info),
-                ),
-                onTap: () {
-                  showInfoSheet(context, yamlHomePageItem.commonInfo,
-                      onTagTap: (yamlTag) {
-                        _log.fine("yamlTag:tag=${yamlTag.tag};desc=${yamlTag.desc}");
-                        _updateTag(yamlTag);
-                        _requestData(clearAll: true);
-                        Navigator.of(context).pop();
-                      });
-                },
-              ),
-            ],
+                    },
+                    icon: const Icon(Icons.info))
+              ],
+            ),
           ),
         ),
       ],
@@ -589,7 +582,7 @@ class _HomeState extends State<HomePage> {
                 },
               ));
             }
-            if(uriState.yamlOption != null){
+            if (uriState.yamlOption != null) {
               children.add(
                 const SizedBox(
                   width: 5,
@@ -626,5 +619,4 @@ class _HomeState extends State<HomePage> {
           }
         });
   }
-
 }
