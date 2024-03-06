@@ -13,9 +13,9 @@ import '../yamlhtmlparser/models.dart';
 class DetailViewModel{
   final YamlRepository repository = YamlRepository();
 
-  final StreamController<DetailState> streamDetailController = StreamController.broadcast();
+  final StreamController<DetailState> streamDetailController = StreamController();
   final DetailState _detailState = DetailState();
-  final StreamController<DetailUriState> streamDetailUriController = StreamController.broadcast();
+  final StreamController<DetailUriState> streamDetailUriController = StreamController();
   final DetailUriState _detailUriState = DetailUriState();
 
   DetailViewModel();

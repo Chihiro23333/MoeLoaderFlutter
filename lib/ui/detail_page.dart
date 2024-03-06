@@ -9,6 +9,8 @@ import '../yamlhtmlparser/models.dart';
 import '../utils/utils.dart';
 import 'common_function.dart';
 import 'common_widget.dart';
+import 'download_tasks_dialog.dart';
+import 'info_dialog.dart';
 
 class DetailPage extends StatefulWidget {
   const DetailPage({super.key, required this.commonInfo, required this.href});

@@ -1,4 +1,4 @@
-import 'package:MoeLoaderFlutter/net/download.dart';
+import 'package:MoeLoaderFlutter/ui/url_list_dialog.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +15,8 @@ import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_validator.dart';
 import 'package:logging/logging.dart';
 import '../utils/utils.dart';
 import 'detail_page.dart';
+import 'download_tasks_dialog.dart';
+import 'info_dialog.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
