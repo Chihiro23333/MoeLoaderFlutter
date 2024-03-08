@@ -283,11 +283,11 @@ class _HomeState extends State<HomePage> {
                                 list[index].rule.name,
                                 style: const TextStyle(fontSize: 18),
                               ),
-                              onTap: () {
+                              onTap: () async{
                                 _updateTag(null);
                                 _clearOptions();
-                                _picHomeViewModel
-                                    .changeGlobalWebPage(list[index]);
+                                await _picHomeViewModel.changeGlobalWebPage(list[index]);
+                                _requestData(clearAll: true);
                                 _scaffoldGlobalKey.currentState?.closeDrawer();
                               },
                             );

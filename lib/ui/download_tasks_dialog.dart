@@ -40,6 +40,7 @@ void showDownloadTasks(BuildContext context) {
                       if (total > 0) {
                         progress = count / total;
                       }
+                      leading = const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2,),);
                       subtitle = LinearProgressIndicator(value: progress);
                     } else if (downloadState == DownloadTask.complete) {
                       subtitle = const LinearProgressIndicator(value: 100);

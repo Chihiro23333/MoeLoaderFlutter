@@ -19,6 +19,7 @@ class HomeViewModel {
   HomeViewModel();
 
   void requestData({String? tags, bool clearAll = false, List<YamlOption>? optionList}) async {
+    print("optionList=$optionList");
     changeLoading(true);
     if(clearAll){
       _clearAll();
@@ -78,9 +79,8 @@ class HomeViewModel {
     return _parser().optionList(doc);
   }
 
-  void changeGlobalWebPage(WebPageItem webPageItem) async{
+  Future<void> changeGlobalWebPage(WebPageItem webPageItem) async{
     await Global().updateCurWebPage(webPageItem.rule);
-    requestData(clearAll: true);
   }
 
   void _clearAll() {
