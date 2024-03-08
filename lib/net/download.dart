@@ -33,6 +33,7 @@ class DownloadManager {
 
   void addTask(DownloadTask downloadTask) {
     _tasks().add(downloadTask);
+    downloadTask.downloadState = DownloadTask.waiting;
     _update();
     _downloadNext();
   }
@@ -58,7 +59,6 @@ class DownloadManager {
     if (hasDownloading) return;
     DownloadTask? downloadTask = _findFirstUnDownload();
     if (downloadTask != null) {
-      downloadTask.downloadState = DownloadTask.downloading;
       YamlMap doc = await YamlRuleFactory().create(Global.curWebPageName);
       Map<String, String>? headers = await _parser().getHeaders(doc);
       if (isImageUrl(downloadTask.url)) {
@@ -67,6 +67,7 @@ class DownloadManager {
       } else {
         ValidateResult<String> result =
             await repository.detail(downloadTask.url, headers: headers);
+        print("result=${result}");
         if (result.validateSuccess) {
           YamlDetailPage picDetailPage =
               await _parser().parseDetail(result.data!, doc);
@@ -75,7 +76,7 @@ class DownloadManager {
           String? rawUrl = picDetailPage.commonInfo?.rawUrl;
           String? bigUrl = picDetailPage.commonInfo?.bigUrl;
           String? downloadFileSize = await getDownloadFileSize();
-          _log.info("downloadFileSize=$downloadFileSize");
+          _log.fine("downloadFileSize=$downloadFileSize");
           switch (downloadFileSize) {
             case Const.preview:
               if (downloadUrl.isEmpty) {
@@ -116,6 +117,7 @@ class DownloadManager {
           _download(downloadTask);
         } else {
           downloadTask.downloadState = DownloadTask.error;
+          _update();
           _downloadNext();
         }
       }
@@ -150,7 +152,7 @@ class DownloadManager {
     Iterator<DownloadTask> iterator = _tasks().iterator;
     while (iterator.moveNext()) {
       var current = iterator.current;
-      if (current.downloadState == DownloadTask.idle) {
+      if (current.downloadState == DownloadTask.waiting) {
         task = current;
         break;
       }
@@ -178,9 +180,10 @@ class DownloadState {
 
 class DownloadTask {
   static const int idle = 0;
-  static const int downloading = 1;
-  static const int complete = 2;
-  static const int error = 3;
+  static const int waiting = 1;
+  static const int downloading = 2;
+  static const int complete = 3;
+  static const int error = 4;
 
   String url;
   String name;

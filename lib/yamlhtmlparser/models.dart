@@ -1,9 +1,12 @@
+import 'package:MoeLoaderFlutter/net/download.dart';
+
 class YamlHomePageItem{
   String url = "";
   String href = "";
   double width = 0;
   double height = 0;
   CommonInfo? commonInfo;
+  int downloadState = DownloadTask.idle;
 
   YamlHomePageItem(this.url, this.href, this.width, this.height, {this.commonInfo});
 }

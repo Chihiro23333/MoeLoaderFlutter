@@ -56,7 +56,7 @@ class DioHttp {
     int index = url.lastIndexOf(".");
     String suffix = url.substring(index, url.length);
     Directory directory = Global.downloadsDirectory;
-    _log.info("suffix=$suffix;path=${directory.path}");
+    _log.fine("suffix=$suffix;path=${directory.path}");
     return await _dio.download(url,
         "${directory.path}\\$name$suffix",
         onReceiveProgress: onReceiveProgress);

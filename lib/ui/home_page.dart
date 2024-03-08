@@ -115,7 +115,7 @@ class _HomeState extends State<HomePage> {
     return IconButton(
         onPressed: () async {
           List<YamlOptionList> list = await _picHomeViewModel.optionList();
-          if (list.isEmpty){
+          if (list.isEmpty) {
             showToast("当前站点无筛选条件");
             return;
           }
@@ -283,10 +283,11 @@ class _HomeState extends State<HomePage> {
                                 list[index].rule.name,
                                 style: const TextStyle(fontSize: 18),
                               ),
-                              onTap: () async{
+                              onTap: () async {
                                 _updateTag(null);
                                 _clearOptions();
-                                await _picHomeViewModel.changeGlobalWebPage(list[index]);
+                                await _picHomeViewModel
+                                    .changeGlobalWebPage(list[index]);
                                 _requestData(clearAll: true);
                                 _scaffoldGlobalKey.currentState?.closeDrawer();
                               },
@@ -306,7 +307,6 @@ class _HomeState extends State<HomePage> {
   }
 
   Widget _buildBody(BuildContext context, AsyncSnapshot snapshot) {
-    debugPrint(snapshot.connectionState.toString());
     if (snapshot.hasError) {
       return Text("Error: ${snapshot.error}");
     }
@@ -443,7 +443,7 @@ class _HomeState extends State<HomePage> {
                           commonInfo: yamlHomePageItem.commonInfo);
                     }),
                   );
-                  print("naviResult=$naviResult");
+                  _log.fine("naviResult=$naviResult");
                   if (naviResult?.data != null) {
                     _updateTag(naviResult?.data);
                     _requestData(clearAll: true);
@@ -453,12 +453,15 @@ class _HomeState extends State<HomePage> {
           right: 0,
           bottom: 0,
           child: Container(
-            color: Colors.white70,
+            color: Colors.white,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 IconButton(
                     onPressed: () async {
+                      if (yamlHomePageItem.downloadState != DownloadTask.idle &&
+                          yamlHomePageItem.downloadState != DownloadTask.error)
+                        return;
                       String? downloadFileSize = await getDownloadFileSize();
                       if (downloadFileSize == Const.choose ||
                           downloadFileSize == null) {
@@ -472,7 +475,8 @@ class _HomeState extends State<HomePage> {
                         showToast("已将图片加入下载列表");
                       }
                     },
-                    icon: const Icon(Icons.download)),
+                    icon: downloadStateIcon(
+                        context, yamlHomePageItem.downloadState)),
                 IconButton(
                     onPressed: () {
                       showInfoSheet(context, yamlHomePageItem.commonInfo,

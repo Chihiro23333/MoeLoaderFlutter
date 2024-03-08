@@ -17,7 +17,7 @@ void showDownloadTasks(BuildContext context) {
               if (hasData) {
                 DownloadState downloadState = snapshot.data;
                 List<DownloadTask> list = downloadState.tasks;
-                if(list.isEmpty){
+                if (list.isEmpty) {
                   return const Center(
                     child: Text("下载列表为空"),
                   );
@@ -27,37 +27,23 @@ void showDownloadTasks(BuildContext context) {
                   itemBuilder: (BuildContext context, int index) {
                     DownloadTask downloadTask = list[index];
                     int downloadState = downloadTask.downloadState;
-                    Widget subtitle = const LinearProgressIndicator(value: 0);
-                    Widget leading = Icon(
-                      Icons.file_download,
-                      color: Theme.of(context).iconTheme.color,
-                    );
+                    double progress = 0;
                     if (downloadState == DownloadTask.downloading) {
                       int count = downloadTask.count;
                       int total = downloadTask.total;
-                      print("count=$count;total=$total");
-                      double progress = 0;
                       if (total > 0) {
                         progress = count / total;
                       }
-                      leading = const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2,),);
-                      subtitle = LinearProgressIndicator(value: progress);
                     } else if (downloadState == DownloadTask.complete) {
-                      subtitle = const LinearProgressIndicator(value: 100);
-                      leading = Icon(
-                        Icons.file_download_done,
-                        color: Global.defaultColor,
-                      );
-                    } else if(downloadState == DownloadTask.error){
-                      leading = const Icon(
-                        Icons.close,
-                        color: Colors.red,
-                      );
-                    }
+                      progress = 100;
+                    } else if (downloadState == DownloadTask.error) {}
                     return ListTile(
-                      leading: leading,
-                      title: Text(downloadTask.name),
-                      subtitle: subtitle,
+                      leading: downloadStateIcon(context, downloadState),
+                      title: Text(
+                        downloadTask.name,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: downloadProgress(progress),
                     );
                   },
                   separatorBuilder: (BuildContext context, int index) {
@@ -73,4 +59,54 @@ void showDownloadTasks(BuildContext context) {
           ),
         );
       });
+}
+
+Widget downloadProgress(double progress) {
+  return LinearProgressIndicator(
+    value: progress,
+    color: Global.defaultColor,
+    minHeight: 5,
+    borderRadius: BorderRadius.circular(20),
+  );
+}
+
+Widget downloadStateIcon(BuildContext context, int downloadState) {
+  Widget icon;
+  switch (downloadState) {
+    case DownloadTask.downloading:
+      icon = SizedBox(
+        width: 20,
+        height: 20,
+        child: CircularProgressIndicator(
+          strokeWidth: 2,
+          color: Global.defaultColor,
+        ),
+      );
+      break;
+    case DownloadTask.complete:
+      icon = Icon(
+        Icons.file_download_done,
+        color: Global.defaultColor,
+      );
+      break;
+    case DownloadTask.error:
+      icon = const Icon(
+        Icons.close,
+        color: Colors.red,
+      );
+      break;
+    case DownloadTask.waiting:
+      icon = Icon(
+        Icons.more_time_outlined,
+        color: Global.defaultColor,
+      );
+      break;
+    case DownloadTask.idle:
+    default:
+      icon = Icon(
+        Icons.file_download,
+        color: Theme.of(context).iconTheme.color,
+      );
+  }
+  return icon;
 }

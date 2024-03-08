@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:MoeLoaderFlutter/init.dart';
+import 'package:MoeLoaderFlutter/net/download.dart';
 import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_reposotory.dart';
 import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_rule_factory.dart';
 import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_validator.dart';
@@ -8,7 +9,6 @@ import '../yamlhtmlparser/models.dart';
 import '../yamlhtmlparser/parser_factory.dart';
 
 class HomeViewModel {
-
   final YamlRepository repository = YamlRepository();
 
   final StreamController<HomeState> streamHomeController = StreamController();
@@ -16,12 +16,28 @@ class HomeViewModel {
   final StreamController<UriState> streamUriController = StreamController();
   final UriState _uriState = UriState();
 
-  HomeViewModel();
+  HomeViewModel() {
+    DownloadManager().downloadStream().listen((downloadState) {
+      List<DownloadTask> list = downloadState.tasks;
+      for(YamlHomePageItem item in _homeState.list){
+        for(DownloadTask task in list){
+          if(task.url == item.href){
+            item.downloadState = task.downloadState;
+            print("url=${task.url};task.downloadState=${task.downloadState}");
+          }
+        }
+      }
+      streamHomeController.add(_homeState);
+    });
+  }
 
-  void requestData({String? tags, bool clearAll = false, List<YamlOption>? optionList}) async {
+  void requestData(
+      {String? tags,
+      bool clearAll = false,
+      List<YamlOption>? optionList}) async {
     print("optionList=$optionList");
     changeLoading(true);
-    if(clearAll){
+    if (clearAll) {
       _clearAll();
     }
 
@@ -30,10 +46,11 @@ class HomeViewModel {
     YamlMap doc = await YamlRuleFactory().create(Global.curWebPageName);
     bool home = tags == null;
     String url;
-    if(home){
+    if (home) {
       url = await _parser().getHomeUrl(doc, page, optionList: optionList);
-    }else{
-      url = await _parser().getSearchUrl(doc, page: page, tags: tags, optionList: optionList);
+    } else {
+      url = await _parser()
+          .getSearchUrl(doc, page: page, tags: tags, optionList: optionList);
     }
 
     String siteName = await _parser().getName(doc);
@@ -41,13 +58,14 @@ class HomeViewModel {
 
     Map<String, String>? headers = await _parser().getHeaders(doc);
     _homeState.headers = headers;
-    ValidateResult<String> result = await repository.home(url, headers: headers);
+    ValidateResult<String> result =
+        await repository.home(url, headers: headers);
     _homeState.code = result.code;
-    if(result.validateSuccess){
+    if (result.validateSuccess) {
       List<YamlHomePageItem> list;
-      if(home){
+      if (home) {
         list = await _parser().parseHome(result.data!, doc);
-      }else{
+      } else {
         list = await _parser().parseSearch(result.data!, doc);
       }
       var dataList = _homeState.list;
@@ -57,7 +75,7 @@ class HomeViewModel {
       dataList.addAll(list);
       _homeState.page++;
       streamHomeController.add(_homeState);
-    }else{
+    } else {
       _homeState.error = true;
       _homeState.errorMessage = "Error:${result.message}";
       streamHomeController.add(_homeState);
@@ -79,7 +97,7 @@ class HomeViewModel {
     return _parser().optionList(doc);
   }
 
-  Future<void> changeGlobalWebPage(WebPageItem webPageItem) async{
+  Future<void> changeGlobalWebPage(WebPageItem webPageItem) async {
     await Global().updateCurWebPage(webPageItem.rule);
   }
 
@@ -87,7 +105,8 @@ class HomeViewModel {
     _homeState.reset();
   }
 
-  void _updateUri(String siteName, String url, String page, String? tags, List<YamlOption>? optionList) {
+  void _updateUri(String siteName, String url, String page, String? tags,
+      List<YamlOption>? optionList) {
     Uri uri = Uri.parse(url);
     _uriState.baseHref = "${uri.scheme}://${uri.host}${uri.path}";
     _uriState.page = page;
@@ -98,7 +117,7 @@ class HomeViewModel {
     streamUriController.add(_uriState);
   }
 
-  Parser _parser(){
+  Parser _parser() {
     return ParserFactory().createParser();
   }
 }
@@ -127,7 +146,7 @@ class HomeState {
   HomeState();
 }
 
-class UriState{
+class UriState {
   String siteName = "";
   String url = "";
   String baseHref = "";

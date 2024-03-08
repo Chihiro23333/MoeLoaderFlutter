@@ -77,7 +77,7 @@ class YamlRuleFactory {
     if(exist){
       rulesDirectory.listSync().forEach((element) {
         var basenameWithoutExtension = path.basenameWithoutExtension(element.path);
-        print("basenameWithoutExtension=$basenameWithoutExtension");
+        // print("basenameWithoutExtension=$basenameWithoutExtension");
         _ruleList.add(Rule("custom", element.path , basenameWithoutExtension));
       });
     }
