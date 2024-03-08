@@ -4,11 +4,15 @@ import 'package:MoeLoaderFlutter/net/download.dart';
 import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_reposotory.dart';
 import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_rule_factory.dart';
 import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_validator.dart';
+import 'package:logging/logging.dart';
 import 'package:yaml/yaml.dart';
 import '../yamlhtmlparser/models.dart';
 import '../yamlhtmlparser/parser_factory.dart';
 
 class HomeViewModel {
+
+  final _log = Logger('HomeViewModel');
+
   final YamlRepository repository = YamlRepository();
 
   final StreamController<HomeState> streamHomeController = StreamController();
@@ -21,9 +25,9 @@ class HomeViewModel {
       List<DownloadTask> list = downloadState.tasks;
       for(YamlHomePageItem item in _homeState.list){
         for(DownloadTask task in list){
-          if(task.url == item.href){
+          if(task.id == item.href){
             item.downloadState = task.downloadState;
-            print("url=${task.url};task.downloadState=${task.downloadState}");
+            _log.fine("id=${task.id};task.downloadState=${task.downloadState}");
           }
         }
       }
@@ -35,7 +39,7 @@ class HomeViewModel {
       {String? tags,
       bool clearAll = false,
       List<YamlOption>? optionList}) async {
-    print("optionList=$optionList");
+    _log.fine("optionList=$optionList");
     changeLoading(true);
     if (clearAll) {
       _clearAll();

@@ -74,7 +74,7 @@ void showUrlList(BuildContext context, String href, CommonInfo? commonInfo) {
                           .add(buildDownloadItem(context, url, "预览图($url)", () {
                         Navigator.of(context).pop();
                         detailViewModel.download(
-                            url, yamlDetailPage.commonInfo);
+                            href, url, yamlDetailPage.commonInfo);
                         showToast("已将图片加入下载列表");
                       }));
                     }
@@ -86,7 +86,7 @@ void showUrlList(BuildContext context, String href, CommonInfo? commonInfo) {
                           buildDownloadItem(context, bigUrl, "大图($bigUrl)", () {
                         Navigator.of(context).pop();
                         detailViewModel.download(
-                            bigUrl, yamlDetailPage.commonInfo);
+                            href, bigUrl, yamlDetailPage.commonInfo);
                         showToast("已将图片加入下载列表");
                       }));
                     }
@@ -98,7 +98,7 @@ void showUrlList(BuildContext context, String href, CommonInfo? commonInfo) {
                           buildDownloadItem(context, rawUrl, "原图($rawUrl)", () {
                         Navigator.of(context).pop();
                         detailViewModel.download(
-                            rawUrl, yamlDetailPage.commonInfo);
+                            href, rawUrl, yamlDetailPage.commonInfo);
                         showToast("已将图片加入下载列表");
                       }));
                     }

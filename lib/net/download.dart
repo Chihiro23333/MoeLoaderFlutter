@@ -185,6 +185,7 @@ class DownloadTask {
   static const int complete = 3;
   static const int error = 4;
 
+  String id;
   String url;
   String name;
   String downloadUrl = "";
@@ -192,5 +193,5 @@ class DownloadTask {
   int total = 0;
   int downloadState = idle;
 
-  DownloadTask(this.url, this.name);
+  DownloadTask(this.id, this.url, this.name);
 }

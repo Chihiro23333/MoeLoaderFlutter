@@ -6,11 +6,15 @@ import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_reposotory.dart';
 import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_rule_factory.dart';
 import 'package:MoeLoaderFlutter/net/request_manager.dart';
 import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_validator.dart';
+import 'package:logging/logging.dart';
 import 'package:yaml/yaml.dart';
 import '../utils/utils.dart';
 import '../yamlhtmlparser/models.dart';
 
 class DetailViewModel{
+
+  final _log = Logger('DetailViewModel');
+
   final YamlRepository repository = YamlRepository();
 
   final StreamController<DetailState> streamDetailController = StreamController();
@@ -53,8 +57,8 @@ class DetailViewModel{
     streamDetailController.add(_detailState);
   }
 
-  void download(String url, CommonInfo? commonInfo) {
-    DownloadManager().addTask(DownloadTask(url, getDownloadName(url, commonInfo)));
+  void download(String id, String url, CommonInfo? commonInfo) {
+    DownloadManager().addTask(DownloadTask(id, url, getDownloadName(url, commonInfo)));
   }
 
   void close(){

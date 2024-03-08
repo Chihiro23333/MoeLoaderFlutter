@@ -470,6 +470,7 @@ class _HomeState extends State<HomePage> {
                       } else {
                         DownloadManager().addTask(DownloadTask(
                             yamlHomePageItem.href,
+                            yamlHomePageItem.href,
                             getDownloadName(yamlHomePageItem.href,
                                 yamlHomePageItem.commonInfo)));
                         showToast("已将图片加入下载列表");
