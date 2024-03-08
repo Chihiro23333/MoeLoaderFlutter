@@ -12,3 +12,16 @@ Future<String?> getProxy() async{
   String? proxy = prefs.getString("proxy");
   return proxy;
 }
+
+Future<bool> setDownloadFileSize(String fileSizeType) async{
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.setString("downloadFileSize", fileSizeType);
+  return true;
+}
+
+Future<String?> getDownloadFileSize() async{
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  String? proxy = prefs.getString("downloadFileSize");
+  return proxy;
+}
+

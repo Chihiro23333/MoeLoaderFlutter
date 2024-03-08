@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import '../init.dart';
 import '../net/download.dart';
 
 void showDownloadTasks(BuildContext context) {
@@ -26,7 +27,7 @@ void showDownloadTasks(BuildContext context) {
                   itemBuilder: (BuildContext context, int index) {
                     DownloadTask downloadTask = list[index];
                     int downloadState = downloadTask.downloadState;
-                    Widget subtitle = LinearProgressIndicator(value: 0);
+                    Widget subtitle = const LinearProgressIndicator(value: 0);
                     Widget leading = Icon(
                       Icons.file_download,
                       color: Theme.of(context).iconTheme.color,
@@ -44,7 +45,12 @@ void showDownloadTasks(BuildContext context) {
                       subtitle = const LinearProgressIndicator(value: 100);
                       leading = Icon(
                         Icons.file_download_done,
-                        color: Theme.of(context).iconTheme.color,
+                        color: Global.defaultColor,
+                      );
+                    } else if(downloadState == DownloadTask.error){
+                      leading = const Icon(
+                        Icons.close,
+                        color: Colors.red,
                       );
                     }
                     return ListTile(

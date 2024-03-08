@@ -4,14 +4,12 @@ import 'package:yaml/yaml.dart';
 import 'models.dart';
 
 class ParserFactory {
+
   static ParserFactory? _cache;
-
   ParserFactory._create();
-
   factory ParserFactory() {
     return _cache ?? (_cache = ParserFactory._create());
   }
-
   final MixParser _mixParser = MixParser();
 
   Parser createParser() {
@@ -44,6 +42,7 @@ abstract class Parser {
     int pageBase = homeRule["pageBase"] ?? 1;
     page = (int.parse(page) * pageBase).toString();
     await _defaultOption(webPage, optionList);
+    _log.info("optionList:optionList=$optionList");
     url = await _formatUrl(link, page, optionList: optionList);
     _log.fine("getUrl:url=$url");
     return url;
@@ -103,7 +102,6 @@ abstract class Parser {
       YamlMap webPage, List<YamlOption>? inOptionList) async {
     if (inOptionList == null) return;
     List<YamlOptionList> list = await optionList(webPage);
-    List<YamlOption> resultList = [];
     if (list.isNotEmpty) {
       for (var item in list) {
         bool find = false;
@@ -114,10 +112,9 @@ abstract class Parser {
           }
         }
         if (!find) {
-          resultList.add(item.options[0]);
+          inOptionList.add(item.options[0]);
         }
-      }
-      ;
+      };
     }
   }
 

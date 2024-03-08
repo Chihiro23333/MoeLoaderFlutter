@@ -1,3 +1,5 @@
+import 'package:MoeLoaderFlutter/net/download.dart';
+import 'package:MoeLoaderFlutter/ui/radio_choice_chip.dart';
 import 'package:MoeLoaderFlutter/ui/url_list_dialog.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:extended_image/extended_image.dart';
@@ -13,6 +15,8 @@ import 'package:MoeLoaderFlutter/yamlhtmlparser/models.dart';
 import 'package:MoeLoaderFlutter/ui/view_model_home.dart';
 import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_validator.dart';
 import 'package:logging/logging.dart';
+import '../utils/const.dart';
+import '../utils/sharedpreferences_utils.dart';
 import '../utils/utils.dart';
 import 'detail_page.dart';
 import 'download_tasks_dialog.dart';
@@ -111,7 +115,10 @@ class _HomeState extends State<HomePage> {
     return IconButton(
         onPressed: () async {
           List<YamlOptionList> list = await _picHomeViewModel.optionList();
-          if (list.isEmpty) return;
+          if (list.isEmpty){
+            showToast("当前站点无筛选条件");
+            return;
+          }
           _showOptionsSheet(context, list);
         },
         icon: const Icon(Icons.filter_alt));
@@ -133,41 +140,28 @@ class _HomeState extends State<HomePage> {
                   ),
                 ));
                 List<YamlOption> options = yamlOptionList.options;
-                List<Widget> choiceChips = [];
                 int selectedIndex = 0;
+                List<String> nameList = [];
                 for (int i = 0; i < options.length; i++) {
                   YamlOption yamlOption = options[i];
+                  nameList.add(yamlOption.desc);
                   YamlOption? chooseOption = _yamlOptionMap[yamlOption.pId];
                   if (chooseOption != null &&
                       chooseOption.desc == yamlOption.desc) {
                     selectedIndex = i;
                   }
                 }
-                for (int i = 0; i < options.length; i++) {
-                  YamlOption yamlOption = options[i];
-                  choiceChips.add(ChoiceChip.elevated(
-                    label: Text(yamlOption.desc),
-                    selected: selectedIndex == i,
-                    onSelected: (bool selected) {
-                      _log.fine("index=$i;selected=$selected");
+                widgets.add(RadioChoiceChip(
+                    list: nameList,
+                    index: selectedIndex,
+                    radioSelectCallback: (index, name) {
+                      _log.fine("selected index=$index");
+                      YamlOption yamlOption = options[index];
                       _yamlOptionMap[yamlOption.pId] = yamlOption;
                       setState(() {});
                       Navigator.of(context).pop();
                       _requestData(clearAll: true);
-                    },
-                    selectedColor: Global.defaultColor,
-                    labelStyle: TextStyle(
-                      color: selectedIndex == i ? Colors.white : Colors.black,
-                    ),
-                    elevation: 10,
-                    showCheckmark: false,
-                  ));
-                }
-                widgets.add(Wrap(
-                  spacing: 8.0, // 主轴(水平)方向间距
-                  runSpacing: 4.0, // 纵轴（垂直）方向间距
-                  children: choiceChips,
-                ));
+                    }));
               }
               return SingleChildScrollView(
                   padding: const EdgeInsets.only(
@@ -191,16 +185,6 @@ class _HomeState extends State<HomePage> {
     return IconButton(
         onPressed: () async {
           FlutterClipboard.copy(_url).then((value) => showToast("链接已复制"));
-          // var result = await Navigator.push(
-          //   context,
-          //   MaterialPageRoute(builder: (context) {
-          //     return const WebView2Page(
-          //       url: "https://www.pixiv.net/",
-          //       code: ValidateResult.needLogin,
-          //     );
-          //   }),
-          // );
-          // _log.fine("push result=$result");
         },
         icon: const Icon(Icons.copy));
   }
@@ -474,9 +458,19 @@ class _HomeState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 IconButton(
-                    onPressed: () {
-                      showUrlList(context, yamlHomePageItem.href,
-                          yamlHomePageItem.commonInfo);
+                    onPressed: () async {
+                      String? downloadFileSize = await getDownloadFileSize();
+                      if (downloadFileSize == Const.choose ||
+                          downloadFileSize == null) {
+                        showUrlList(context, yamlHomePageItem.href,
+                            yamlHomePageItem.commonInfo);
+                      } else {
+                        DownloadManager().addTask(DownloadTask(
+                            yamlHomePageItem.href,
+                            getDownloadName(yamlHomePageItem.href,
+                                yamlHomePageItem.commonInfo)));
+                        showToast("已将图片加入下载列表");
+                      }
                     },
                     icon: const Icon(Icons.download)),
                 IconButton(

@@ -53,8 +53,13 @@ class DetailViewModel{
     streamDetailController.add(_detailState);
   }
 
-  void download(String url, String id) {
-    DownloadManager().addTask(DownloadTask(url, getDownloadName(url, id)));
+  void download(String url, CommonInfo? commonInfo) {
+    DownloadManager().addTask(DownloadTask(url, getDownloadName(url, commonInfo)));
+  }
+
+  void close(){
+    streamDetailController.close();
+    streamDetailUriController.close();
   }
 
   void _updateUri(String url) {
