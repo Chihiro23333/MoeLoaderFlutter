@@ -453,7 +453,7 @@ class _HomeState extends State<HomePage> {
           right: 0,
           bottom: 0,
           child: Container(
-            color: Colors.white,
+            color: Colors.white70,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [

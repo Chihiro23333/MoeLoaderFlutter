@@ -7,8 +7,11 @@ display:
   aspectRatio: 0.72
 
 url:
-  home: {link: "https://gelbooru.com/index.php?page=post&s=list&tags=all&pid=${page}", pageBase: 21 }
+  home: {link: "https://gelbooru.com/index.php?page=post&s=list&tags=${rating}&pid=${page}", pageBase: 21 }
   search: {link: "https://gelbooru.com/index.php?page=post&s=list&tags=${tag}&pid=${page}", tagConnector: "_", pageBase: 21 }
+
+options:
+  - {id: "rating", desc: "评级", items: [{desc: "general ", param: "rating%3Ageneral+"}, {desc: "all", param: "all"}, {desc: "Sensitive", param: "rating%3Asensitive+"}, {desc: "Questionable", param: "rating%3Aquestionable +"}, {desc: "explicit", param: "rating%3Aexplicit+"}]}
 
 homePage: &HOMEPAGE
   onParseResult:

@@ -47,6 +47,10 @@ detailPage:
     object:
       url:
         get: { cssSelector: "#image", attr: "src" }
+      bigUrl:
+        get: { cssSelector: "#highres", attr: "href" }
+      rawUrl:
+        get: { cssSelector: "#png", attr: "href" }
       tags:
         list:
           get: { cssSelector: "#image", attr: "alt" }
@@ -61,13 +65,8 @@ detailPage:
       author:
         get: { cssSelector: "#stats", text: "" }
         filter: { regex: "(?<=by ).*?(?=Size:)", index: 0 }
-#      fileSize:
-#        get: { cssSelector: "#stats", text: "" }
-#        filter: { regex: "(?<=Size: ).*?(?=Rating:)", index: 0 }
       dimensions:
         get: { cssSelector: "#stats", text: "" }
         filter: { regex: "(?<=Size: ).*?(?= )", index: 0 }
       source:
         get: { cssSelector: "[rel^='canonical']", attr: "href" }
-      rawUrl:
-        get: { cssSelector: "#highres", attr: "href" }

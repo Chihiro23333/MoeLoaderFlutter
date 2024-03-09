@@ -35,6 +35,12 @@ homePage:
         tags:
           list:
             getNodes: { jsonpath: ".tags" }
+        id:
+          get: { jsonpath: ".illust_id" }
+        author:
+          get: { jsonpath: ".user_name" }
+        characters:
+          get: { jsonpath: ".title" }
 
 searchPage:
   onParseResult:

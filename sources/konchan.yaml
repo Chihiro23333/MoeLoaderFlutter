@@ -36,6 +36,10 @@ homePage: &HOMEPAGE
         height:
           get: { cssSelector: "span[class=directlink-info]", text: "" }
           filter: { regex: '^\d+ x (\d+)', index: 1 }
+        id:
+          get: { cssSelector: "", attr: "id" }
+          format:
+            - replaceAll: { from: "p", to: "" }
 
 searchPage:
   *HOMEPAGE
@@ -53,3 +57,18 @@ detailPage:
         list:
           get: { cssSelector: "#image", attr: "alt" }
           toList: { separator: " " }
+      width:
+        get: { cssSelector: "a[class=thumb] img", attr: "width" }
+      height:
+        get: { cssSelector: "a[class=thumb] img", attr: "height" }
+      id:
+        get: { cssSelector: "#stats", text: "" }
+        filter: { regex: "(?<=Id:).*?(?=Posted:)", index: 0 }
+      author:
+        get: { cssSelector: "#stats", text: "" }
+        filter: { regex: "(?<=by ).*?(?=Size:)", index: 0 }
+      dimensions:
+        get: { cssSelector: "#stats", text: "" }
+        filter: { regex: "(?<=Size: ).*?(?= )", index: 0 }
+      source:
+        get: { cssSelector: "[rel^='canonical']", attr: "href" }
