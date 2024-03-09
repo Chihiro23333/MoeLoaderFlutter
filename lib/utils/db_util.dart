@@ -1,4 +1,3 @@
-
 import 'package:hive/hive.dart';
 
 const _cookiesDb = "cookies";
@@ -8,6 +7,18 @@ Future<bool> saveCookieString(String domain, String cookiesString) async{
   box.put(domain, cookiesString);
   box.close();
   return true;
+}
+
+Future<bool> deleteCookie(String domain) async{
+  var box = await Hive.openBox(_cookiesDb);
+  box.delete(domain);
+  box.close();
+  return true;
+}
+
+Future<String?> getCookie(String domain) async{
+  var result = await getAllCookieString();
+  return result[domain];
 }
 
 Future<Map<String, String>> getAllCookieString() async{

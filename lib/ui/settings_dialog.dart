@@ -107,7 +107,7 @@ Widget _buildDefaultDownloadSize(BuildContext context) {
         _log.info("snapshot=$snapshot");
         ConnectionState connectionState = snapshot.connectionState;
         if(connectionState == ConnectionState.done){
-          List<String> list = [Const.preview, Const.big, Const.raw, Const.choose];
+          List<String> list = [Const.choose, Const.preview, Const.big, Const.raw];
           String data = snapshot.data ?? "";
           int selectedIndex = 0;
           for(int i = 0; i < list.length; i++){

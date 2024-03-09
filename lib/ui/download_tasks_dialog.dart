@@ -103,9 +103,9 @@ Widget downloadStateIcon(BuildContext context, int downloadState) {
       break;
     case DownloadTask.idle:
     default:
-      icon = Icon(
-        Icons.file_download,
-        color: Theme.of(context).iconTheme.color,
+      icon = const Icon(
+        Icons.download,
+        color: Colors.black,
       );
   }
   return icon;

@@ -358,7 +358,10 @@ class _HomeState extends State<HomePage> {
           child: CircularProgressIndicator(),
         );
       }
-      return _buildMasonryGrid(homeState);
+      return Padding(
+          padding: const EdgeInsets.all(10),
+          child: _buildMasonryGrid(homeState),
+      );
     } else {
       return const Center(
         child: CircularProgressIndicator(),
@@ -405,9 +408,12 @@ class _HomeState extends State<HomePage> {
           double height = width * scale;
           Color loadingBackgroundColor = const Color.fromARGB(30, 46, 176, 242);
           return Container(
-            color: loadingBackgroundColor,
             width: width,
             height: height,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+              color: loadingBackgroundColor,
+            ),
             child: _buildItem(context, yamlHomePageItem, index, crossAxisCount,
                 width, height, homeState.headers),
           );
@@ -428,6 +434,8 @@ class _HomeState extends State<HomePage> {
         Positioned.fill(
             child: GestureDetector(
                 child: ExtendedImage.network(
+                  borderRadius: const BorderRadius.all(Radius.circular(5)),
+                  shape: BoxShape.rectangle,
                   headers: headers,
                   width: width,
                   height: height,
@@ -450,18 +458,22 @@ class _HomeState extends State<HomePage> {
                   }
                 })),
         Positioned(
-          right: 0,
-          bottom: 0,
+          right: 2,
+          bottom: 3,
           child: Container(
-            color: Colors.white70,
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(20)),
+              color: Colors.white70,
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 IconButton(
                     onPressed: () async {
                       if (yamlHomePageItem.downloadState != DownloadTask.idle &&
-                          yamlHomePageItem.downloadState != DownloadTask.error)
+                          yamlHomePageItem.downloadState != DownloadTask.error) {
                         return;
+                      }
                       String? downloadFileSize = await getDownloadFileSize();
                       if (downloadFileSize == Const.choose ||
                           downloadFileSize == null) {
@@ -489,7 +501,10 @@ class _HomeState extends State<HomePage> {
                         Navigator.of(context).pop();
                       });
                     },
-                    icon: const Icon(Icons.info))
+                    icon: const Icon(
+                        Icons.info,
+                      color: Colors.black,
+                    ))
               ],
             ),
           ),
