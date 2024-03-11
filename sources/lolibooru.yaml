@@ -34,15 +34,35 @@ homePage: &HOMEPAGE
           get: { cssSelector: "a[class=thumb] img", attr: "width" }
         height:
           get: { cssSelector: "a[class=thumb] img", attr: "height" }
+        id:
+          get: { cssSelector: "", attr: "id" }
+          format:
+            - replaceAll: { from: "p", to: "" }
 
 searchPage:
   *HOMEPAGE
 
 detailPage:
   onParseResult:
-    url:
-      get: { cssSelector: "#image", attr: "src" }
-    tags:
-      list:
-        get: { cssSelector: "#image", attr: "alt" }
-        toList: { separator: " " }
+    object:
+      url:
+        get: { cssSelector: "#image", attr: "src" }
+      bigUrl:
+        get: { cssSelector: "#highres", attr: "href" }
+      rawUrl:
+        get: { cssSelector: "#png", attr: "href" }
+      tags:
+        list:
+          get: { cssSelector: "#image", attr: "alt" }
+          toList: { separator: " " }
+      id:
+        get: { cssSelector: "#stats", text: "" }
+        filter: { regex: "(?<=Id:).*?(?=Posted:)", index: 0 }
+      author:
+        get: { cssSelector: "#stats", text: "" }
+        filter: { regex: "(?<=by ).*?(?=Size:)", index: 0 }
+      dimensions:
+        get: { cssSelector: "#stats", text: "" }
+        filter: { regex: "(?<=Size: ).*?(?= )", index: 0 }
+      source:
+        get: { cssSelector: "#stats a[rel=nofollow]", attr: "href" }

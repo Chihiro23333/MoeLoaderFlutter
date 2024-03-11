@@ -21,17 +21,17 @@ class YamlRuleFactory {
 
   Future<void> init() async {
     if (!_init) {
-      await _addAssets("yande");
-      await _addAssets("shuushuu");
-      await _addAssets("zerochan");
-      await _addAssets("lolibooru");
-      await _addAssets("safebooru");
-      await _addAssets("gelbooru");
-      await _addAssets("konchan");
-      await _addAssets("pixiv");
-      await _addAssets("behoimi");
-      await _addAssets("danbooru");
       await _addAssets("anim_pictures");
+      await _addAssets("danbooru");
+      await _addAssets("behoimi");
+      await _addAssets("konchan");
+      await _addAssets("gelbooru");
+      await _addAssets("safebooru");
+      await _addAssets("lolibooru");
+      await _addAssets("zerochan");
+      await _addAssets("shuushuu");
+      await _addAssets("yande");
+      await _addAssets("pixiv");
       await addCustomRules();
       _init = true;
     }

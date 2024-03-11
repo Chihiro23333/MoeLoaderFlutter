@@ -13,7 +13,7 @@ url:
 homePage: &HOMEPAGE
   onParseResult:
     list:
-      getElements: { cssSelector: "#content #posts div span[class='img_block2 img_block_big']" }
+      getElements: { cssSelector: "span[class^=img-block]" }
       foreach:
         coverUrl:
           get: { cssSelector: "a img", attr: "src" }
@@ -30,6 +30,15 @@ homePage: &HOMEPAGE
         height:
           get: { cssSelector: "a[class]", text: "" }
           filter: { regex: '^\d+x(\d+)', index: 1 }
+        dimensions:
+          get: { cssSelector: "a[rel]", attr: "title" }
+          format:
+            - replaceAll: { from: "Anime picture", to: "" }
+        id:
+          get: { cssSelector: "a[rel]", attr: "href" }
+          format:
+            - replaceAll: { from: "/posts/", to: "" }
+            - replaceAll: { from: "?lang=en", to: "" }
 
 searchPage:
   *HOMEPAGE
@@ -38,7 +47,11 @@ detailPage:
   onParseResult:
     object:
       url:
-        get: { cssSelector: "#big_preview_cont a", attr: "href" }
+        get: { cssSelector: "#big_preview", attr: "src" }
+        format:
+          - concat: { start: "https:", end: "" }
+      rawUrl:
+        get: { cssSelector: "a[class^=download_icon]", attr: "href" }
       tags:
         list:
           get: { cssSelector: "ul[itemprop=keywords] a", text: "" }

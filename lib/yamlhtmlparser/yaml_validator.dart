@@ -41,9 +41,8 @@ abstract class Validator{
 
 }
 
-Future<ValidateResult<String>> _validateResult(String result) async{
-  YamlMap doc = await YamlRuleFactory().create(Global.curWebPageName);
-  YamlList? resultRule = doc["detailPage"]?["onValidateResult"]?["result"];
+Future<ValidateResult<String>> _validateResult(String result, YamlMap? page) async{
+  YamlList? resultRule = page?["onValidateResult"]?["result"];
   if(resultRule != null){
     Iterator iterator = resultRule.iterator;
     while(iterator.moveNext()){
@@ -74,7 +73,8 @@ class HomeValidator extends Validator{
 
   @override
   Future<ValidateResult<String>> validateResult(String result) async{
-    return _validateResult(result);
+    YamlMap doc = await YamlRuleFactory().create(Global.curWebPageName);
+    return _validateResult(result, doc["homePage"]);
   }
 
 }
@@ -82,7 +82,8 @@ class HomeValidator extends Validator{
 class DetailValidator extends Validator{
   @override
   Future<ValidateResult<String>> validateResult(String result) async{
-    return _validateResult(result);
+    YamlMap doc = await YamlRuleFactory().create(Global.curWebPageName);
+    return _validateResult(result, doc["detailPage"]);
   }
 }
 

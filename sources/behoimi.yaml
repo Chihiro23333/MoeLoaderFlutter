@@ -36,6 +36,10 @@ homePage: &HOMEPAGE
           get: { cssSelector: "a img", attr: "width" }
         height:
           get: { cssSelector: "a img", attr: "height" }
+        id:
+          get: { cssSelector: "", attr: "id" }
+          format:
+            - replaceAll: { from: "p", to: "" }
 
 searchPage:
   *HOMEPAGE
@@ -45,7 +49,20 @@ detailPage:
     object:
       url:
         get: { cssSelector: "#image", attr: "src" }
+      bigUrl:
+        get: { cssSelector: "#highres", attr: "href" }
       tags:
         list:
           get: { cssSelector: "#image", attr: "alt" }
           toList: { separator: " " }
+      id:
+        get: { cssSelector: "#stats", text: "" }
+        filter: { regex: "(?<=Id:).*?(?=Posted:)", index: 0 }
+      author:
+        get: { cssSelector: "#stats", text: "" }
+        filter: { regex: "(?<=by ).*?(?=Size:)", index: 0 }
+      dimensions:
+        get: { cssSelector: "#stats", text: "" }
+        filter: { regex: "(?<=Size: ).*?(?= )", index: 0 }
+      source:
+        get: { cssSelector: "[rel^='canonical']", attr: "href" }

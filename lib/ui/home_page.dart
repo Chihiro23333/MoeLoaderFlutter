@@ -316,12 +316,11 @@ class _HomeState extends State<HomePage> {
         List<Widget> children = [];
         children.add(ElevatedButton(
             onPressed: () {
-              _requestData(clearAll: true);
+              _requestData();
             },
             child: const Text("点击重试")));
         if (homeState.code == ValidateResult.needChallenge ||
             homeState.code == ValidateResult.needLogin) {
-          children.add(const SizedBox(height: 20));
           children.add(ElevatedButton(
               onPressed: () async {
                 bool? result = await Navigator.push(
@@ -535,7 +534,7 @@ class _HomeState extends State<HomePage> {
                 visible: !homeState.loading,
                 child: Center(
                   child: Icon(
-                    Icons.keyboard_double_arrow_down,
+                    homeState.error ? Icons.refresh : Icons.keyboard_double_arrow_down,
                     color: Theme.of(context).iconTheme.color,
                   ),
                 ))

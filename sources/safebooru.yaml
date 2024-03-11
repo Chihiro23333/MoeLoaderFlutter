@@ -25,6 +25,10 @@ homePage: &HOMEPAGE
           list:
             get: { cssSelector: "img", attr: "alt" }
             toList: { separator: " " }
+        id:
+          get: { cssSelector: "", attr: "id" }
+          format:
+            - replaceAll: { from: "p", to: "" }
 
 searchPage:
   *HOMEPAGE
@@ -34,9 +38,22 @@ detailPage:
     object:
       url:
         get: { cssSelector: "#image", attr: "src" }
+      bigUrl:
+        get: { cssSelector: "#highres", attr: "href" }
+      rawUrl:
+        get: { cssSelector: "ul li a[style]", attr: "href" }
       tags:
         list:
           get: { cssSelector: "#image", attr: "alt" }
           toList: { separator: " " }
-      rawUrl:
-        get: { cssSelector: "ul li a[style]", attr: "href" }
+      id:
+        get: { cssSelector: "#stats", text: "" }
+        filter: { regex: "(?<=Id:).*?(?=Posted:)", index: 0 }
+      author:
+        get: { cssSelector: "#stats", text: "" }
+        filter: { regex: "(?<=by ).*?(?=Size:)", index: 0 }
+      dimensions:
+        get: { cssSelector: "#stats", text: "" }
+        filter: { regex: "(?<=Size: ).*?(?= )", index: 0 }
+      source:
+        get: { cssSelector: "#stats a[rel=nofollow]", attr: "href" }

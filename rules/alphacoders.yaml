@@ -25,6 +25,10 @@ homePage: &HOMEPAGE
           list:
             get: { cssSelector: ".thumb-tags a", text: "", connector: "," }
             toList: { separator: "," }
+        id:
+          get: { cssSelector: "div[class=thumb-container-masonry]", attr: "id" }
+          format:
+            - replaceAll: { from: "content_", to: "" }
 
 searchPage:
   *HOMEPAGE

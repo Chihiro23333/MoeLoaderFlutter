@@ -40,7 +40,7 @@ class DioHttp {
     }
     var response = await _dio.get(url);
     var result = response.toString();
-    _log.fine("result=$result");
+    _log.info("result=$result");
     return result;
   }
 

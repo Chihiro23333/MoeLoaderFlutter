@@ -31,6 +31,8 @@ homePage: &HOMEPAGE
           get: { cssSelector: "img:not([style])", attr: "width" }
         height:
           get: { cssSelector: "img:not([style])", attr: "height" }
+        id:
+          get: { cssSelector: "", attr: "data-id" }
 
 searchPage:
   *HOMEPAGE
@@ -44,3 +46,12 @@ detailPage:
         list:
           get: { cssSelector: "#large p[style]", text: "" }
           toList: { separator: "," }
+      id:
+        get: { cssSelector: "#large a[rel=next]", attr: "href" }
+        format:
+          - replaceAll: { from: "#content", to: "" }
+          - replaceAll: { from: "/", to: "" }
+      rawUrl:
+        get: { cssSelector: "a[class=preview]", attr: "href" }
+      source:
+        get: { cssSelector: "#source-url", text: "" }

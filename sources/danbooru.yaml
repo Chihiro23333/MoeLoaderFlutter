@@ -33,6 +33,10 @@ homePage: &HOMEPAGE
           list:
             get: { cssSelector: "", attr: "data-tags" }
             toList: { separator: " " }
+        id:
+          get: { cssSelector: "", attr: "id" }
+          format:
+            - replaceAll: { from: "ost_", to: "" }
 
 searchPage:
   *HOMEPAGE
@@ -42,7 +46,19 @@ detailPage:
     object:
       url:
         get: { cssSelector: "#image", attr: "src" }
+      rawUrl:
+        get: { cssSelector: "#post-option-view-large a", attr: "href" }
       tags:
         list:
           get: { cssSelector: "section[class^=image-container]", attr: "data-tags" }
           toList: { separator: " " }
+      id:
+        get: { cssSelector: "#post-info-id", text: "" }
+        format:
+          - replaceAll: { from: "ID: ", to: "" }
+      author:
+        get: { cssSelector: "#post-info-uploader a", text: "" }
+      dimensions:
+        get: { cssSelector: "#post-info-size", text: "" }
+      source:
+        get: { cssSelector: "#post-info-source a", text: "" }

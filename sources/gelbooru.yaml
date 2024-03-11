@@ -27,6 +27,10 @@ homePage: &HOMEPAGE
             get: { cssSelector: "img", attr: "alt" }
             filter: { regex: 'Rule 34 \| ([^|]+)', index: 1 }
             toList: { separator: "," }
+        id:
+          get: { cssSelector: "a", attr: "id" }
+          format:
+            - replaceAll: { from: "p", to: "" }
 
 searchPage:
   *HOMEPAGE
@@ -36,7 +40,13 @@ detailPage:
     object:
       url:
         get: { cssSelector: "#image", attr: "src" }
+      rawUrl:
+        get: { cssSelector: "li a[rel=noopener]", attr: "href" }
       tags:
         list:
           get: { cssSelector: "section[class='image-container note-container']", attr: "data-tags" }
           toList: { separator: " " }
+      id:
+        get: { cssSelector: ".image-container", attr: "data-id" }
+      source:
+        get: { cssSelector: "li[style] a[rel=nofollow]", attr: "href" }

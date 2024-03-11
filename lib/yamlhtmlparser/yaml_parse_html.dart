@@ -5,15 +5,15 @@ import 'package:logging/logging.dart';
 import 'package:yaml/yaml.dart';
 import 'models.dart';
 
-class YamlHtmlParser extends Parser{
-
+class YamlHtmlParser extends Parser {
   final _log = Logger('YamlHtmlParser');
 
   static const defaultConnector = ",";
   static const defaultSeparator = ",";
 
   @override
-  Future<List<YamlHomePageItem>> parseHome(String content, YamlMap webPage) async {
+  Future<List<YamlHomePageItem>> parseHome(
+      String content, YamlMap webPage) async {
     _log.fine("html=$content");
     Document document = parse(content);
     Element? body = document.querySelector("html");
@@ -42,14 +42,15 @@ class YamlHtmlParser extends Parser{
     _log.fine("preview=$preview");
     CommonInfo commonInfo = _getCommonInfo(object, body);
     _log.fine("commonInfo=${commonInfo.id}");
-    YamlDetailPage yamlDetailPage = YamlDetailPage(url, preview, commonInfo: commonInfo);
+    YamlDetailPage yamlDetailPage =
+        YamlDetailPage(url, preview, commonInfo: commonInfo);
     return yamlDetailPage;
   }
 
   Future<String> preprocess(String content, YamlMap preprocessNode) async {
-    String? contentType  = preprocessNode["contentType"];
+    String? contentType = preprocessNode["contentType"];
     _log.fine("contentType=$contentType,html=$content");
-    if(contentType != null && contentType == "html"){
+    if (contentType != null && contentType == "html") {
       Document document = parse(content);
       Element? html = document.querySelector("html");
       return _getOne(html, preprocessNode);
@@ -80,17 +81,13 @@ class YamlHtmlParser extends Parser{
       CommonInfo commonInfo = _getCommonInfo(foreach, element);
       _log.fine("commonInfo=$commonInfo");
       dataList.add(YamlHomePageItem(
-          coverUrl,
-          href,
-          double.parse(width),
-          double.parse(height),
-          commonInfo: commonInfo
-      ));
+          coverUrl, href, double.parse(width), double.parse(height),
+          commonInfo: commonInfo));
     }
     return dataList;
   }
 
-  CommonInfo _getCommonInfo(YamlMap yamlMap, Element? element){
+  CommonInfo _getCommonInfo(YamlMap yamlMap, Element? element) {
     YamlMap? idRule = yamlMap['id'];
     YamlMap? authorRule = yamlMap['author'];
     YamlMap? charactersRule = yamlMap['characters'];
@@ -119,7 +116,8 @@ class YamlHtmlParser extends Parser{
     _log.fine("bigUrl=$bigUrl");
     List<YamlTag> tagsList = _listTags(element, tagsRule);
     _log.fine("tagsList=${tagsList.length}");
-    CommonInfo commonInfo = CommonInfo(id, author, characters, fileSize, dimensions, source, bigUrl, rawUrl, tagsList);
+    CommonInfo commonInfo = CommonInfo(id, author, characters, fileSize,
+        dimensions, source, bigUrl, rawUrl, tagsList);
     return commonInfo;
   }
 
@@ -147,7 +145,7 @@ class YamlHtmlParser extends Parser{
           String tags = _getOne(element, listRule);
           String separator = toListRule?["separator"] ?? defaultSeparator;
           _log.fine("tags=$tags");
-          if(tags.isNotEmpty){
+          if (tags.isNotEmpty) {
             tags.split(separator).forEach((element) {
               tagsList.add(YamlTag(element, element));
             });
@@ -172,11 +170,15 @@ class YamlHtmlParser extends Parser{
 
   /// 查找多个
   List<Element> _queryN(Element? element, YamlMap yamlMap) {
+    //第一步，查找
     List<Element> list = [];
     YamlMap getElementsRule = yamlMap["getElements"];
     String? css = getElementsRule["cssSelector"];
     if (css == null) throw "first rule must be cssSelector！";
     list = element?.querySelectorAll(css) ?? [];
+    _log.info("list=$list");
+    //第二步，筛选元素
+    _filterList(list, yamlMap);
     return list;
   }
 
@@ -203,6 +205,7 @@ class YamlHtmlParser extends Parser{
         }
       }
     }
+    _log.info("_queryOne=$result");
     return result;
   }
 
@@ -232,7 +235,7 @@ class YamlHtmlParser extends Parser{
             result = "$result$attr$connector";
           }
         });
-        if(result.isNotEmpty){
+        if (result.isNotEmpty) {
           result = result.substring(0, result.length - 1);
         }
       }
@@ -250,12 +253,32 @@ class YamlHtmlParser extends Parser{
             result = "$result$text$connector";
           }
         });
-        if(result.isNotEmpty){
+        if (result.isNotEmpty) {
           result = result.substring(0, result.length - 1);
         }
       }
     }
     return result;
+  }
+
+  void _filterList(List<Element> list, YamlMap yamlMap) {
+    var filterRule = yamlMap["filter"];
+    if (filterRule != null) {
+      for (YamlMap? yamlMap in filterRule) {
+        if (yamlMap != null) {
+          YamlMap? removeRule = yamlMap["remove"];
+          if (removeRule != null) {
+            String? cssSelectorRule = removeRule["cssSelector"];
+            if (cssSelectorRule != null) {
+              list.removeWhere((element) {
+                Element? findElement = element.querySelector(cssSelectorRule);
+                return findElement != null;
+              });
+            }
+          }
+        }
+      }
+    }
   }
 
   String _filter(String value, YamlMap yamlMap) {
@@ -279,7 +302,7 @@ class YamlHtmlParser extends Parser{
     String result = chooseResult;
 
     YamlMap? concatRule = formatRule["concat"];
-    if(concatRule != null){
+    if (concatRule != null) {
       String? startRule = concatRule["start"];
       String? endRule = concatRule["end"];
       if (startRule != null && !chooseResult.startsWith(startRule)) {
@@ -291,7 +314,7 @@ class YamlHtmlParser extends Parser{
     }
 
     YamlMap? replaceAllRule = formatRule["replaceAll"];
-    if(replaceAllRule != null){
+    if (replaceAllRule != null) {
       String? fromRule = replaceAllRule["from"];
       String? toRule = replaceAllRule["to"];
       if (fromRule != null && toRule != null) {
