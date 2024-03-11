@@ -12,7 +12,7 @@ url:
 
 options:
   - {id: "rating", desc: "评级", items: [{desc: "safe", param: "rating%3Asafe+"}, {desc: "all", param: ""}, {desc: "questionable", param: "rating%3Aquestionable+"}, {desc: "explicit", param: "rating%3Aexplicit+"}]}
-  - {id: "pageCount", desc: "每页数量", items: [{desc: "50", param: "&limit=50"}, {desc: "20", param: "&limit=20"}, {desc: "80", param: "&limit=80"}]}
+  - {id: "pageCount", desc: "每页数量", items: [{desc: "默认", param: ""},{desc: "50", param: "&limit=50"},  {desc: "80", param: "&limit=80"}]}
 
 homePage: &HOMEPAGE
   onParseResult:
