@@ -121,7 +121,7 @@ Widget _buildDefaultDownloadSize(BuildContext context) {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 const Text(
-                  "默认下载大小：",
+                  "下载方式：",
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 RadioChoiceChip(
