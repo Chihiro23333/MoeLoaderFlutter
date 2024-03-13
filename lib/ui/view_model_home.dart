@@ -65,7 +65,7 @@ class HomeViewModel {
     ValidateResult<String> result =
         await repository.home(url, headers: headers);
     _homeState.code = result.code;
-    _log.info("result.code=${result.code}");
+    _log.fine("result.code=${result.code}");
     if (result.validateSuccess) {
       _homeState.error = false;
       List<YamlHomePageItem> list;

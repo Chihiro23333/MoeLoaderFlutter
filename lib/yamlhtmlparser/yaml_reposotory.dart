@@ -31,7 +31,7 @@ class YamlRepository {
   }
 
   Future<ValidateResult<String>> _request(String url, Validator validator, {Map<String, String>? headers}) async{
-    _log.info("url=$url");
+    _log.fine("url=$url");
     ValidateResult<String> result = await RequestManager().dioRequest(url, validator, headers: headers);
     return result;
   }

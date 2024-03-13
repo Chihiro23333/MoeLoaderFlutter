@@ -42,7 +42,7 @@ class _RadioChoiceChipState extends State<RadioChoiceChip> {
         label: Text(desc),
         selected: selected,
         onSelected: (bool selected) {
-          _log.info("index=$i;selected=$selected");
+          _log.fine("index=$i;selected=$selected");
           widget.index = i;
           setState(() {});
           radioSelectCallback(i, desc);

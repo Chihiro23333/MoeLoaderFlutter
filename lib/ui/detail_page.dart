@@ -115,7 +115,7 @@ class _DetailState extends State<DetailPage> {
       _yamlDetailPage = detailState.yamlDetailPage;
       List<String> urlList = [];
       urlList.add(_yamlDetailPage!.url);
-      _log.info("urlList=$urlList");
+      _log.fine("urlList=$urlList");
       if (_yamlDetailPage!.preview.isNotEmpty) {
         urlList.addAll(_yamlDetailPage!.preview.split(","));
       }

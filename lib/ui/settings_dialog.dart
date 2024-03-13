@@ -104,7 +104,7 @@ Widget _buildDefaultDownloadSize(BuildContext context) {
   return FutureBuilder(
       future: getDownloadFileSize(),
       builder: (context, snapshot) {
-        _log.info("snapshot=$snapshot");
+        _log.fine("snapshot=$snapshot");
         ConnectionState connectionState = snapshot.connectionState;
         if(connectionState == ConnectionState.done){
           List<String> list = [Const.choose, Const.preview, Const.big, Const.raw];
@@ -128,7 +128,7 @@ Widget _buildDefaultDownloadSize(BuildContext context) {
                     list: list,
                     index: selectedIndex,
                     radioSelectCallback: (index, desc) {
-                      _log.info("index=$index;desc=$desc");
+                      _log.fine("index=$index;desc=$desc");
                       setDownloadFileSize(desc);
                     })
               ],

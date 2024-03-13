@@ -42,7 +42,7 @@ abstract class Parser {
     int pageBase = homeRule["pageBase"] ?? 1;
     page = (int.parse(page) * pageBase).toString();
     await _defaultOption(webPage, optionList);
-    _log.info("optionList:optionList=$optionList");
+    _log.fine("optionList:optionList=$optionList");
     url = await _formatUrl(link, page, optionList: optionList);
     _log.fine("getUrl:url=$url");
     return url;
@@ -78,7 +78,7 @@ abstract class Parser {
   Future<List<YamlOptionList>> optionList(YamlMap webPage) async {
     List<YamlOptionList> result = [];
     YamlList? optionsRule = webPage["options"];
-    _log.info("optionsRule=$optionsRule");
+    _log.fine("optionsRule=$optionsRule");
     if (optionsRule != null) {
       for (var option in optionsRule) {
         String id = option["id"];
@@ -127,7 +127,7 @@ abstract class Parser {
     // 遍历匹配结果并打印
     for (Match match in iterator) {
       String? text = match.group(1);
-      _log.info('找到匹配内容: $text');
+      _log.fine('找到匹配内容: $text');
       if ("page" == text) {
         url = url.replaceAll("\${$text}", page ?? "");
         continue;
@@ -136,7 +136,7 @@ abstract class Parser {
         url = url.replaceAll("\${$text}", tags ?? "");
         continue;
       }
-      _log.info("optionList=$optionList");
+      _log.fine("optionList=$optionList");
       YamlOption? yamlOption;
       if (optionList != null) {
         for (var item in optionList) {

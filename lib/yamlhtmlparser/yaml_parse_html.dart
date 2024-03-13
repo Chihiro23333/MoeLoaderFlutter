@@ -176,7 +176,7 @@ class YamlHtmlParser extends Parser {
     String? css = getElementsRule["cssSelector"];
     if (css == null) throw "first rule must be cssSelector！";
     list = element?.querySelectorAll(css) ?? [];
-    _log.info("list=$list");
+    _log.fine("list=$list");
     //第二步，筛选元素
     _filterList(list, yamlMap);
     return list;
@@ -205,7 +205,7 @@ class YamlHtmlParser extends Parser {
         }
       }
     }
-    _log.info("_queryOne=$result");
+    _log.fine("_queryOne=$result");
     return result;
   }
 
