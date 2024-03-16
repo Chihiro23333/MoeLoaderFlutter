@@ -1,4 +1,5 @@
 import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_parse_mix.dart';
+import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_rule_factory.dart';
 import 'package:logging/logging.dart';
 import 'package:yaml/yaml.dart';
 import 'models.dart';
@@ -20,6 +21,14 @@ class ParserFactory {
 abstract class Parser {
   final _log = Logger('Parser');
 
+  Future<String> getJsonHeaders(String sourceName) async {
+    YamlMap yamlDoc = await YamlRuleFactory().create(sourceName);
+    YamlMap meta = yamlDoc['meta'];
+    YamlMap? headersRule = meta['headers'];
+    _log.fine("getHeaders:result=$headersRule");
+    return headersRule.toString();
+  }
+
   Future<Map<String, String>?> getHeaders(YamlMap webPage) async {
     YamlMap meta = webPage['meta'];
     YamlMap? headersRule = meta['headers'];
@@ -30,6 +39,23 @@ abstract class Parser {
     });
     _log.fine("getHeaders:result=$result");
     return result;
+  }
+
+  Future<String> getJsonHomeUrl(String sourceName, String page,
+      {List<YamlOption>? optionList}) async {
+    YamlMap yamlDoc = await YamlRuleFactory().create(sourceName);
+    YamlMap urlRule = yamlDoc['url'];
+    YamlMap homeRule = urlRule['home'];
+
+    String url = "";
+    String link = homeRule["link"];
+    int pageBase = homeRule["pageBase"] ?? 1;
+    page = (int.parse(page) * pageBase).toString();
+    await _defaultOption(yamlDoc, optionList);
+    _log.fine("optionList:optionList=$optionList");
+    url = await _formatUrl(link, page, optionList: optionList);
+    _log.fine("getUrl:url=$url");
+    return url;
   }
 
   Future<String> getHomeUrl(YamlMap webPage, String page,
@@ -44,6 +70,30 @@ abstract class Parser {
     await _defaultOption(webPage, optionList);
     _log.fine("optionList:optionList=$optionList");
     url = await _formatUrl(link, page, optionList: optionList);
+    _log.fine("getUrl:url=$url");
+    return url;
+  }
+
+  Future<String> getJsonSearchUrl(String sourceName,
+      {String? page, String? tags, List<YamlOption>? optionList}) async {
+    YamlMap yamlDoc = await YamlRuleFactory().create(sourceName);
+    YamlMap urlRule = yamlDoc['url'];
+    YamlMap searchRule = urlRule['search'];
+
+    String url = "";
+    if (tags != null && page != null) {
+      String? connectorRule = searchRule["tagConnector"];
+      if (connectorRule != null) {
+        //记得去掉首尾不必要的空格，避免tags添加连接符的时候多加了
+        tags = tags.trim().replaceAll(" ", connectorRule);
+      }
+      String link = searchRule["link"];
+      int pageBase = searchRule["pageBase"] ?? 1;
+      page = (int.parse(page) * pageBase).toString();
+      await _defaultOption(yamlDoc, optionList);
+      url = await _formatUrl(link, page, tags: tags, optionList: optionList);
+    }
+
     _log.fine("getUrl:url=$url");
     return url;
   }
@@ -71,37 +121,27 @@ abstract class Parser {
     return url;
   }
 
+  Future<String> getJsonName(String sourceName) async {
+    YamlMap yamlDoc = await YamlRuleFactory().create(sourceName);
+    return yamlDoc["meta"]?["name"] ?? "";
+  }
+
   Future<String> getName(YamlMap doc) async {
     return doc["meta"]?["name"] ?? "";
   }
 
-  Future<List<YamlOptionList>> optionList(YamlMap webPage) async {
-    List<YamlOptionList> result = [];
-    YamlList? optionsRule = webPage["options"];
+  Future<String> optionList(String sourceName) async {
+    YamlMap yamlDoc = await YamlRuleFactory().create(sourceName);
+    var optionsRule = yamlDoc["url"]["options"];
     _log.fine("optionsRule=$optionsRule");
-    if (optionsRule != null) {
-      for (var option in optionsRule) {
-        String id = option["id"];
-        String desc = option["desc"];
-        List<YamlOption> options = [];
-        YamlList optionItems = option["items"];
-        for (var optionItem in optionItems) {
-          String desc = optionItem["desc"];
-          String param = optionItem["param"];
-          YamlOption yamlOption = YamlOption(id, desc, param);
-          options.add(yamlOption);
-        }
-        YamlOptionList yamlOptionList = YamlOptionList(id, desc, options);
-        result.add(yamlOptionList);
-      }
-    }
-    return result;
+    return optionsRule.toString();
   }
 
   Future<void> _defaultOption(
       YamlMap webPage, List<YamlOption>? inOptionList) async {
     if (inOptionList == null) return;
-    List<YamlOptionList> list = await optionList(webPage);
+    // List<YamlOptionList> list = await optionList();
+    List<YamlOptionList> list = [];
     if (list.isNotEmpty) {
       for (var item in list) {
         bool find = false;

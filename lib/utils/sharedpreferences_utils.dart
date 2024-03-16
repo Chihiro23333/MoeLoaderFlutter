@@ -25,3 +25,15 @@ Future<String?> getDownloadFileSize() async{
   return proxy;
 }
 
+Future<bool> saveHtml(String fileSizeType) async{
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.setString("html", fileSizeType);
+  return true;
+}
+
+Future<String?> getHtml() async{
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  String? proxy = prefs.getString("html");
+  return proxy;
+}
+

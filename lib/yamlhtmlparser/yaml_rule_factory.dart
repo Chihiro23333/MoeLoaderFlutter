@@ -2,11 +2,14 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:MoeLoaderFlutter/init.dart';
 import 'package:MoeLoaderFlutter/yamlhtmlparser/parser_factory.dart';
+import 'package:logging/logging.dart';
 import 'package:yaml/yaml.dart';
 import 'package:path/path.dart' as path;
 import 'models.dart';
 
 class YamlRuleFactory {
+  final _log = Logger("YamlRuleFactory");
+
   static YamlRuleFactory? _cache;
 
   YamlRuleFactory._create();
@@ -21,6 +24,8 @@ class YamlRuleFactory {
 
   Future<void> init() async {
     if (!_init) {
+      await _addAssets("yande_common");
+      await _addAssets("anim_pictures_common");
       await _addAssets("anim_pictures");
       await _addAssets("danbooru");
       await _addAssets("behoimi");
@@ -45,7 +50,6 @@ class YamlRuleFactory {
       }
     }
     if(targetRule == null)throw "yaml source not found!";
-
     YamlMap? targetWebPage;
     _ruleMap.forEach((key, value) {
       if(key.name == fileName){

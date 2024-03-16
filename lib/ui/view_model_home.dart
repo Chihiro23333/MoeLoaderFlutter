@@ -99,8 +99,9 @@ class HomeViewModel {
   }
 
   Future<List<YamlOptionList>> optionList() async {
-    YamlMap doc = await YamlRuleFactory().create(Global.curWebPageName);
-    return _parser().optionList(doc);
+    // YamlMap doc = await YamlRuleFactory().create(Global.curWebPageName);
+    // return _parser().optionList(doc);
+    return [];
   }
 
   Future<void> changeGlobalWebPage(WebPageItem webPageItem) async {
