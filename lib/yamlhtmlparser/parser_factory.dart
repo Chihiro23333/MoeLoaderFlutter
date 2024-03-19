@@ -5,12 +5,14 @@ import 'package:yaml/yaml.dart';
 import 'models.dart';
 
 class ParserFactory {
-
   static ParserFactory? _cache;
+
   ParserFactory._create();
+
   factory ParserFactory() {
     return _cache ?? (_cache = ParserFactory._create());
   }
+
   final MixParser _mixParser = MixParser();
 
   Parser createParser() {
@@ -42,7 +44,7 @@ abstract class Parser {
   }
 
   Future<String> getJsonHomeUrl(String sourceName, String page,
-      {List<YamlOption>? optionList}) async {
+      {List<Option>? chooseOption}) async {
     YamlMap yamlDoc = await YamlRuleFactory().create(sourceName);
     YamlMap urlRule = yamlDoc['url'];
     YamlMap homeRule = urlRule['home'];
@@ -51,10 +53,9 @@ abstract class Parser {
     String link = homeRule["link"];
     int pageBase = homeRule["pageBase"] ?? 1;
     page = (int.parse(page) * pageBase).toString();
-    await _defaultOption(yamlDoc, optionList);
-    _log.fine("optionList:optionList=$optionList");
-    url = await _formatUrl(link, page, optionList: optionList);
-    _log.fine("getUrl:url=$url");
+    _log.fine("chooseOption=$chooseOption");
+    url = await _jsonFormatUrl(yamlDoc, link, page, chooseOption: chooseOption);
+    _log.fine("getJsonHomeUrl:url=$url");
     return url;
   }
 
@@ -74,27 +75,25 @@ abstract class Parser {
     return url;
   }
 
-  Future<String> getJsonSearchUrl(String sourceName,
-      {String? page, String? tags, List<YamlOption>? optionList}) async {
+  Future<String> getJsonSearchUrl(
+      String sourceName, String page, String searchKey,
+      {List<Option>? chooseOption}) async {
     YamlMap yamlDoc = await YamlRuleFactory().create(sourceName);
     YamlMap urlRule = yamlDoc['url'];
     YamlMap searchRule = urlRule['search'];
 
     String url = "";
-    if (tags != null && page != null) {
-      String? connectorRule = searchRule["tagConnector"];
-      if (connectorRule != null) {
-        //记得去掉首尾不必要的空格，避免tags添加连接符的时候多加了
-        tags = tags.trim().replaceAll(" ", connectorRule);
-      }
-      String link = searchRule["link"];
-      int pageBase = searchRule["pageBase"] ?? 1;
-      page = (int.parse(page) * pageBase).toString();
-      await _defaultOption(yamlDoc, optionList);
-      url = await _formatUrl(link, page, tags: tags, optionList: optionList);
+    String? connectorRule = searchRule["tagConnector"];
+    if (connectorRule != null) {
+      //记得去掉首尾不必要的空格，避免tags添加连接符的时候多加了
+      searchKey = searchKey.trim().replaceAll(" ", connectorRule);
     }
-
-    _log.fine("getUrl:url=$url");
+    String link = searchRule["link"];
+    int pageBase = searchRule["pageBase"] ?? 1;
+    page = (int.parse(page) * pageBase).toString();
+    url = await _jsonFormatUrl(yamlDoc, link, page,
+        searchKey: searchKey, chooseOption: chooseOption);
+    _log.fine("getJsonSearchUrl:url=$url");
     return url;
   }
 
@@ -130,7 +129,7 @@ abstract class Parser {
     return doc["meta"]?["name"] ?? "";
   }
 
-  Future<String> optionList(String sourceName) async {
+  Future<String> jsonOptionList(String sourceName) async {
     YamlMap yamlDoc = await YamlRuleFactory().create(sourceName);
     var optionsRule = yamlDoc["url"]["options"];
     _log.fine("optionsRule=$optionsRule");
@@ -154,8 +153,60 @@ abstract class Parser {
         if (!find) {
           inOptionList.add(item.options[0]);
         }
-      };
+      }
+      ;
     }
+  }
+
+  String _findOptionParam(YamlMap yamlDoc, Option option) {
+    var optionsRule = yamlDoc["url"]["options"];
+    String result = "";
+    if (optionsRule != null) {
+      for (var item in optionsRule) {
+        if (option.id == item["id"]) {
+          return item["items"][option.index]["param"];
+        }
+      }
+    }
+    return result;
+  }
+
+  Future<String> _jsonFormatUrl(YamlMap yamlDoc, String url, String page,
+      {String? searchKey, List<Option>? chooseOption}) async {
+    String pattern = r'\${(.*?)\}';
+    // 使用正则表达式匹配被{}包围的内容
+    RegExp regExp = RegExp(pattern);
+    Iterable iterator = regExp.allMatches(url);
+    // 遍历匹配结果并打印
+    for (Match match in iterator) {
+      String? text = match.group(1);
+      _log.fine('找到匹配内容: $text');
+      if ("page" == text) {
+        url = url.replaceAll("\${$text}", page ?? "");
+        continue;
+      }
+      if ("tag" == text) {
+        url = url.replaceAll("\${$text}", searchKey ?? "");
+        continue;
+      }
+      _log.fine("chooseOption=$chooseOption");
+      Option? option;
+      if (chooseOption != null) {
+        for (var item in chooseOption) {
+          if (item.id == text) {
+            option = item;
+            break;
+          }
+        }
+      }
+      if (option != null) {
+        url = url.replaceAll("\${$text}", _findOptionParam(yamlDoc, option));
+      } else {
+        url = url.replaceAll(
+            "\${$text}", _findOptionParam(yamlDoc, Option(text ?? "", 0)));
+      }
+    }
+    return url;
   }
 
   Future<String> _formatUrl(String url, String? page,
@@ -200,4 +251,11 @@ abstract class Parser {
   Future<List<YamlHomePageItem>> parseSearch(String content, YamlMap webPage);
 
   Future<YamlDetailPage> parseDetail(String content, YamlMap webPage);
+}
+
+class Option {
+  String id = "";
+  int index = 0;
+
+  Option(this.id, this.index);
 }

@@ -66,7 +66,7 @@ class _TestState extends State<TestPage> {
             ListTile(
               title: const Text("getOptions"),
               onTap: () async {
-                String options = await yamlHtmlCommonParser.optionList(sourceName);
+                String options = await yamlHtmlCommonParser.jsonOptionList(sourceName);
                 _log.info("options=$options");
               },
             ),
@@ -90,7 +90,7 @@ class _TestState extends State<TestPage> {
             ListTile(
               title: const Text("getJsonSearchUrl"),
               onTap: () async {
-                String jsonSearchUrl = await yamlHtmlCommonParser.getJsonSearchUrl(sourceName);
+                String jsonSearchUrl = await yamlHtmlCommonParser.getJsonSearchUrl(sourceName, "1", "tag");
                 _log.info("jsonSearchUrl=$jsonSearchUrl");
               },
             ),
