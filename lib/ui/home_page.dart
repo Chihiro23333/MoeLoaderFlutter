@@ -307,12 +307,9 @@ class _HomeState extends State<HomePage> {
   }
 
   Widget _buildBody(BuildContext context, AsyncSnapshot snapshot) {
-    if (snapshot.hasError) {
-      return Text("Error: ${snapshot.error}");
-    }
     if (snapshot.connectionState == ConnectionState.active) {
       HomeState homeState = snapshot.data;
-      if (homeState.firstIn && homeState.error) {
+      if (homeState.error) {
         List<Widget> children = [];
         children.add(ElevatedButton(
             onPressed: () {
@@ -352,7 +349,7 @@ class _HomeState extends State<HomePage> {
           ),
         );
       }
-      if (homeState.firstIn) {
+      if (homeState.loading && homeState.list.isEmpty) {
         return const Center(
           child: CircularProgressIndicator(),
         );

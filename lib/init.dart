@@ -1,8 +1,10 @@
 import 'dart:io';
 import 'dart:ui';
+import 'package:MoeLoaderFlutter/utils/const.dart';
 import 'package:MoeLoaderFlutter/utils/sharedpreferences_utils.dart';
 import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_rule_factory.dart';
 import 'package:MoeLoaderFlutter/net/request_manager.dart';
+import 'package:flutter_socks_proxy/socks_proxy.dart';
 import 'package:hive/hive.dart';
 import 'package:logging/logging.dart';
 import 'package:webview_windows/webview_windows.dart';
@@ -21,7 +23,7 @@ class Global{
 
   static late WebPage _curWebPage;
   static late bool _supportWebView2 = false;
-  ProxyHttpOverrides? _proxyHttpOverrides;
+  bool _proxyInited = false;
 
   Future<void> init() async{
     String? webViewVersion = await WebviewController.getWebViewVersion();
@@ -50,11 +52,19 @@ class Global{
 
   Future<void> updateProxy() async{
     String? proxy = await getProxy();
-    if(_proxyHttpOverrides == null){
-      _proxyHttpOverrides = ProxyHttpOverrides(proxy);
-      HttpOverrides.global = _proxyHttpOverrides;
+    if(proxy == null || proxy.isEmpty){
+      proxy = "DIRECT";
     }else{
-      _proxyHttpOverrides?.setProxy = proxy;
+      String? proxyType = await getProxyType();
+      proxyType = proxyType ?? Const.proxyHttp;
+      proxy = "$proxyType $proxy";
+    }
+    print("proxy=$proxy");
+    if(!_proxyInited){
+      SocksProxy.initProxy(proxy: proxy);
+      _proxyInited = true;
+    }else{
+      SocksProxy.setProxy(proxy);
     }
   }
 
@@ -74,41 +84,9 @@ class Global{
 
 }
 
-
 class WebPage{
   YamlMap webPage;
   Rule rule;
 
   WebPage(this.webPage, this.rule);
-}
-
-class ProxyHttpOverrides extends HttpOverrides {
-
-  String? _proxy;
-
-  ProxyHttpOverrides(this._proxy);
-
-  String? get proxyStr => _proxy;
-
-  set setProxy(String? proxy){
-    _proxy = proxy;
-  }
-
-  @override
-  HttpClient createHttpClient(SecurityContext? context) {
-    print("createHttpClient:proxy=$_proxy");
-    final client = super.createHttpClient(context);
-    client.connectionTimeout = const Duration(seconds: 10);
-    client.findProxy = (uri) => (_proxy == null || _proxy!.isEmpty) ? "DIRECT" : "PROXY $_proxy";
-    client.badCertificateCallback = (X509Certificate cert, String host, int port){
-      final ipv4RegExp = RegExp(
-          r'^((25[0-5]|2[0-4]\d|[0-1]?\d?\d)(\.(25[0-5]|2[0-4]\d|[0-1]?\d?\d)){3})$');
-      if(ipv4RegExp.hasMatch(host)){
-        // 允许ip访问
-        return true;
-      }
-      return false;
-    };
-    return client;
-  }
 }

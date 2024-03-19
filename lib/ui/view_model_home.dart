@@ -40,13 +40,12 @@ class HomeViewModel {
       bool clearAll = false,
       List<YamlOption>? optionList}) async {
     _log.fine("optionList=$optionList");
-    changeLoading(true);
     if (clearAll) {
       _clearAll();
     }
+    changeLoading(true);
 
     String page = _homeState.page.toString();
-
     YamlMap doc = await YamlRuleFactory().create(Global.curWebPageName);
     bool home = tags == null;
     String url;
@@ -75,9 +74,6 @@ class HomeViewModel {
         list = await _parser().parseSearch(result.data!, doc);
       }
       var dataList = _homeState.list;
-      if (_homeState.firstIn) {
-        _homeState.firstIn = false;
-      }
       dataList.addAll(list);
       _homeState.page++;
       streamHomeController.add(_homeState);
@@ -91,6 +87,9 @@ class HomeViewModel {
 
   void changeLoading(bool loading) {
     _homeState.loading = loading;
+    if(loading){
+      _homeState.error = false;
+    }
     streamHomeController.add(_homeState);
   }
 
@@ -132,7 +131,6 @@ class HomeState {
   List<YamlHomePageItem> list = [];
   int page = 1;
   bool loading = false;
-  bool firstIn = true;
   bool error = false;
   String errorMessage = "";
   int code = ValidateResult.success;
@@ -142,7 +140,6 @@ class HomeState {
     list.clear();
     page = 1;
     loading = false;
-    firstIn = true;
     error = false;
     errorMessage = "";
     headers = null;

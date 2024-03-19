@@ -57,6 +57,7 @@ dependencies:
       url: https://github.com/Chihiro23333/webview_windows.git
       ref: main
   hive: ^2.2.3
+  flutter_socks_proxy: ^0.0.3
 
 dev_dependencies:
   flutter_test:
