@@ -48,7 +48,7 @@ class YamlJsonParser extends Parser{
           _log.fine("propName=$key;propValue=$result");
           object[key] = result;
         });
-        return object.toString();
+        return jsonEncode(object);
       case "list":
         YamlMap getNodesRule = contentRule["getNodes"];
         String listJpath = _getJsonPath(getNodesRule);
@@ -68,7 +68,7 @@ class YamlJsonParser extends Parser{
           list.add(item);
         }
         _log.fine("result=${list.toString()}");
-        return list.toString();
+        return jsonEncode(list);
       default:
         return _getOne(json, pJPath, rule, index: index, defaultValue: defaultValue);
     }

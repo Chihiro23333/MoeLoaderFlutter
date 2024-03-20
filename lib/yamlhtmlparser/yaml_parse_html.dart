@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:MoeLoaderFlutter/yamlhtmlparser/parser_factory.dart';
 import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_rule_factory.dart';
 import 'package:html/dom.dart';
@@ -46,7 +48,7 @@ class YamlHtmlParser extends Parser {
           _log.fine("propName=$key;propValue=$result");
           object[key] = result;
         });
-        return object.toString();
+        return jsonEncode(object);
       case "list":
         YamlMap foreachRule = contentRule["foreach"];
         var list = [];
@@ -62,7 +64,7 @@ class YamlHtmlParser extends Parser {
           list.add(item);
         }
         _log.fine("result=${list.toString()}");
-        return list.toString();
+        return jsonEncode(list);
       default:
         return _getOne(element, rule);
     }
