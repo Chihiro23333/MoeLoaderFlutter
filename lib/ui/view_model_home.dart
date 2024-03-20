@@ -10,7 +10,6 @@ import '../yamlhtmlparser/models.dart';
 import '../yamlhtmlparser/parser_factory.dart';
 
 class HomeViewModel {
-
   final _log = Logger('HomeViewModel');
 
   final YamlRepository repository = YamlRepository();
@@ -23,9 +22,9 @@ class HomeViewModel {
   HomeViewModel() {
     DownloadManager().downloadStream().listen((downloadState) {
       List<DownloadTask> list = downloadState.tasks;
-      for(YamlHomePageItem item in _homeState.list){
-        for(DownloadTask task in list){
-          if(task.id == item.href){
+      for (YamlHomePageItem item in _homeState.list) {
+        for (DownloadTask task in list) {
+          if (task.id == item.href) {
             item.downloadState = task.downloadState;
             _log.fine("id=${task.id};task.downloadState=${task.downloadState}");
           }
@@ -37,6 +36,7 @@ class HomeViewModel {
 
   void requestData(
       {String? tags,
+      String? page,
       bool clearAll = false,
       List<YamlOption>? optionList}) async {
     _log.fine("optionList=$optionList");
@@ -45,7 +45,7 @@ class HomeViewModel {
     }
     changeLoading(true);
 
-    String page = _homeState.page.toString();
+    page = page ?? _homeState.page.toString();
     YamlMap doc = await YamlRuleFactory().create(Global.curWebPageName);
     bool home = tags == null;
     String url;
@@ -87,7 +87,7 @@ class HomeViewModel {
 
   void changeLoading(bool loading) {
     _homeState.loading = loading;
-    if(loading){
+    if (loading) {
       _homeState.error = false;
     }
     streamHomeController.add(_homeState);

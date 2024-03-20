@@ -54,11 +54,12 @@ class _HomeState extends State<HomePage> {
     _yamlOptionMap.remove(id);
   }
 
-  void _requestData({bool clearAll = false}) {
+  void _requestData({bool clearAll = false, String? page}) {
     _picHomeViewModel.requestData(
         tags: _tag?.tag,
         optionList: _yamlOptionMap.values.toList(),
-        clearAll: clearAll);
+        clearAll: clearAll,
+        page: page);
   }
 
   @override
@@ -355,8 +356,8 @@ class _HomeState extends State<HomePage> {
         );
       }
       return Padding(
-          padding: const EdgeInsets.all(10),
-          child: _buildMasonryGrid(homeState),
+        padding: const EdgeInsets.all(10),
+        child: _buildMasonryGrid(homeState),
       );
     } else {
       return const Center(
@@ -467,7 +468,8 @@ class _HomeState extends State<HomePage> {
                 IconButton(
                     onPressed: () async {
                       if (yamlHomePageItem.downloadState != DownloadTask.idle &&
-                          yamlHomePageItem.downloadState != DownloadTask.error) {
+                          yamlHomePageItem.downloadState !=
+                              DownloadTask.error) {
                         return;
                       }
                       String? downloadFileSize = await getDownloadFileSize();
@@ -498,7 +500,7 @@ class _HomeState extends State<HomePage> {
                       });
                     },
                     icon: const Icon(
-                        Icons.info,
+                      Icons.info,
                       color: Colors.black,
                     ))
               ],
@@ -531,7 +533,9 @@ class _HomeState extends State<HomePage> {
                 visible: !homeState.loading,
                 child: Center(
                   child: Icon(
-                    homeState.error ? Icons.refresh : Icons.keyboard_double_arrow_down,
+                    homeState.error
+                        ? Icons.refresh
+                        : Icons.keyboard_double_arrow_down,
                     color: Theme.of(context).iconTheme.color,
                   ),
                 ))
@@ -570,11 +574,63 @@ class _HomeState extends State<HomePage> {
             children.add(Chip(
               avatar: ClipOval(
                 child: Icon(
-                  Icons.insert_page_break,
+                  Icons.format_list_numbered,
                   color: Theme.of(context).iconTheme.color,
                 ),
               ),
               label: Text(uriState.page),
+              deleteIcon: const Icon(Icons.near_me),
+              onDeleted: () {
+                TextEditingController textEditingController =
+                    TextEditingController(text: uriState.page);
+                showModalBottomSheet(
+                    context: context,
+                    builder: (context) {
+                      return Padding(
+                        padding: const EdgeInsets.only(
+                            top: 20, bottom: 20, left: 20, right: 20),
+                        child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              TextField(
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))//设置只允许输入数字
+                                  ],
+                                  controller: textEditingController,
+                                  decoration: InputDecoration(
+                                      prefixIcon: Icon(
+                                        Icons.format_list_numbered,
+                                        color:
+                                            Theme.of(context).iconTheme.color,
+                                      ),
+                                      suffixIcon: GestureDetector(
+                                        child: Icon(
+                                          Icons.clear,
+                                          color:
+                                              Theme.of(context).iconTheme.color,
+                                        ),
+                                        onTap: () {
+                                          textEditingController.clear();
+                                        },
+                                      ),
+                                      border: const OutlineInputBorder(),
+                                      labelText: "请输入页码",
+                                      hintText: "请输入页码",
+                                      helperText: "输入后按ENTER加载指定页码",
+                                      filled: true),
+                                  onSubmitted: (String value) {
+                                    if(value.isEmpty){
+                                      showToast("请输入正确的页码");
+                                      return;
+                                    }
+                                    _requestData(page: value);
+                                    Navigator.of(context).pop();
+                                  }),
+                            ]),
+                      );
+                    });
+              },
             ));
             if (uriState.tag.isNotEmpty) {
               children.add(
@@ -635,6 +691,7 @@ class _HomeState extends State<HomePage> {
             }
             return FittedBox(
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: children,
               ),
             );
