@@ -24,6 +24,7 @@ class YamlRuleFactory {
 
   Future<void> init() async {
     if (!_init) {
+      await _addAssets("pixiv_common");
       await _addAssets("yande_common");
       await _addAssets("anim_pictures_common");
       await _addAssets("anim_pictures");

@@ -1,4 +1,5 @@
 import 'package:MoeLoaderFlutter/yamlhtmlparser/parser_factory.dart';
+import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_rule_factory.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart';
 import 'package:logging/logging.dart';
@@ -6,10 +7,66 @@ import 'package:yaml/yaml.dart';
 import 'models.dart';
 
 class YamlHtmlParser extends Parser {
-  final _log = Logger('YamlHtmlParser');
+  final _log = Logger('YamlHtmlCommonParser');
 
   static const defaultConnector = ",";
   static const defaultSeparator = ",";
+
+  @override
+  Future<String> parseUseYaml(String content, String sourceName, String pageName) async {
+    _log.fine("html=$content");
+    YamlMap doc = await YamlRuleFactory().create(sourceName);
+    YamlMap? page = doc[pageName];
+    if (page == null) {
+      throw "pageName不存在";
+    }
+    Document document = parse(content);
+    Element? body = document.querySelector("html");
+    //解析文本拿到结果
+    YamlMap onParseResult = page["onParseResult"];
+    String json = _recursionQuery(body, onParseResult);
+    _log.fine("json=$json");
+    return json;
+  }
+
+  String _recursionQuery(Element? element, YamlMap rule) {
+    String? dataType;
+    for (var element in rule.keys) {
+      if(element.toString() == "contentType")continue;
+      dataType = element.toString();
+    }
+    _log.fine("dataType=$dataType");
+    YamlMap contentRule = rule[dataType];
+    _log.fine("contentRule=$contentRule");
+    switch (dataType) {
+      case "object":
+        var object = {};
+        contentRule.forEach((key, value) {
+          String result = _recursionQuery(element, value);
+          _log.fine("propName=$key;propValue=$result");
+          object[key] = result;
+        });
+        return object.toString();
+      case "list":
+        YamlMap foreachRule = contentRule["foreach"];
+        var list = [];
+        List<Element> listList = _queryN(element, contentRule);
+        _log.fine("listList=$listList");
+        for (Element element in listList) {
+          var item = {};
+          foreachRule.forEach((key, value) {
+            String result = _recursionQuery(element, value);
+            _log.fine("propName=$key;propValue=$result");
+            item[key] = result;
+          });
+          list.add(item);
+        }
+        _log.fine("result=${list.toString()}");
+        return list.toString();
+      default:
+        return _getOne(element, rule);
+    }
+  }
 
   @override
   Future<List<YamlHomePageItem>> parseHome(
@@ -189,10 +246,10 @@ class YamlHtmlParser extends Parser {
     //第一步，定位元素并获取值
     result = _get(element, yamlMap['get']);
     _log.fine("get=$result");
-    //第二步，查找值并选择选择值
+    //第二步，查找值
     var filterRule = yamlMap["filter"];
     if (filterRule != null) {
-      result = _filter(result, filterRule);
+      result = _find(result, filterRule);
       _log.fine("filter=$result");
     }
     //第三步，规整拼接值
@@ -281,20 +338,19 @@ class YamlHtmlParser extends Parser {
     }
   }
 
-  String _filter(String value, YamlMap yamlMap) {
+  String _find(String value, YamlMap yamlMap) {
     String result = value;
-    RegExp? linkRegExp;
-
-    String? regexRule = yamlMap["regex"];
-    if (regexRule == null) throw "first rule must be regex！";
-    linkRegExp = RegExp(regexRule);
-
-    int? indexRule = yamlMap["index"];
-    if (indexRule != null) {
-      result = linkRegExp.firstMatch(value)?.group(indexRule) ?? "";
-    }
-
-    result = _regularString(result);
+    yamlMap.forEach((key, value) {
+      RegExp? linkRegExp;
+      String? findRule = yamlMap["find"];
+      if (findRule == null) throw "first rule must be regex！";
+      linkRegExp = RegExp(findRule);
+      int? indexRule = yamlMap["index"];
+      if (indexRule != null) {
+        result = linkRegExp.firstMatch(value)?.group(indexRule) ?? "";
+      }
+      result = _regularString(result);
+    });
     return result;
   }
 
