@@ -1,3 +1,4 @@
+[![GitHub license](https://raw.githubusercontent.com/Chihiro23333/MoeLoaderFlutter/c8f4acf60a7a277944ba27699fd130040471a26f/screenshot/icons/pywxdump.svg)](https://github.com/Chihiro23333/MoeLoaderFlutter/blob/master/LICENSE)
 ## About MoeLoaderFlutter
 **MoeLoaderFlutter**是基于**Flutter**开发的Windows桌面ACG图片浏览工具，灵感来自[moe-loader-v7](https://github.com/esonic/moe-loader-v7)
 ## 支持的图片站点（部分站点访问需要前往设置配置代理）
