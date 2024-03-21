@@ -61,6 +61,10 @@ class HomeViewModel {
 
     Map<String, String>? headers = await _parser().getHeaders(doc);
     _homeState.headers = headers;
+
+    bool canSearch = await _parser().canSearch(doc);
+    _homeState.canSearch = canSearch;
+
     ValidateResult<String> result =
         await repository.home(url, headers: headers);
     _homeState.code = result.code;
@@ -132,6 +136,7 @@ class HomeState {
   int page = 1;
   bool loading = false;
   bool error = false;
+  bool canSearch = true;
   String errorMessage = "";
   int code = ValidateResult.success;
   Map<String, String>? headers;
@@ -141,6 +146,7 @@ class HomeState {
     page = 1;
     loading = false;
     error = false;
+    canSearch = true;
     errorMessage = "";
     headers = null;
     code = ValidateResult.success;

@@ -1,0 +1,45 @@
+meta:
+  name: "minitokyo.indyArt"
+  type: "assets"
+
+display:
+  columnCount: 6
+  aspectRatio: 1
+
+url:
+  home: {link: "http://gallery.minitokyo.net/indy-art?order=id&page=${page}" }
+  search: {link: "http://www.minitokyo.net/search?q=${tag}", tagConnector: "" }
+
+homePage:
+  onParseResult:
+    list:
+      getElements: { cssSelector: "ul[class=wallpapers] li[style^=float]" }
+      foreach:
+        coverUrl:
+          get: { cssSelector: "a[tabindex] img", attr: "src" }
+        href:
+          get: { cssSelector: "a[tabindex]", attr: "href" }
+        id:
+          get: { cssSelector: "a[tabindex]", attr: "href" }
+          format:
+            - replaceAll: { from: "http://gallery.minitokyo.net/view/", to: "" }
+        width:
+          get: { cssSelector: "p", text: "" }
+          filter: { regex: '\d+(?=x)', index: 0 }
+        height:
+          get: { cssSelector: "p", text: "" }
+          filter: { regex: 'x(\d+)', index: 1 }
+
+detailPage:
+  onParseResult:
+    object:
+      url:
+        get: { cssSelector: "#preview img", attr: "src" }
+      rawUrl:
+        get: { cssSelector: "#preview img", attr: "src" }
+        format:
+          - replaceAll: { from: "/view/", to: "/downloads/" }
+      id:
+        get: { cssSelector: "link[rel=canonical]", text: "href" }
+        format:
+          - replaceAll: { from: "/view/", to: "" }

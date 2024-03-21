@@ -1,0 +1,39 @@
+meta:
+  name: "minitokyo.scans"
+  type: "assets"
+
+display:
+  columnCount: 5
+  aspectRatio: 1.3
+
+url:
+  home: {link: "http://gallery.minitokyo.net/scans?order=id&page=${page}" }
+  search: {link: "http://www.minitokyo.net/search?q=${tag}", tagConnector: "" }
+
+homePage:
+  onParseResult:
+    list:
+      getElements: { cssSelector: "#content ul[class=scans] li" }
+      foreach:
+        coverUrl:
+          get: { cssSelector: "a[tabindex] img", attr: "src" }
+        href:
+          get: { cssSelector: "a[tabindex]", attr: "href" }
+        id:
+          get: { cssSelector: "a[tabindex]", attr: "href" }
+          format:
+            - replaceAll: { from: "http://gallery.minitokyo.net/view/", to: "" }
+
+detailPage:
+  onParseResult:
+    object:
+      url:
+        get: { cssSelector: "#preview img", attr: "src" }
+      rawUrl:
+        get: { cssSelector: "#preview img", attr: "src" }
+        format:
+          - replaceAll: { from: "/view/", to: "/downloads/" }
+      id:
+        get: { cssSelector: "link[rel=canonical]", text: "href" }
+        format:
+          - replaceAll: { from: "/view/", to: "" }

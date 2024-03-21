@@ -103,6 +103,10 @@ flutter:
     - sources/zerochan.yaml
     - sources/shuushuu.yaml
     - sources/pixiv.yaml
+    - sources/minitokyo_wallpaper.yaml
+    - sources/minitokyo_indy_art.yaml
+    - sources/minitokyo_mobile_wallpaper.yaml
+    - sources/minitokyo_scans.yaml
 
   # To add custom fonts to your application, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a

@@ -84,7 +84,7 @@ class _HomeState extends State<HomePage> {
                 _buildCopyAction(context),
                 _buildDownloadAction(context),
                 _buildOptionsAction(context),
-                _buildSearchAction(context),
+                _buildSearchAction(context, snapshot),
                 _buildSettingsAction(context),
                 _buildAboutAction(context)
               ]),
@@ -190,9 +190,24 @@ class _HomeState extends State<HomePage> {
         icon: const Icon(Icons.copy));
   }
 
-  Widget _buildSearchAction(BuildContext context) {
+  Widget _buildSearchAction(BuildContext context, AsyncSnapshot snapshot) {
     return IconButton(
         onPressed: () {
+          if(!snapshot.hasData){
+            showToast("数据没准备好");
+            return;
+          }
+          HomeState? homeState = snapshot.data;
+          if(homeState == null){
+            showToast("数据没准备好");
+            return;
+          }
+
+          if(!homeState.canSearch){
+            showToast("当前源暂不支持搜索");
+            return;
+          }
+
           if (_tag != null) {
             _textEditingControl.value = TextEditingValue(text: _tag!.desc);
           }
@@ -319,6 +334,7 @@ class _HomeState extends State<HomePage> {
             child: const Text("点击重试")));
         if (homeState.code == ValidateResult.needChallenge ||
             homeState.code == ValidateResult.needLogin) {
+          children.add(const SizedBox(height: 10,));
           children.add(ElevatedButton(
               onPressed: () async {
                 bool? result = await Navigator.push(
@@ -595,7 +611,8 @@ class _HomeState extends State<HomePage> {
                             children: [
                               TextField(
                                   inputFormatters: [
-                                    FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))//设置只允许输入数字
+                                    FilteringTextInputFormatter.allow(
+                                        RegExp(r'[0-9]')) //设置只允许输入数字
                                   ],
                                   controller: textEditingController,
                                   decoration: InputDecoration(
@@ -620,7 +637,7 @@ class _HomeState extends State<HomePage> {
                                       helperText: "输入后按ENTER加载指定页码",
                                       filled: true),
                                   onSubmitted: (String value) {
-                                    if(value.isEmpty){
+                                    if (value.isEmpty) {
                                       showToast("请输入正确的页码");
                                       return;
                                     }

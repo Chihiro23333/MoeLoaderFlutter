@@ -24,7 +24,7 @@ homePage: &HOMEPAGE
     *ON_VALIDATE_RESULT
   onParseResult:
     list:
-      getElements: { cssSelector: ".thumb" }
+      getElements: { cssSelector: ".thumb[data-id]" }
       filter:
         - remove: { cssSelector: ".animated_details"}
       foreach:

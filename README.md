@@ -8,9 +8,12 @@
 * [safebooru.org](http://safebooru.org)
 * [gelbooru.com](https://gelbooru.com)
 * [e-shuushuu.net](http://e-shuushuu.net)
-* www.zerochan.net
+* [zerochan](www.zerochan.net)
+* [minitokyo](http://www.minitokyo.net/)
+* [wallpaperscraft](https://wallpaperscraft.com/)
+* [Konchan_CHS](https://gelbooru.wjcodes.com/)
 * [mjv-art.org](https://anime-pictures.net)
-* www.pixiv.net
+* [pixiv](www.pixiv.net)
 * [lolibooru.moe](https://lolibooru.moe) (萝莉)
 ## 预览图
 
