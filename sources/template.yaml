@@ -1,0 +1,82 @@
+#网页的元信息
+meta:
+  #网页名字：独一无二
+  name: "demo"
+  #规则类型：是assets(软件自带)还是custom(用户自定义)
+  type: "assets"
+  #网页自定义请求头
+  headers:
+    User-Agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+
+#网页的显示信息，在解析的数据没有宽高的时候建议定义一个默认的显示规则
+display:
+  columnCount: 6
+  aspectRatio: 1
+
+#网页的链接信息
+url:
+  #链接信息，此处可能还需要更加通用的定义，其中的${page}表示会被动态替换的参数
+  home: {link: "https://www.pixiv.net/ranking.php?p=${page}&format=json${mode}" }
+  search: {link: "https://www.pixiv.net/ajax/search/artworks/${tag}?word=${tag}&order=date_d&mode=${mode}&p=${page}&csw=0&s_mode=s_tag_full&type=all&lang=z"}
+  #选项信息，选择某个选项会把链接里对应id的${mode}替换为选择条目的param参数，代码是这么设计的，建议上层逻辑上这么写
+  options:
+    - id: "mode"
+      desc: "排行榜"
+      items:
+        - { desc: "今日", param: "&mode=daily" }
+        - { desc: "本周", param: "&mode=weekly" }
+        - { desc: "本月", param: "&mode=monthly" }
+        - { desc: "新人", param: "&mode=rookie" }
+        - { desc: "原创", param: "&mode=original" }
+        - { desc: "AI生成", param: "&mode=daily_ai" }
+        - { desc: "受男性欢迎", param: "&mode=male" }
+        - { desc: "受女性欢迎", param: "&mode=female" }
+
+#以上其实是非通用部分，以下才是通用部分，用于将输入的html文本解析成json的通用规则定义
+#整个解析部分分为三步：
+#1、onValidateResult：验证数据，如果解析出来没有数据，需要登录或者需要安全验证时直接返回响应的错误，上层可以用于进行提示和更多操作
+#2、onPreprocessResult：数据预处理，去掉不需要的数据，取出真正能够用于解析的部分，一般采用正则取出对应数据
+#3、onParseResult：解析数据，有了正确的解析数据，则可以开始对数据进行解析，获得相应的数据
+homePage:
+  # 循环取下面的正则规则，符合正则规则则进行相应的操作
+  # regex：正则规则
+  # action：操作，可以自定义，返回之后上层自己解析
+  onValidateResult:
+    - { regex: '"regular":null', action: "login" }
+  # 数据预处理
+  # contentType：传入解析数据的类型
+  # get：获取数据，此操作符永远返回字符串
+  #   cssSelector：css选择器
+  #   attr：前面选择的元素的属性
+  onPreprocessResult:
+    contentType: "html"
+    get: { cssSelector: "#meta-preload-data", attr: "content" }
+  # 数据解析，解析数据返回json，解析规则可以嵌套
+  # contentType：传入解析数据的类型
+  # list：解析返回的数据类型，分为集合list和对象object
+  #   getElements：css选择器获取元素集合，此选择器返回元素集合
+  #   foreach：遍历集合的数据，下面处理每个条目数据
+  #     coverUrl：变量名，可以定义多个，后面没跟类型则表示返回的是字符串
+  #       get：获取数据，此操作符永远返回字符串
+  #     info：变量名，后面跟了类型，则按照类型嵌套解析
+  #       object：类型为对象，对象下面有变量名，依次解析
+  #         width：变量名
+  onParseResult:
+    contentType: "json"
+    list:
+      getElements: { cssSelector: "#post-list-posts li" }
+      foreach:
+        coverUrl:
+          get: { cssSelector: "a[class=thumb] img", attr: "src" }
+        info:
+          object:
+              width:
+                get: { cssSelector: "a[class=thumb] img", attr: "src" }
+        tags:
+          list:
+            getElements: { cssSelector: "#post-list-posts li" }
+            foreach:
+              desc:
+                get: { cssSelector: "a[class=thumb] img", attr: "src" }
+              href:
+                get: { cssSelector: "a[class=thumb] img", attr: "src" }

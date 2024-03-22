@@ -37,7 +37,8 @@ homePage: &HOMEPAGE
             - concat: { start: "https://yande.re", end: "" }
         tagStr:
           get: { cssSelector: "a[class=thumb] img", attr: "alt" }
-          find: { regex: "(?<=Tags:).*?(?=User:)", index: 0 }
+          find:
+            - { regex: "(?<=Tags:).*?(?=User:)", index: 0 }
         width:
           get: { cssSelector: "a[class=thumb] img", attr: "width" }
         height:

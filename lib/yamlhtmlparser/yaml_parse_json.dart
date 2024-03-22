@@ -36,10 +36,10 @@ class YamlJsonParser extends Parser{
       break;
     }
     _log.fine("dataType=$dataType");
-    YamlMap contentRule = rule[dataType];
-    _log.fine("contentRule=$contentRule");
     switch (dataType) {
       case "object":
+        YamlMap contentRule = rule[dataType];
+        _log.fine("contentRule=$contentRule");
         var object = {};
         contentRule.forEach((key, value) {
           String result = _recursionQuery(json, pJPath, value);
@@ -48,12 +48,16 @@ class YamlJsonParser extends Parser{
         });
         return jsonEncode(object);
       case "list":
+        YamlMap contentRule = rule[dataType];
+        _log.fine("contentRule=$contentRule");
+
         YamlMap getNodesRule = contentRule["getNodes"];
         String listJpath = _getJsonPath(getNodesRule);
         _log.fine("listJpath=$listJpath");
-        List<dynamic> jsonList = _jsonPathN(json, listJpath);
 
+        List<dynamic> jsonList = _jsonPathN(json, listJpath);
         YamlMap foreachRule = contentRule["foreach"];
+
         var list = [];
         _log.fine("listList=$jsonList");
         for (int i = 0; i < jsonList.length; i++) {

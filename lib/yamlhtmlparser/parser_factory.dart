@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:MoeLoaderFlutter/yamlhtmlparser/utils.dart';
 import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_parse_mix.dart';
 import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_rule_factory.dart';
 import 'package:logging/logging.dart';
@@ -34,7 +35,7 @@ abstract class Parser {
     YamlMap meta = yamlDoc['meta'];
     YamlMap? headersRule = meta['headers'];
     _log.fine("getHeaders:result=$headersRule");
-    return jsonEncode(headersRule);
+    return toResult(success, "解析成功", headersRule);
   }
 
   Future<String> homeUrl(String sourceName, String page,
@@ -50,7 +51,7 @@ abstract class Parser {
     _log.fine("chooseOption=$chooseOption");
     url = await _formatUrl(yamlDoc, link, page, chooseOption: chooseOption);
     _log.fine("getJsonHomeUrl:url=$url");
-    return url;
+    return toResult(success, "解析成功", url);
   }
 
   Future<String> searchUrl(String sourceName, String page, String searchKey,
@@ -71,23 +72,19 @@ abstract class Parser {
     url = await _formatUrl(yamlDoc, link, page,
         searchKey: searchKey, chooseOption: chooseOption);
     _log.fine("getJsonSearchUrl:url=$url");
-    return url;
+    return toResult(success, "解析成功", url);
   }
 
   Future<String> webPageName(String sourceName) async {
     YamlMap yamlDoc = await YamlRuleFactory().create(sourceName);
-    return webPageNameByDoc(yamlDoc);
-  }
-
-  Future<String> webPageNameByDoc(YamlMap doc) async {
-    return doc["meta"]?["name"] ?? "";
+    return toResult(success, "解析成功", yamlDoc["meta"]?["name"] ?? "");
   }
 
   Future<String> options(String sourceName) async {
     YamlMap yamlDoc = await YamlRuleFactory().create(sourceName);
     var optionsRule = yamlDoc["url"]["options"];
     _log.fine("optionsRule=$optionsRule");
-    return jsonEncode(optionsRule);
+    return toResult(success, "解析成功", optionsRule);
   }
 
   String _findOptionParam(YamlMap yamlDoc, Option option) {
@@ -140,6 +137,7 @@ abstract class Parser {
     }
     return url;
   }
+
 
   Future<String> parseUseYaml(String content, String sourceName, String pageName);
 }

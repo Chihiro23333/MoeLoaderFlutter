@@ -69,10 +69,6 @@ class YamlRuleFactory {
   Future<void> _addAssets(String fileName) async {
     Rule rule = Rule("assets", "sources/$fileName.yaml", fileName);
     await _loadRule(rule);
-    YamlMap? doc = _ruleMap[rule];
-    if(doc != null){
-      rule.name = await ParserFactory().createParser().webPageNameByDoc(doc);
-    }
     _ruleList.add(rule);
   }
 

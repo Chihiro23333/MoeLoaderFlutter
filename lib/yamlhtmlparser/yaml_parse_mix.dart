@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:MoeLoaderFlutter/yamlhtmlparser/parser_factory.dart';
+import 'package:MoeLoaderFlutter/yamlhtmlparser/utils.dart';
 import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_parse_html.dart';
 import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_parse_json.dart';
 import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_rule_factory.dart';
@@ -34,9 +35,9 @@ class MixParser extends Parser {
     }
 
     //结果验证
-    YamlList? resultRule = page["onValidateResult"]?["result"];
-    if (resultRule != null) {
-      Iterator iterator = resultRule.iterator;
+    YamlList? onValidateRule = page["onValidateResult"];
+    if (onValidateRule != null) {
+      Iterator iterator = onValidateRule.iterator;
       while (iterator.moveNext()) {
         YamlMap item = iterator.current;
         RegExp regExp = RegExp(item["regex"]);
@@ -51,10 +52,10 @@ class MixParser extends Parser {
             code = Parser.needChallenge;
             message = "需要安全挑战";
           }
-          return _toResult(code, message, "");
+          return toResult(code, message, "");
         }
       }
-      return _toResult(Parser.fail, "结果验证失败", "");
+      return toResult(Parser.fail, "结果验证失败", "");
     }
 
     //预处理文本，拿到需要解析的信息
@@ -72,15 +73,7 @@ class MixParser extends Parser {
       data = await _yamlHtmlParser.parseUseYaml(
           content, sourceName, pageName);
     }
-    return _toResult(Parser.success, "解析成功", data);
-  }
-
-  String _toResult(int code, String message, String data) {
-    var object = {};
-    object["code"] = code;
-    object["message"] = message;
-    object["data"] = jsonDecode(data);
-    return jsonEncode(object);
+    return toResult(Parser.success, "解析成功", jsonDecode(data));
   }
 
 }

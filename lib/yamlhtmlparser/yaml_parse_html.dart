@@ -13,7 +13,8 @@ class YamlHtmlParser extends Parser {
   static const defaultSeparator = ",";
 
   @override
-  Future<String> parseUseYaml(String content, String sourceName, String pageName) async {
+  Future<String> parseUseYaml(
+      String content, String sourceName, String pageName) async {
     _log.fine("html=$content");
     YamlMap doc = await YamlRuleFactory().create(sourceName);
     YamlMap? page = doc[pageName];
@@ -32,14 +33,14 @@ class YamlHtmlParser extends Parser {
   String _recursionQuery(Element? element, YamlMap rule) {
     String? dataType;
     for (var element in rule.keys) {
-      if(element.toString() == "contentType")continue;
+      if (element.toString() == "contentType") continue;
       dataType = element.toString();
     }
-    _log.fine("dataType=$dataType");
-    YamlMap contentRule = rule[dataType];
-    _log.fine("contentRule=$contentRule");
+    _log.info("dataType=$dataType");
     switch (dataType) {
       case "object":
+        YamlMap contentRule = rule[dataType];
+        _log.fine("contentRule=$contentRule");
         var object = {};
         contentRule.forEach((key, value) {
           String result = _recursionQuery(element, value);
@@ -48,6 +49,8 @@ class YamlHtmlParser extends Parser {
         });
         return jsonEncode(object);
       case "list":
+        YamlMap contentRule = rule[dataType];
+        _log.fine("contentRule=$contentRule");
         YamlMap foreachRule = contentRule["foreach"];
         List list = [];
         List<Element> listList = _queryN(element, contentRule);
@@ -56,7 +59,7 @@ class YamlHtmlParser extends Parser {
           var item = {};
           foreachRule.forEach((key, value) {
             String result = _recursionQuery(element, value);
-            _log.fine("propName=$key;propValue=$result");
+            _log.info("propName=$key;propValue=$result");
             item[key] = result;
           });
           list.add(item);
@@ -111,9 +114,9 @@ class YamlHtmlParser extends Parser {
     result = _get(element, yamlMap['get']);
     _log.fine("get=$result");
     //第二步，查找值
-    var filterRule = yamlMap["filter"];
-    if (filterRule != null) {
-      result = _find(result, filterRule);
+    var findRule = yamlMap["find"];
+    if (findRule != null) {
+      result = _find(result, findRule);
       _log.fine("filter=$result");
     }
     //第三步，规整拼接值
@@ -202,19 +205,18 @@ class YamlHtmlParser extends Parser {
     }
   }
 
-  String _find(String value, YamlMap yamlMap) {
+  String _find(String value, YamlList yamlMap) {
     String result = value;
-    yamlMap.forEach((key, value) {
+    for (var item in yamlMap) {
       RegExp? linkRegExp;
-      String? findRule = yamlMap["find"];
-      if (findRule == null) throw "first rule must be regex！";
-      linkRegExp = RegExp(findRule);
-      int? indexRule = yamlMap["index"];
-      if (indexRule != null) {
+      String? regex = item["regex"];
+      if (regex != null) {
+        linkRegExp = RegExp(regex);
+        int indexRule = item["index"] ?? 0;
         result = linkRegExp.firstMatch(value)?.group(indexRule) ?? "";
       }
       result = _regularString(result);
-    });
+    }
     return result;
   }
 
