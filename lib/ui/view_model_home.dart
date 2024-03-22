@@ -23,11 +23,16 @@ class HomeViewModel {
     DownloadManager().downloadStream().listen((downloadState) {
       List<DownloadTask> list = downloadState.tasks;
       for (YamlHomePageItem item in _homeState.list) {
+        bool find = false;
         for (DownloadTask task in list) {
           if (task.id == item.href) {
             item.downloadState = task.downloadState;
             _log.fine("id=${task.id};task.downloadState=${task.downloadState}");
+            find = true;
           }
+        }
+        if(!find){
+          item.downloadState = DownloadTask.idle;
         }
       }
       streamHomeController.add(_homeState);
@@ -45,7 +50,7 @@ class HomeViewModel {
     }
     changeLoading(true);
 
-    page = page ?? _homeState.page.toString();
+    page = page ?? (++_homeState.page).toString();
     YamlMap doc = await YamlRuleFactory().create(Global.curWebPageName);
     bool home = tags == null;
     String url;
@@ -79,7 +84,7 @@ class HomeViewModel {
       }
       var dataList = _homeState.list;
       dataList.addAll(list);
-      _homeState.page++;
+      _homeState.page = int.parse(page);
       streamHomeController.add(_homeState);
     } else {
       _homeState.error = true;
@@ -133,7 +138,7 @@ class HomeViewModel {
 
 class HomeState {
   List<YamlHomePageItem> list = [];
-  int page = 1;
+  int page = 0;
   bool loading = false;
   bool error = false;
   bool canSearch = true;
@@ -143,7 +148,7 @@ class HomeState {
 
   void reset() {
     list.clear();
-    page = 1;
+    page = 0;
     loading = false;
     error = false;
     canSearch = true;

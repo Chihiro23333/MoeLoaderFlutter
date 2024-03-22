@@ -72,10 +72,10 @@ void showUrlList(BuildContext context, String href, CommonInfo? commonInfo) {
                     if (isImageUrl(url) && url.isNotEmpty) {
                       children
                           .add(buildDownloadItem(context, url, "预览图($url)", () {
-                        Navigator.of(context).pop();
                         detailViewModel.download(
                             href, url, yamlDetailPage.commonInfo);
                         showToast("已将图片加入下载列表");
+                        Navigator.of(context).pop();
                       }));
                     }
                     if (bigUrl != null && bigUrl.isNotEmpty) {
@@ -84,10 +84,10 @@ void showUrlList(BuildContext context, String href, CommonInfo? commonInfo) {
                       ));
                       children.add(
                           buildDownloadItem(context, bigUrl, "大图($bigUrl)", () {
-                        Navigator.of(context).pop();
                         detailViewModel.download(
                             href, bigUrl, yamlDetailPage.commonInfo);
                         showToast("已将图片加入下载列表");
+                        Navigator.of(context).pop();
                       }));
                     }
                     if (rawUrl != null && rawUrl.isNotEmpty) {
@@ -96,10 +96,10 @@ void showUrlList(BuildContext context, String href, CommonInfo? commonInfo) {
                       ));
                       children.add(
                           buildDownloadItem(context, rawUrl, "原图($rawUrl)", () {
-                        Navigator.of(context).pop();
                         detailViewModel.download(
                             href, rawUrl, yamlDetailPage.commonInfo);
                         showToast("已将图片加入下载列表");
+                        Navigator.of(context).pop();
                       }));
                     }
                     if (children.isEmpty) {

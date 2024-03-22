@@ -164,4 +164,5 @@ abstract class Parser {
   Future<List<YamlHomePageItem>> parseSearch(String content, YamlMap webPage);
 
   Future<YamlDetailPage> parseDetail(String content, YamlMap webPage);
+
 }

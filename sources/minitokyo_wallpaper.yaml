@@ -9,10 +9,10 @@ display:
   aspectRatio: 1.65
 
 url:
-  home: {link: "http://gallery.minitokyo.net/wallpapers?time=1&order=id&page=${page}" }
-  search: {link: "http://www.minitokyo.net/search?q=${tag}", tagConnector: "" }
+  home: {link: "http://gallery.minitokyo.net/wallpapers?time=1&order=id&page=${page}&display=extensive" }
+  search: {link: "http://browse.minitokyo.net/gallery?tid=${tag}&order=id&index=1&display=extensive", tagConnector: "" }
 
-homePage:
+homePage: &HOMEPAGE
   onParseResult:
     list:
       getElements: { cssSelector: "ul[class=wallpapers] li[style^=float]" }
@@ -32,6 +32,9 @@ homePage:
           get: { cssSelector: "p", text: "" }
           filter: { regex: 'x(\d+)', index: 1 }
 
+searchPage:
+  *HOMEPAGE
+
 detailPage:
   onParseResult:
     object:
@@ -45,3 +48,13 @@ detailPage:
         get: { cssSelector: "link[rel=canonical]", text: "href" }
         format:
           - replaceAll: { from: "/view/", to: "" }
+      tags:
+        list:
+          getElements: { cssSelector: "#content p[class=more]" }
+          foreach:
+            desc:
+              get: { cssSelector: "", text: "" }
+              filter: { regex: "(?<=Browse).*?(?=Gallery:)", index: 0 }
+            tag:
+              get: { cssSelector: "a", attr: "href" }
+              filter: { regex: "(?<=tid=).*?(?=&)", index: 0 }

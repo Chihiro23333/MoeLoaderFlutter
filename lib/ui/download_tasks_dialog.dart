@@ -1,7 +1,9 @@
+import 'package:clipboard/clipboard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../init.dart';
 import '../net/download.dart';
+import 'common_function.dart';
 
 void showDownloadTasks(BuildContext context) {
   showModalBottomSheet(
@@ -44,6 +46,11 @@ void showDownloadTasks(BuildContext context) {
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                       subtitle: downloadProgress(progress),
+                      trailing: IconButton(
+                          onPressed: () async {
+                            DownloadManager().cancelTask(downloadTask);
+                          },
+                          icon: const Icon(Icons.cancel)),
                     );
                   },
                   separatorBuilder: (BuildContext context, int index) {

@@ -53,13 +53,13 @@ class DioHttp {
   }
 
   Future<Response> download(String url, String name,
-      {ProgressCallback? onReceiveProgress}) async {
+      {ProgressCallback? onReceiveProgress, CancelToken? cancelToken}) async {
     int index = url.lastIndexOf(".");
     String suffix = url.substring(index, url.length);
     Directory directory = Global.downloadsDirectory;
     _log.fine("suffix=$suffix;path=${directory.path}");
     return await _dio.download(url, "${directory.path}\\$name$suffix",
-        onReceiveProgress: onReceiveProgress);
+        onReceiveProgress: onReceiveProgress, cancelToken: cancelToken);
   }
 
   Future<void> updateCookies(Uri uri, String cookiesString) async {

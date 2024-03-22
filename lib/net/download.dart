@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:MoeLoaderFlutter/net/request_manager.dart';
 import 'package:MoeLoaderFlutter/utils/sharedpreferences_utils.dart';
 import 'package:MoeLoaderFlutter/yamlhtmlparser/models.dart';
+import 'package:dio/dio.dart';
 import 'package:logging/logging.dart';
 import 'package:yaml/yaml.dart';
 
@@ -31,9 +32,18 @@ class DownloadManager {
 
   final YamlRepository repository = YamlRepository();
 
+  CancelToken? _curCancelToken;
+
   void addTask(DownloadTask downloadTask) {
     _tasks().add(downloadTask);
     downloadTask.downloadState = DownloadTask.waiting;
+    _update();
+    _downloadNext();
+  }
+
+  void cancelTask(DownloadTask task){
+    _curCancelToken?.cancel();
+    _tasks().removeWhere((element) => task.url == element.url);
     _update();
     _downloadNext();
   }
@@ -132,6 +142,7 @@ class DownloadManager {
     if (downloadTask.downloadUrl.isEmpty) {
       _downloadNext();
     } else {
+      _curCancelToken = CancelToken();
       RequestManager().download(downloadTask.downloadUrl, downloadTask.name,
           onReceiveProgress: (int count, int total) {
         downloadTask.count = count;
@@ -143,7 +154,8 @@ class DownloadManager {
         if (complete) {
           _downloadNext();
         }
-      });
+      },
+      cancelToken:_curCancelToken);
     }
   }
 
