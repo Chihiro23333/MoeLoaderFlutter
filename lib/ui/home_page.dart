@@ -325,7 +325,7 @@ class _HomeState extends State<HomePage> {
   Widget _buildBody(BuildContext context, AsyncSnapshot snapshot) {
     if (snapshot.connectionState == ConnectionState.active) {
       HomeState homeState = snapshot.data;
-      if (homeState.error) {
+      if (homeState.error && homeState.page <= 1) {
         List<Widget> children = [];
         children.add(ElevatedButton(
             onPressed: () {

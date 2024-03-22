@@ -17,7 +17,7 @@ homePage: &HOMEPAGE
     exception: {code: "403",  action: "challenge"}
   onParseResult:
     list:
-      getElements: { cssSelector: ".item" }
+      getElements: { cssSelector: "div[id^=content_]" }
       foreach:
         coverUrl:
           get: { cssSelector: "img[class=thumb]", attr: "src" }
