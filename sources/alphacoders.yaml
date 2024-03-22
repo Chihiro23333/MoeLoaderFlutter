@@ -1,6 +1,8 @@
 meta:
   name: "alphacoders.com"
   type: "assets"
+  headers:
+    user-agent: "Dart/3.2 (dart:io)"
 
 display:
   columnCount: 5

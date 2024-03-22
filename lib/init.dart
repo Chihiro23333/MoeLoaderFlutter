@@ -24,6 +24,7 @@ class Global{
   static late WebPage _curWebPage;
   static late bool _supportWebView2 = false;
   bool _proxyInited = false;
+  ProxyHttpOverrides? _proxyHttpOverrides;
 
   Future<void> init() async{
     String? webViewVersion = await WebviewController.getWebViewVersion();
@@ -34,8 +35,8 @@ class Global{
       }catch(e){}
     }
     _initHive();
-    await updateProxy();
     await RequestManager().init();
+    await updateProxy();
     await YamlRuleFactory().init();
     await updateCurWebPage(YamlRuleFactory().webPageList()[0]);
     Logger.root.level = Level.INFO; // defaults to Level.INFO
@@ -62,12 +63,19 @@ class Global{
     print("proxy=$proxy");
     if(!_proxyInited){
       SocksProxy.initProxy(proxy: proxy, onCreate: (client){
-        client.userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36";
+        client.userAgent = null;
       });
       _proxyInited = true;
     }else{
       SocksProxy.setProxy(proxy);
     }
+    // String? proxy = await getProxy();
+    // if(_proxyHttpOverrides == null){
+    //   _proxyHttpOverrides = ProxyHttpOverrides(proxy);
+    //   HttpOverrides.global = _proxyHttpOverrides;
+    // }else{
+    //   _proxyHttpOverrides?.setProxy = proxy;
+    // }
   }
 
   void _initHive() {
@@ -91,4 +99,35 @@ class WebPage{
   Rule rule;
 
   WebPage(this.webPage, this.rule);
+}
+
+class ProxyHttpOverrides extends HttpOverrides {
+
+  String? _proxy;
+
+  ProxyHttpOverrides(this._proxy);
+
+  String? get proxyStr => _proxy;
+
+  set setProxy(String? proxy){
+    _proxy = proxy;
+  }
+
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    print("createHttpClient:proxy=$_proxy");
+    final client = super.createHttpClient(context);
+    client.connectionTimeout = const Duration(seconds: 10);
+    client.findProxy = (uri) => (_proxy == null || _proxy!.isEmpty) ? "DIRECT" : "PROXY $_proxy";
+    client.badCertificateCallback = (X509Certificate cert, String host, int port){
+      final ipv4RegExp = RegExp(
+          r'^((25[0-5]|2[0-4]\d|[0-1]?\d?\d)(\.(25[0-5]|2[0-4]\d|[0-1]?\d?\d)){3})$');
+      if(ipv4RegExp.hasMatch(host)){
+        // 允许ip访问
+        return true;
+      }
+      return false;
+    };
+    return client;
+  }
 }
