@@ -30,9 +30,10 @@ class DioHttp {
   }
 
   Future<String> get(String url, {Map<String, String>? headers}) async {
+    _log.info("url=${url}");
     BaseOptions baseOptions = _dio.options;
     Map<String, dynamic> nowHeaders = baseOptions.headers;
-    _log.info("nowHeaders=${nowHeaders}");
+    _log.fine("nowHeaders=${nowHeaders}");
     nowHeaders.clear();
     if (headers != null) {
       headers.forEach((key, value) {

@@ -50,7 +50,7 @@ class HomeViewModel {
     }
     changeLoading(true);
 
-    String realPage = page ?? _homeState.page.toString();
+    String realPage = page ?? (_homeState.page + 1).toString();
     YamlMap doc = await YamlRuleFactory().create(Global.curWebPageName);
     bool home = tags == null;
     String url;
@@ -58,7 +58,7 @@ class HomeViewModel {
       url = await _parser().getHomeUrl(doc, realPage, optionList: optionList);
     } else {
       url = await _parser()
-          .getSearchUrl(doc, page: page, tags: tags, optionList: optionList);
+          .getSearchUrl(doc, page: realPage, tags: tags, optionList: optionList);
     }
 
     String siteName = await _parser().getName(doc);
@@ -73,7 +73,7 @@ class HomeViewModel {
     ValidateResult<String> result =
         await repository.home(url, headers: headers);
     _homeState.code = result.code;
-    _log.fine("result.code=${result.code}");
+    _log.info("result.code=${result.code}");
     if (result.validateSuccess) {
       _homeState.error = false;
       List<YamlHomePageItem> list;
@@ -84,9 +84,7 @@ class HomeViewModel {
       }
       var dataList = _homeState.list;
       dataList.addAll(list);
-      if(page == null){
-        _homeState.page++;
-      }
+      _homeState.page = int.parse(realPage);
       streamHomeController.add(_homeState);
     } else {
       _homeState.error = true;
@@ -140,7 +138,7 @@ class HomeViewModel {
 
 class HomeState {
   List<YamlHomePageItem> list = [];
-  int page = 1;
+  int page = 0;
   bool loading = false;
   bool error = false;
   bool canSearch = true;
@@ -150,7 +148,7 @@ class HomeState {
 
   void reset() {
     list.clear();
-    page = 1;
+    page = 0;
     loading = false;
     error = false;
     canSearch = true;

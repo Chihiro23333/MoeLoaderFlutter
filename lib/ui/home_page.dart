@@ -464,7 +464,7 @@ class _HomeState extends State<HomePage> {
                           commonInfo: yamlHomePageItem.commonInfo);
                     }),
                   );
-                  _log.fine("naviResult=$naviResult");
+                  _log.info("naviResult=$naviResult");
                   if (naviResult?.data != null) {
                     _updateTag(naviResult?.data);
                     _requestData(clearAll: true);

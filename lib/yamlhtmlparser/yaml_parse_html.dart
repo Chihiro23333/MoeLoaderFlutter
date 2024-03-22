@@ -188,12 +188,12 @@ class YamlHtmlParser extends Parser {
     String result = "";
     //第一步，定位元素并获取值
     result = _get(element, yamlMap['get']);
-    _log.info("get=$result");
+    _log.fine("get=$result");
     //第二步，查找值并选择选择值
     var filterRule = yamlMap["filter"];
     if (filterRule != null) {
       result = _filter(result, filterRule);
-      _log.info("filter=$result");
+      _log.fine("filter=$result");
     }
     //第三步，规整拼接值
     var formatRule = yamlMap["format"];
