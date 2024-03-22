@@ -71,7 +71,7 @@ class YamlRuleFactory {
     await _loadRule(rule);
     YamlMap? doc = _ruleMap[rule];
     if(doc != null){
-      rule.name = await ParserFactory().createParser().getName(doc);
+      rule.name = await ParserFactory().createParser().webPageNameByDoc(doc);
     }
     _ruleList.add(rule);
   }

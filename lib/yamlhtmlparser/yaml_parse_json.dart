@@ -1,11 +1,9 @@
 import 'dart:convert';
-
 import 'package:MoeLoaderFlutter/yamlhtmlparser/parser_factory.dart';
 import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_rule_factory.dart';
 import 'package:json_path/json_path.dart';
 import 'package:logging/logging.dart';
 import 'package:yaml/yaml.dart';
-import 'models.dart';
 
 class YamlJsonParser extends Parser{
 
@@ -74,37 +72,6 @@ class YamlJsonParser extends Parser{
     }
   }
 
-  @override
-  Future<List<YamlHomePageItem>> parseHome(String content, YamlMap webPage) async {
-    _log.fine("jsonStr=$content");
-    List<YamlHomePageItem> dataList = _listHomeLit(content, webPage);
-    return dataList;
-  }
-
-  @override
-  Future<List<YamlHomePageItem>> parseSearch(String content, YamlMap webPage) {
-    return parseHome(content, webPage);
-  }
-
-  @override
-  Future<YamlDetailPage> parseDetail(String jsonStr, YamlMap webPage) async {
-    _log.fine("jsonStr=$jsonStr");
-    var json = jsonDecode(jsonStr);
-    YamlMap object = webPage['object'];
-    YamlMap urlRule = object['url'];
-    YamlMap? previewRule = object['preview'];
-
-    String url = _getOne(json, "", urlRule);
-    _log.fine("url=$url");
-    String preview = _getOne(json, "", previewRule);
-    _log.fine("preview=$preview");
-    CommonInfo commonInfo = _getCommonInfo(json, object, "");
-    _log.fine("commonInfo=${commonInfo.id}");
-    YamlDetailPage yamlDetailPage =
-        YamlDetailPage(url, preview, commonInfo: commonInfo);
-    return yamlDetailPage;
-  }
-
   Future<String> preprocess(String content, YamlMap preprocessNode) async {
     String? contentType  = preprocessNode["contentType"];
     _log.fine("contentType=$contentType,jsonStr=$content");
@@ -113,42 +80,6 @@ class YamlJsonParser extends Parser{
       return _getOne(json, "", preprocessNode);
     }
     return content;
-  }
-
-  List<YamlHomePageItem> _listHomeLit(String jsonStr, YamlMap webPage) {
-    var json = jsonDecode(jsonStr);
-    YamlMap list = webPage["onParseResult"]["list"];
-    YamlMap getNodesRule = list["getNodes"];
-
-    YamlMap foreach = list["foreach"];
-
-    YamlMap coverUrlRule = foreach["coverUrl"];
-
-    YamlMap hrefRule = foreach["href"];
-    YamlMap? widthRule = foreach['width'];
-    YamlMap? heightRule = foreach['height'];
-
-    List<YamlHomePageItem> dataList = [];
-    String listJpath = _getJsonPath(getNodesRule);
-    _log.fine("listJpath=$listJpath");
-    List<dynamic> jsonList = _jsonPathN(json, listJpath);
-    for (int i = 0; i < jsonList.length; i++) {
-      String coverUrl = _getOne(json, listJpath, coverUrlRule, index: i);
-      _log.fine("coverUrl=$coverUrl");
-      String href = _getOne(json, listJpath, hrefRule, index: i);
-      _log.fine("href=$href");
-      String width = _getOne(json, listJpath, widthRule, index: i, defaultValue: "0");
-      _log.fine("width=$width");
-      String height =
-          _getOne(json, listJpath, heightRule, index: i, defaultValue: "0");
-      _log.fine("height=$height");
-      CommonInfo commonInfo = _getCommonInfo(json, foreach, listJpath, index: i);
-      _log.fine("commonInfo=$commonInfo");
-      dataList.add(YamlHomePageItem(
-          coverUrl, href, double.parse(width), double.parse(height),
-          commonInfo: commonInfo));
-    }
-    return dataList;
   }
 
   String _getJsonPath(YamlMap rule) {
@@ -178,41 +109,6 @@ class YamlJsonParser extends Parser{
     }
   }
 
-  CommonInfo _getCommonInfo(
-      Map<String, dynamic> json, YamlMap yamlMap, String pJPath,{int? index}) {
-    YamlMap? idRule = yamlMap['id'];
-    YamlMap? authorRule = yamlMap['author'];
-    YamlMap? charactersRule = yamlMap['characters'];
-    YamlMap? fileSizeRule = yamlMap['fileSize'];
-    YamlMap? dimensionsRule = yamlMap['dimensions'];
-    YamlMap? sourceRule = yamlMap['source'];
-    YamlMap? bigUrlRule = yamlMap['bigUrl'];
-    YamlMap? rawUrlRule = yamlMap['rawUrl'];
-    YamlMap? tagsRule = yamlMap['tags'];
-
-    String id = _getOne(json, pJPath, idRule, index: index);
-    _log.fine("id=$id");
-    String author = _getOne(json, pJPath, authorRule, index: index);
-    _log.fine("author=$author");
-    String characters = _getOne(json, pJPath, charactersRule, index: index);
-    _log.fine("characters=$characters");
-    String fileSize = _getOne(json, pJPath, fileSizeRule, index: index);
-    _log.fine("fileSize=$fileSize");
-    String dimensions = _getOne(json, pJPath, dimensionsRule, index: index);
-    _log.fine("dimensions=$dimensions");
-    String source = _getOne(json, pJPath, sourceRule, index: index);
-    _log.fine("source=$source");
-    String rawUrl = _getOne(json, pJPath, rawUrlRule, index: index);
-    _log.fine("rawUrl=$rawUrl");
-    String bigUrl = _getOne(json, pJPath, bigUrlRule, index: index);
-    _log.fine("bigUrl=$bigUrl");
-    List<YamlTag> tagsList = _listTags(json, tagsRule, pJPath, index);
-    _log.fine("tagsList=${tagsList.length}");
-    CommonInfo commonInfo = CommonInfo(
-        id, author, characters, fileSize, dimensions, source, bigUrl, rawUrl, tagsList);
-    return commonInfo;
-  }
-
   String _getOne(Map<String, dynamic> json, String pJPath, YamlMap? rule,
       {int? index, String defaultValue = ""}) {
     if (rule == null) {
@@ -223,56 +119,6 @@ class YamlJsonParser extends Parser{
       _log.fine("_getOne result=$result");
       return result;
     }
-  }
-
-  List<YamlTag> _listTags(
-      Map<String, dynamic> json,
-      YamlMap? tagsRule,
-      String pJPath,
-      int? index
-      ) {
-    List<YamlTag> tagsList = [];
-    if (tagsRule != null) {
-      YamlMap listRule = tagsRule["list"];
-      YamlMap? getNodesRule = listRule["getNodes"];
-      if(getNodesRule != null){
-        YamlMap? foreach = listRule["foreach"];
-        _log.fine("foreach=$foreach");
-        String queryJPath = _formatJsonPath(pJPath, _getJsonPath(getNodesRule), index);
-        List<dynamic> listList = _jsonPathN(json, queryJPath);
-        if(foreach == null){
-          for (int i = 0; i < listList.length; i++ ) {
-            String tagStr = listList[i];
-            tagsList.add(YamlTag(tagStr, tagStr));
-          }
-        }else{
-          YamlMap descRule = foreach["desc"];
-          YamlMap tagRule = foreach["tag"];
-          for (int i = 0; i < listList.length; i++ ) {
-            String desc = _getOne(json,queryJPath, descRule, index: index);
-            _log.fine("desc=$desc");
-            String tag = _getOne(json,queryJPath, tagRule, index: index);
-            _log.fine("tags=$desc");
-            tagsList.add(YamlTag(desc, tag));
-          }
-        }
-      }
-
-      YamlMap? getRule = listRule["get"];
-      YamlMap? toListRule = listRule["toList"];
-      if(getRule != null){
-        String separator = toListRule?["separator"] ?? defaultSeparator;
-        String queryJPath = _formatJsonPath(pJPath, _getJsonPath(getRule), index);
-        String tagStr = _jsonPathOne(json, queryJPath);
-        _log.fine("tagStr=$tagStr");
-        if(tagStr.isNotEmpty){
-          tagStr.split(separator).forEach((element) {
-            tagsList.add(YamlTag(element, element));
-          });
-        }
-      }
-    }
-    return tagsList;
   }
 
   Future<String> homeRequestBy(YamlMap webPage) async {

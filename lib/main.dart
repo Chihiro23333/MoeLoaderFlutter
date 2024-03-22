@@ -1,7 +1,7 @@
+import 'package:MoeLoaderFlutter/ui/demo_page.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:MoeLoaderFlutter/init.dart';
-import 'package:MoeLoaderFlutter/ui/home_page.dart';
 
 void main(List<String> args) {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Global.defaultColor),
         useMaterial3: true,
       ),
-      home: const HomePage()
+      home: const DemoPage()
     );
   }
 }

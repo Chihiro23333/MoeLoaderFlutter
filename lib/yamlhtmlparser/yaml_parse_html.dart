@@ -1,12 +1,10 @@
 import 'dart:convert';
-
 import 'package:MoeLoaderFlutter/yamlhtmlparser/parser_factory.dart';
 import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_rule_factory.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart';
 import 'package:logging/logging.dart';
 import 'package:yaml/yaml.dart';
-import 'models.dart';
 
 class YamlHtmlParser extends Parser {
   final _log = Logger('YamlHtmlCommonParser');
@@ -51,7 +49,7 @@ class YamlHtmlParser extends Parser {
         return jsonEncode(object);
       case "list":
         YamlMap foreachRule = contentRule["foreach"];
-        var list = [];
+        List list = [];
         List<Element> listList = _queryN(element, contentRule);
         _log.fine("listList=$listList");
         for (Element element in listList) {
@@ -70,42 +68,6 @@ class YamlHtmlParser extends Parser {
     }
   }
 
-  @override
-  Future<List<YamlHomePageItem>> parseHome(
-      String content, YamlMap webPage) async {
-    _log.fine("html=$content");
-    Document document = parse(content);
-    Element? body = document.querySelector("html");
-    List<YamlHomePageItem> dataList = _listHomeLit(body, webPage);
-    return dataList;
-  }
-
-  @override
-  Future<List<YamlHomePageItem>> parseSearch(String content, YamlMap webPage) {
-    return parseHome(content, webPage);
-  }
-
-  @override
-  Future<YamlDetailPage> parseDetail(String content, YamlMap webPage) async {
-    _log.fine("html=$content");
-    Document document = parse(content);
-
-    YamlMap object = webPage['object'];
-    YamlMap urlRule = object['url'];
-    YamlMap? previewRule = object['preview'];
-
-    Element? body = document.querySelector("html");
-    String url = _getOne(body, urlRule);
-    _log.fine("url=$url");
-    String preview = _getOne(body, previewRule);
-    _log.fine("preview=$preview");
-    CommonInfo commonInfo = _getCommonInfo(object, body);
-    _log.fine("commonInfo=${commonInfo.id}");
-    YamlDetailPage yamlDetailPage =
-        YamlDetailPage(url, preview, commonInfo: commonInfo);
-    return yamlDetailPage;
-  }
-
   Future<String> preprocess(String content, YamlMap preprocessNode) async {
     String? contentType = preprocessNode["contentType"];
     _log.fine("contentType=$contentType,html=$content");
@@ -117,69 +79,6 @@ class YamlHtmlParser extends Parser {
     return content;
   }
 
-  List<YamlHomePageItem> _listHomeLit(Element? element, YamlMap webPage) {
-    YamlMap list = webPage["onParseResult"]["list"];
-    YamlMap foreach = list["foreach"];
-
-    YamlMap coverUrlRule = foreach["coverUrl"];
-    YamlMap hrefRule = foreach["href"];
-    YamlMap? widthRule = foreach['width'];
-    YamlMap? heightRule = foreach['height'];
-
-    List<YamlHomePageItem> dataList = [];
-    List<Element> listList = _queryN(element, list);
-    for (Element element in listList) {
-      String coverUrl = _getOne(element, coverUrlRule);
-      _log.fine("coverUrl=$coverUrl");
-      String href = _getOne(element, hrefRule);
-      _log.fine("href=$href");
-      String width = _getOne(element, widthRule, defaultValue: "0");
-      _log.fine("width=$width");
-      String height = _getOne(element, heightRule, defaultValue: "0");
-      _log.fine("height=$height");
-      CommonInfo commonInfo = _getCommonInfo(foreach, element);
-      _log.fine("commonInfo=$commonInfo");
-      dataList.add(YamlHomePageItem(
-          coverUrl, href, double.parse(width), double.parse(height),
-          commonInfo: commonInfo));
-    }
-    return dataList;
-  }
-
-  CommonInfo _getCommonInfo(YamlMap yamlMap, Element? element) {
-    YamlMap? idRule = yamlMap['id'];
-    YamlMap? authorRule = yamlMap['author'];
-    YamlMap? charactersRule = yamlMap['characters'];
-    YamlMap? fileSizeRule = yamlMap['fileSize'];
-    YamlMap? dimensionsRule = yamlMap['dimensions'];
-    YamlMap? sourceRule = yamlMap['source'];
-    YamlMap? bigUrlRule = yamlMap['bigUrl'];
-    YamlMap? rawUrlRule = yamlMap['rawUrl'];
-    YamlMap? tagsRule = yamlMap['tags'];
-
-    String id = _getOne(element, idRule);
-    _log.fine("id=$id");
-    String author = _getOne(element, authorRule);
-    _log.fine("author=$author");
-    String characters = _getOne(element, charactersRule);
-    _log.fine("characters=$characters");
-    String fileSize = _getOne(element, fileSizeRule);
-    _log.fine("fileSize=$fileSize");
-    String dimensions = _getOne(element, dimensionsRule);
-    _log.fine("dimensions=$dimensions");
-    String source = _getOne(element, sourceRule);
-    _log.fine("source=$source");
-    String rawUrl = _getOne(element, rawUrlRule);
-    _log.fine("rawUrl=$rawUrl");
-    String bigUrl = _getOne(element, bigUrlRule);
-    _log.fine("bigUrl=$bigUrl");
-    List<YamlTag> tagsList = _listTags(element, tagsRule);
-    _log.fine("tagsList=${tagsList.length}");
-    CommonInfo commonInfo = CommonInfo(id, author, characters, fileSize,
-        dimensions, source, bigUrl, rawUrl, tagsList);
-    return commonInfo;
-  }
-
   String _getOne(Element? element, YamlMap? rule, {String defaultValue = ""}) {
     if (rule == null) {
       return defaultValue;
@@ -188,43 +87,6 @@ class YamlHtmlParser extends Parser {
       _log.fine("_getOne result=$result");
       return result;
     }
-  }
-
-  List<YamlTag> _listTags(Element? element, YamlMap? tagsRule) {
-    List<YamlTag> tagsList = [];
-    if (tagsRule != null) {
-      YamlMap listRule = tagsRule["list"];
-      YamlMap? foreach = listRule["foreach"];
-      _log.fine("foreach=$foreach");
-      //字符传转数组
-      if (foreach == null) {
-        YamlMap? toListRule = listRule["toList"];
-        YamlMap? easyGet = listRule["get"];
-        if (easyGet != null) {
-          String tags = _getOne(element, listRule);
-          String separator = toListRule?["separator"] ?? defaultSeparator;
-          _log.fine("tags=$tags");
-          if (tags.isNotEmpty) {
-            tags.split(separator).forEach((element) {
-              tagsList.add(YamlTag(element, element));
-            });
-          }
-          return tagsList;
-        }
-      } else {
-        List<Element>? listList = _queryN(element, listRule);
-        YamlMap descRule = foreach["desc"];
-        YamlMap tagRule = foreach["tag"];
-        for (Element element in listList) {
-          String desc = _getOne(element, descRule);
-          _log.fine("desc=$desc");
-          String tag = _getOne(element, tagRule);
-          _log.fine("tags=$desc");
-          tagsList.add(YamlTag(desc, tag));
-        }
-      }
-    }
-    return tagsList;
   }
 
   /// 查找多个

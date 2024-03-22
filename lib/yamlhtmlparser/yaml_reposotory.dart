@@ -2,6 +2,7 @@ import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_rule_factory.dart';
 import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_validator.dart';
 import 'package:MoeLoaderFlutter/net/request_manager.dart';
 import 'package:logging/logging.dart';
+
 import 'models.dart';
 
 class YamlRepository {

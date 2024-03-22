@@ -1,7 +1,5 @@
 import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_validator.dart';
 
-import '../yamlhtmlparser/models.dart';
-
 String unicodeToUTF16(String str){
   final Pattern unicodePattern = RegExp(r'\\u([0-9A-Fa-f]{4})');
   String newStr = str.replaceAllMapped(unicodePattern, (Match unicodeMatch) {
@@ -47,14 +45,4 @@ String validateCompleteTipsByCode(int code){
     return "已完成登录";
   }
   return "";
-}
-
-String getDownloadName(String url, CommonInfo? commonInfo){
-  Uri uri = Uri.parse(url);
-  String host = uri.host;
-  String id = "";
-  if(commonInfo != null){
-    id = commonInfo.id;
-  }
-  return "${host}_id_${id}_date_${DateTime.now().millisecondsSinceEpoch}";
 }
