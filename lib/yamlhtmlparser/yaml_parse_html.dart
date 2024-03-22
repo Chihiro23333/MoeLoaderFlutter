@@ -25,12 +25,12 @@ class YamlHtmlParser extends Parser {
     Element? body = document.querySelector("html");
     //解析文本拿到结果
     YamlMap onParseResult = page["onParseResult"];
-    String json = _recursionQuery(body, onParseResult);
+    String json = jsonEncode(_recursionQuery(body, onParseResult));
     _log.fine("json=$json");
     return json;
   }
 
-  String _recursionQuery(Element? element, YamlMap rule) {
+  dynamic _recursionQuery(Element? element, YamlMap rule) {
     String? dataType;
     for (var element in rule.keys) {
       if (element.toString() == "contentType") continue;
@@ -43,11 +43,11 @@ class YamlHtmlParser extends Parser {
         _log.fine("contentRule=$contentRule");
         var object = {};
         contentRule.forEach((key, value) {
-          String result = _recursionQuery(element, value);
+          dynamic result = _recursionQuery(element, value);
           _log.fine("propName=$key;propValue=$result");
           object[key] = result;
         });
-        return jsonEncode(object);
+        return object;
       case "list":
         YamlMap contentRule = rule[dataType];
         _log.fine("contentRule=$contentRule");
@@ -58,14 +58,14 @@ class YamlHtmlParser extends Parser {
         for (Element element in listList) {
           var item = {};
           foreachRule.forEach((key, value) {
-            String result = _recursionQuery(element, value);
+            dynamic result = _recursionQuery(element, value);
             _log.info("propName=$key;propValue=$result");
             item[key] = result;
           });
           list.add(item);
         }
         _log.fine("result=${list.toString()}");
-        return jsonEncode(list);
+        return list;
       default:
         return _getOne(element, rule);
     }
@@ -117,7 +117,7 @@ class YamlHtmlParser extends Parser {
     var findRule = yamlMap["find"];
     if (findRule != null) {
       result = _find(result, findRule);
-      _log.fine("filter=$result");
+      _log.fine("find=$result");
     }
     //第三步，规整拼接值
     var formatRule = yamlMap["format"];
@@ -205,14 +205,14 @@ class YamlHtmlParser extends Parser {
     }
   }
 
-  String _find(String value, YamlList yamlMap) {
+  String _find(String value, YamlList yamlList) {
     String result = value;
-    for (var item in yamlMap) {
+    for (var item in yamlList) {
       RegExp? linkRegExp;
-      String? regex = item["regex"];
-      if (regex != null) {
-        linkRegExp = RegExp(regex);
-        int indexRule = item["index"] ?? 0;
+      YamlMap? regexRule = item["regex"];
+      if (regexRule != null) {
+        linkRegExp = RegExp(regexRule["regex"]);
+        int indexRule = regexRule["index"] ?? 0;
         result = linkRegExp.firstMatch(value)?.group(indexRule) ?? "";
       }
       result = _regularString(result);

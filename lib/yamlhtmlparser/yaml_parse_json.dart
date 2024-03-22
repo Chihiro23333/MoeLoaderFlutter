@@ -23,12 +23,12 @@ class YamlJsonParser extends Parser{
     var jsonContent = jsonDecode(content);
     //解析文本拿到结果
     YamlMap onParseResult = page["onParseResult"];
-    String json = _recursionQuery(jsonContent, "", onParseResult);
+    String json = jsonEncode(_recursionQuery(jsonContent, "", onParseResult));
     _log.fine("json=$json");
     return json;
   }
 
-  String _recursionQuery(Map<String, dynamic> json, String pJPath, YamlMap rule, {int? index, String defaultValue = ""}) {
+  dynamic _recursionQuery(Map<String, dynamic> json, String pJPath, YamlMap rule, {int? index, String defaultValue = ""}) {
     String? dataType;
     for (var element in rule.keys) {
       if(element.toString() == "contentType")continue;
@@ -42,11 +42,11 @@ class YamlJsonParser extends Parser{
         _log.fine("contentRule=$contentRule");
         var object = {};
         contentRule.forEach((key, value) {
-          String result = _recursionQuery(json, pJPath, value);
+          dynamic result = _recursionQuery(json, pJPath, value);
           _log.fine("propName=$key;propValue=$result");
           object[key] = result;
         });
-        return jsonEncode(object);
+        return object;
       case "list":
         YamlMap contentRule = rule[dataType];
         _log.fine("contentRule=$contentRule");
@@ -63,14 +63,14 @@ class YamlJsonParser extends Parser{
         for (int i = 0; i < jsonList.length; i++) {
           var item = {};
           foreachRule.forEach((key, value) {
-            String result = _recursionQuery(json, listJpath, value, index: i, defaultValue: value["default"] ?? "");
+            dynamic result = _recursionQuery(json, listJpath, value, index: i, defaultValue: value["default"] ?? "");
             _log.fine("propName=$key;propValue=$result");
             item[key] = result;
           });
           list.add(item);
         }
         _log.fine("result=${list.toString()}");
-        return jsonEncode(list);
+        return list;
       default:
         return _getOne(json, pJPath, rule, index: index, defaultValue: defaultValue);
     }
