@@ -1,6 +1,8 @@
 meta:
   name: "danbooru.donmai.us"
   type: "assets"
+  headers:
+    user-agent: "Dart/3.2 (dart:io)"
 
 display:
   columnCount: 7
@@ -12,9 +14,14 @@ url:
 
 options:
   - {id: "rating", desc: "评级", items: [{desc: "safe", param: "rating%3Asafe+"}, {desc: "all", param: ""}, {desc: "questionable", param: "rating%3Aquestionable+"}, {desc: "explicit", param: "rating%3Aexplicit+"}]}
-  - {id: "pageCount", desc: "每页数量", items: [{desc: "50", param: "&limit=50"}, {desc: "20", param: "&limit=20"}, {desc: "80", param: "&limit=80"}]}
+  - {id: "pageCount", desc: "每页数量", items: [{desc: "20", param: ""}, {desc: "50", param: "&limit=50"}, {desc: "80", param: "&limit=80"}]}
+
+onValidateResult: &onValidateResult
+  exception: {code: "403",  action: "challenge"}
 
 homePage: &HOMEPAGE
+  onValidateResult:
+    *onValidateResult
   onParseResult:
     list:
       getElements: { cssSelector: "div[class='posts-container gap-2'] article" }
@@ -42,6 +49,8 @@ searchPage:
   *HOMEPAGE
 
 detailPage:
+  onValidateResult:
+    *onValidateResult
   onParseResult:
     object:
       url:

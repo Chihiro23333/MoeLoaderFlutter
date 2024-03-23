@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:MoeLoaderFlutter/init.dart';
@@ -21,6 +23,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Global.defaultColor),
         useMaterial3: true,
+        fontFamily: Platform.isWindows ? "微软雅黑" : null,
       ),
       home: const HomePage()
     );

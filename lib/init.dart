@@ -91,7 +91,7 @@ class Global{
   static get hiveDirectory => Directory(path.join(path.current ,"hive"));
   static get supportWebView2 => _supportWebView2;
   static get defaultColor => const Color.fromARGB(255, 46, 176, 242);
-  static get defaultColor30 => const Color.fromARGB(80, 46, 176, 242);
+  static get defaultColor30 => const Color.fromARGB(30, 46, 176, 242);
 
 }
 

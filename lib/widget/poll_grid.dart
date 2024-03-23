@@ -1,20 +1,10 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:logging/logging.dart';
 import '../init.dart';
-import '../net/download.dart';
-import '../ui/common_function.dart';
-import '../ui/download_tasks_dialog.dart';
-import '../ui/info_dialog.dart';
-import '../ui/url_list_dialog.dart';
 import '../ui/view_model_home.dart';
-import '../utils/const.dart';
-import '../utils/sharedpreferences_utils.dart';
-import '../utils/utils.dart';
 import '../yamlhtmlparser/models.dart';
-import '../yamlhtmlparser/yaml_validator.dart';
 
 typedef ExceptionActionCallback = void Function(HomeState homeState);
 typedef ItemClickCallback = void Function(YamlHomePageItem yamlHomePageItem);
@@ -88,7 +78,7 @@ class _PoolGridState extends State<PoolGrid> {
       widgets.add(Container(
         width: width,
         height: height,
-        color: Colors.grey,
+        color: Colors.black26,
         child: const SizedBox(
           child: Center(
             child: Text(
@@ -96,7 +86,7 @@ class _PoolGridState extends State<PoolGrid> {
               style: TextStyle(
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
-                  fontSize: 20),
+                  fontSize: 18),
             ),
           ),
         ),
@@ -116,7 +106,7 @@ class _PoolGridState extends State<PoolGrid> {
       padding: const EdgeInsets.all(10),
       child: Text(
         yamlHomePageItem.commonInfo?.desc ?? "暂无描述",
-        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
         overflow: TextOverflow.ellipsis,
         maxLines: 2,
       ),

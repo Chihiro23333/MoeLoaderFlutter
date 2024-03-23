@@ -39,6 +39,7 @@ class _RadioChoiceChipState extends State<RadioChoiceChip> {
       String desc = list[i];
       bool selected = i == index;
       choiceChips.add(ChoiceChip.elevated(
+        backgroundColor: Colors.white,
         label: Text(desc),
         selected: selected,
         onSelected: (bool selected) {

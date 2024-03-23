@@ -1,0 +1,281 @@
+import 'package:MoeLoaderFlutter/ui/radio_choice_chip.dart';
+import 'package:MoeLoaderFlutter/ui/view_model_setting.dart';
+import 'package:flutter/material.dart';
+import 'package:MoeLoaderFlutter/init.dart';
+import 'package:MoeLoaderFlutter/utils/sharedpreferences_utils.dart';
+import 'package:logging/logging.dart';
+import '../utils/const.dart';
+import 'common_function.dart';
+
+class SettingPage extends StatefulWidget {
+  const SettingPage({super.key});
+
+  @override
+  State<StatefulWidget> createState() {
+    return _SettingState();
+  }
+}
+
+class _SettingState extends State<SettingPage> {
+  final _log = Logger("_SettingsInfo");
+
+  final TextEditingController _textEditingControl = TextEditingController();
+  String _dropdownValue = "";
+  SettingViewModel _settingViewModel = SettingViewModel();
+
+  Future<void> _setProxy(String text) async {
+    await setProxy(text);
+    Global().updateProxy();
+  }
+
+  void updateDropDownValue(String value) {
+    setState(() {
+      _dropdownValue = value;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _settingViewModel.getCacheSetting();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<SettingState>(
+        stream: _settingViewModel.streamSettingController.stream,
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.connectionState != ConnectionState.active) {
+            return const SizedBox();
+          }
+          return Scaffold(
+            body: _buildBody(context, snapshot),
+            appBar: _buildAppBar(context),
+          );
+        });
+  }
+
+  AppBar _buildAppBar(BuildContext context) {
+    return AppBar(
+      title: const Text("设置"),
+      iconTheme: Theme.of(context).iconTheme,
+      elevation: 10,
+    );
+  }
+
+  Widget _buildProxyInput(BuildContext context, SettingState settingState) {
+    List<String> list = [Const.proxyHttp, Const.proxySocks5, Const.proxySocks4];
+    String data = settingState.proxy ?? "";
+    for (int i = 0; i < list.length; i++) {
+      if (list[i] == data) {
+        _dropdownValue = list[i];
+      }
+    }
+    if (_dropdownValue.isEmpty) {
+      _dropdownValue = Const.proxyHttp;
+    }
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(15, 20, 15, 5),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _textEditingControl,
+                  decoration: InputDecoration(
+                      fillColor: Colors.white,
+                      suffixIcon: Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+                        child: IconButton(
+                          onPressed: () {
+                            String text = _textEditingControl.text;
+                            _log.fine("text=$text");
+                            _setProxy(text);
+                            showToast("更新代理成功");
+                          },
+                          icon: const Icon(Icons.save),
+                        ),
+                      ),
+                      prefixIcon: Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                        child: DropdownButton<String>(
+                          value: _dropdownValue,
+                          icon: const Icon(Icons.arrow_drop_down),
+                          onChanged: (String? value) async {
+                            if (value != null) {
+                              await setProxyType(value);
+                              await Global().updateProxy();
+                              updateDropDownValue(value);
+                            }
+                          },
+                          iconSize: 18,
+                          items: list
+                              .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                          underline: const SizedBox(
+                            height: 0,
+                          ),
+                        ),
+                      ),
+                      border: const OutlineInputBorder(),
+                      labelText: "请输入代理地址",
+                      hintText: "请输入代理地址",
+                      helperText: "示例:127.0.0.1:7890,输入地址后点击右侧按钮保存",
+                      filled: true),
+                  onSubmitted: (String value) {},
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFolderItem(BuildContext context, String title, String desc) {
+    return ListTile(
+      title: Text(title),
+      subtitle: Text(desc),
+    );
+  }
+
+  Widget _buildDefaultDownloadSize(
+      BuildContext context, SettingState settingState) {
+    List<String> list = [Const.choose, Const.preview, Const.big, Const.raw];
+    String data = settingState.downloadFileSize ?? "";
+    int selectedIndex = 0;
+    for (int i = 0; i < list.length; i++) {
+      if (list[i] == data) {
+        selectedIndex = i;
+      }
+    }
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          const Text(
+            "下载方式：",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          RadioChoiceChip(
+              list: list,
+              index: selectedIndex,
+              radioSelectCallback: (index, desc) {
+                _log.fine("index=$index;desc=$desc");
+                setDownloadFileSize(desc);
+              })
+        ],
+      ),
+    );
+  }
+
+  _buildBody(BuildContext context, AsyncSnapshot snapshot) {
+    SettingState? settingState = snapshot.data;
+    if (settingState != null) {
+      _textEditingControl.value = TextEditingValue(
+        text: settingState.proxy ?? "",
+      );
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 320,
+            color: Global.defaultColor30,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+              child: Column(
+                children: [
+                  ListTile(
+                    title: const Text(
+                      "MoeLoaderFlutter",
+                      style: TextStyle(fontSize: 14),
+                    ),
+                    leading: Icon(
+                      Icons.title,
+                      color: Theme.of(context).iconTheme.color,
+                    ),
+                  ),
+                  ListTile(
+                    title: const Text(
+                      "V1.0.3",
+                      style: TextStyle(fontSize: 14),
+                    ),
+                    leading: Icon(
+                      Icons.code,
+                      color: Theme.of(context).iconTheme.color,
+                    ),
+                  ),
+                  ListTile(
+                    title: const Text(
+                      "@2024 by Chihiro23333",
+                      style: TextStyle(fontSize: 14),
+                    ),
+                    leading: Icon(
+                      Icons.timelapse,
+                      color: Theme.of(context).iconTheme.color,
+                    ),
+                  ),
+                  ListTile(
+                    title: const Text(
+                      "https://github.com/Chihiro23333",
+                      style: TextStyle(fontSize: 14),
+                    ),
+                    leading: Icon(
+                      Icons.home,
+                      color: Theme.of(context).iconTheme.color,
+                    ),
+                  ),
+                  ListTile(
+                    title: const Text(
+                      "zhu.20081121@gmail.com",
+                      style: TextStyle(fontSize: 14),
+                    ),
+                    leading: Icon(
+                      Icons.mail,
+                      color: Theme.of(context).iconTheme.color,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Expanded(
+              child: SingleChildScrollView(
+                  child: Column(
+            children: [
+              _buildProxyInput(context, settingState),
+              const Divider(
+                height: 10,
+              ),
+              _buildDefaultDownloadSize(context, settingState),
+              const Divider(
+                height: 10,
+              ),
+              _buildFolderItem(
+                  context, "自定义规则存储路径", Global.rulesDirectory.path),
+              const Divider(
+                height: 10,
+              ),
+              _buildFolderItem(
+                  context, "下载文件保存路径", Global.downloadsDirectory.path),
+              const Divider(
+                height: 10,
+              ),
+              _buildFolderItem(context, "数据库缓存路径", Global.hiveDirectory.path),
+              const Divider(
+                height: 10,
+              ),
+            ],
+          )))
+        ],
+      );
+    }
+  }
+}

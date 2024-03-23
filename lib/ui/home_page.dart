@@ -1,6 +1,7 @@
 import 'package:MoeLoaderFlutter/net/download.dart';
 import 'package:MoeLoaderFlutter/ui/pool_list_page.dart';
 import 'package:MoeLoaderFlutter/ui/radio_choice_chip.dart';
+import 'package:MoeLoaderFlutter/ui/settings_page.dart';
 import 'package:MoeLoaderFlutter/ui/url_list_dialog.dart';
 import 'package:MoeLoaderFlutter/widget/home_loading_status.dart';
 import 'package:MoeLoaderFlutter/widget/image_masonry_grid.dart';
@@ -11,9 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:MoeLoaderFlutter/init.dart';
-import 'package:MoeLoaderFlutter/ui/about_dialog.dart';
 import 'package:MoeLoaderFlutter/ui/common_function.dart';
-import 'package:MoeLoaderFlutter/ui/settings_dialog.dart';
 import 'package:MoeLoaderFlutter/ui/webview2_page.dart';
 import 'package:MoeLoaderFlutter/yamlhtmlparser/models.dart';
 import 'package:MoeLoaderFlutter/ui/view_model_home.dart';
@@ -25,6 +24,8 @@ import '../utils/utils.dart';
 import 'detail_page.dart';
 import 'download_tasks_dialog.dart';
 import 'info_dialog.dart';
+
+enum MoreItem { copy, download, option, search, setting, about }
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -39,6 +40,7 @@ class _HomeState extends State<HomePage> {
   final HomeViewModel _homeViewModel = HomeViewModel();
   final GlobalKey<ScaffoldState> _scaffoldGlobalKey = GlobalKey();
   late TextEditingController _textEditingControl;
+  MoreItem? _chooseItem;
 
   YamlTag? _tag;
   final Map<String, YamlOption> _yamlOptionMap = {};
@@ -90,7 +92,6 @@ class _HomeState extends State<HomePage> {
                 _buildOptionsAction(context),
                 _buildSearchAction(context, snapshot),
                 _buildSettingsAction(context),
-                _buildAboutAction(context)
               ]),
           drawer: _buildDrawer(context),
           body: _buildListBody(snapshot),
@@ -98,6 +99,139 @@ class _HomeState extends State<HomePage> {
         );
       },
     );
+  }
+
+  Widget _buildMoreAction(BuildContext context, AsyncSnapshot snapshot) {
+    return PopupMenuButton<MoreItem>(
+        elevation: 8,
+        initialValue: _chooseItem,
+        icon: const Icon(Icons.more_horiz),
+        onSelected: (MoreItem item) async {
+          switch (item) {
+            case MoreItem.copy:
+              FlutterClipboard.copy(_url).then((value) => showToast("链接已复制"));
+              break;
+            case MoreItem.download:
+              showDownloadTasks(context);
+              break;
+            case MoreItem.option:
+              List<YamlOptionList> list = await _homeViewModel.optionList();
+              if (list.isEmpty) {
+                showToast("当前站点无筛选条件");
+                return;
+              }
+              _showOptionsSheet(context, list);
+              break;
+            case MoreItem.search:
+              showSearch(context, snapshot);
+              break;
+            case MoreItem.setting:
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) {
+                  return SettingPage();
+                }),
+              );
+              break;
+            default:
+          }
+        },
+        itemBuilder: (BuildContext context) => <PopupMenuEntry<MoreItem>>[
+              const PopupMenuItem<MoreItem>(
+                value: MoreItem.copy,
+                child: Center(
+                  child: Text('复制链接'),
+                ),
+              ),
+              const PopupMenuItem<MoreItem>(
+                value: MoreItem.download,
+                child: Center(
+                  child: Text('下载列表'),
+                ),
+              ),
+              const PopupMenuItem<MoreItem>(
+                value: MoreItem.option,
+                child: Center(
+                  child: Text('选项'),
+                ),
+              ),
+              const PopupMenuItem<MoreItem>(
+                value: MoreItem.search,
+                child: Center(
+                  child: Text('搜索'),
+                ),
+              ),
+              const PopupMenuItem<MoreItem>(
+                value: MoreItem.setting,
+                child: Center(
+                  child: Text('设置'),
+                ),
+              ),
+              const PopupMenuItem<MoreItem>(
+                value: MoreItem.about,
+                child: Center(
+                  child: Text('关于'),
+                ),
+              ),
+            ]);
+  }
+
+  void showSearch(BuildContext context, AsyncSnapshot snapshot) {
+    if (!snapshot.hasData) {
+      showToast("数据没准备好");
+      return;
+    }
+    HomeState? homeState = snapshot.data;
+    if (homeState == null) {
+      showToast("数据没准备好");
+      return;
+    }
+
+    if (!homeState.canSearch) {
+      showToast("当前源暂不支持搜索");
+      return;
+    }
+
+    _textEditingControl.value = TextEditingValue(text: _tag?.desc ?? "");
+    showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Padding(
+            padding:
+                const EdgeInsets.only(top: 20, bottom: 20, left: 20, right: 20),
+            child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  TextField(
+                      controller: _textEditingControl,
+                      decoration: InputDecoration(
+                          prefixIcon: Icon(
+                            Icons.label,
+                            color: Theme.of(context).iconTheme.color,
+                          ),
+                          suffixIcon: GestureDetector(
+                            child: Icon(
+                              Icons.clear,
+                              color: Theme.of(context).iconTheme.color,
+                            ),
+                            onTap: () {
+                              _textEditingControl.clear();
+                            },
+                          ),
+                          border: const OutlineInputBorder(),
+                          labelText: "请输入tag",
+                          hintText: "请输入tag",
+                          helperText: "按ENTER键开始搜索",
+                          filled: true),
+                      onSubmitted: (String value) {
+                        _updateTag(YamlTag(value, value));
+                        _requestData(clearAll: true);
+                        Navigator.of(context).pop();
+                      }),
+                ]),
+          );
+        });
   }
 
   Widget _buildListBody(AsyncSnapshot snapshot) {
@@ -174,17 +308,14 @@ class _HomeState extends State<HomePage> {
   Widget _buildSettingsAction(BuildContext context) {
     return IconButton(
         onPressed: () {
-          showSettings(context);
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) {
+              return SettingPage();
+            }),
+          );
         },
         icon: const Icon(Icons.settings));
-  }
-
-  Widget _buildAboutAction(BuildContext context) {
-    return IconButton(
-        onPressed: () {
-          showAbout(context);
-        },
-        icon: const Icon(Icons.info));
   }
 
   Widget _buildOptionsAction(BuildContext context) {
@@ -292,7 +423,9 @@ class _HomeState extends State<HomePage> {
             return;
           }
 
-          _textEditingControl.value = TextEditingValue(text: _tag?.desc ?? "");
+          if (_tag != null) {
+            _textEditingControl.value = TextEditingValue(text: _tag!.desc);
+          }
           showModalBottomSheet(
               context: context,
               builder: (context) {
