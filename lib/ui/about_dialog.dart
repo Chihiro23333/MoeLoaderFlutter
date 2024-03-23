@@ -17,7 +17,7 @@ void showAbout(BuildContext context) {
                   ),
                 ),
                 ListTile(
-                  title: const Text("V1.0.2"),
+                  title: const Text("V1.0.3"),
                   leading: Icon(
                     Icons.code,
                     color: Theme.of(context).iconTheme.color,
