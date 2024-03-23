@@ -1,5 +1,5 @@
 meta:
-  name: "pool.yande.re"
+  name: "yande.re(pool)"
   type: "assets"
   listType: "pool"
 
@@ -11,7 +11,7 @@ url:
   home: { link: "https://yande.re/pool?page=${page}" }
   search: { link: "https://yande.re/pool?commit=%E6%90%9C%E7%B4%A2&page=${page}&query=${tag}" }
 
-homePage:
+homePage: &HOMEPAGE
   onParseResult:
     list:
       getElements: { cssSelector: "table[class=highlightable] tbody tr" }
@@ -26,6 +26,9 @@ homePage:
             - replaceAll: { from: "p", to: "" }
         desc:
           get: { cssSelector: "a", text: "" }
+
+searchPage:
+  *HOMEPAGE
 
 poolListPage:
   onParseResult:

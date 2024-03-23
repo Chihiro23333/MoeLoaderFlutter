@@ -72,7 +72,7 @@ abstract class Parser {
   }
 
   Future<bool> canSearch(YamlMap doc) async {
-    return doc["searchPage"] != null;
+    return true;
   }
 
   Future<String> getName(YamlMap doc) async {

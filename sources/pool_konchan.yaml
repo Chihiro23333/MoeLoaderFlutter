@@ -1,5 +1,5 @@
 meta:
-  name: "pool.konachan"
+  name: "konachan.com(pool)"
   type: "assets"
   listType: "pool"
 
@@ -11,7 +11,7 @@ url:
   home: { link: "https://konachan.com/pool?page=${page}" }
   search: { link: "https://konachan.com/pool?query=${tag}&page=${page}"}
 
-homePage:
+homePage: &HOMEPAGE
   onParseResult:
     list:
       getElements: { cssSelector: "table[class=highlightable] tbody tr" }
@@ -27,6 +27,8 @@ homePage:
         desc:
           get: { cssSelector: "a", text: "" }
 
+searchPage:
+  *HOMEPAGE
 
 poolListPage:
   onParseResult:

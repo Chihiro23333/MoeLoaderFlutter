@@ -260,16 +260,16 @@ class _HomeState extends State<HomePage> {
   Widget _buildCopyAction(BuildContext context) {
     return IconButton(
         onPressed: () async {
-          // FlutterClipboard.copy(_url).then((value) => showToast("链接已复制"));
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) {
-              return WebView2Page(
-                url: "https://www.xsnvshen.co/album/?p=2",
-                code: 1,
-              );
-            }),
-          );
+          FlutterClipboard.copy(_url).then((value) => showToast("链接已复制"));
+          // Navigator.push(
+          //   context,
+          //   MaterialPageRoute(builder: (context) {
+          //     return WebView2Page(
+          //       url: "https://www.xsnvshen.co/album/?p=2",
+          //       code: 1,
+          //     );
+          //   }),
+          // );
         },
         icon: const Icon(Icons.copy));
   }
@@ -292,9 +292,7 @@ class _HomeState extends State<HomePage> {
             return;
           }
 
-          if (_tag != null) {
-            _textEditingControl.value = TextEditingValue(text: _tag!.desc);
-          }
+          _textEditingControl.value = TextEditingValue(text: _tag?.desc ?? "");
           showModalBottomSheet(
               context: context,
               builder: (context) {
