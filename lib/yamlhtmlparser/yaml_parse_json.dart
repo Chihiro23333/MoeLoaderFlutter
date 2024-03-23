@@ -44,6 +44,11 @@ class YamlJsonParser extends Parser{
     return yamlDetailPage;
   }
 
+  @override
+  Future<List<YamlHomePageItem>> parsePoolList(String content, YamlMap webPage) async{
+    return parseHome(content, webPage);
+  }
+
   Future<String> preprocess(String content, YamlMap preprocessNode) async {
     String? contentType  = preprocessNode["contentType"];
     _log.fine("contentType=$contentType,jsonStr=$content");
@@ -126,6 +131,7 @@ class YamlJsonParser extends Parser{
     YamlMap? dimensionsRule = yamlMap['dimensions'];
     YamlMap? sourceRule = yamlMap['source'];
     YamlMap? bigUrlRule = yamlMap['bigUrl'];
+    YamlMap? descRule = yamlMap['desc'];
     YamlMap? rawUrlRule = yamlMap['rawUrl'];
     YamlMap? tagsRule = yamlMap['tags'];
 
@@ -145,10 +151,12 @@ class YamlJsonParser extends Parser{
     _log.fine("rawUrl=$rawUrl");
     String bigUrl = _getOne(json, pJPath, bigUrlRule, index: index);
     _log.fine("bigUrl=$bigUrl");
+    String desc = _getOne(json, pJPath, descRule, index: index);
+    _log.fine("desc=$desc");
     List<YamlTag> tagsList = _listTags(json, tagsRule, pJPath, index);
     _log.fine("tagsList=${tagsList.length}");
     CommonInfo commonInfo = CommonInfo(
-        id, author, characters, fileSize, dimensions, source, bigUrl, rawUrl, tagsList);
+        id, author, characters, fileSize, dimensions, source, bigUrl, rawUrl, desc, tagsList);
     return commonInfo;
   }
 

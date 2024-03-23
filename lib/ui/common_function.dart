@@ -3,6 +3,8 @@ import 'package:clipboard/clipboard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../yamlhtmlparser/models.dart';
+
 CancelFunc? cancel;
 
 void showToast(String toastString) {
@@ -39,3 +41,5 @@ Widget buildDownloadItem(
     ),
   );
 }
+
+typedef TagTapCallback = void Function(YamlTag yamlTag);

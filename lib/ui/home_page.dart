@@ -1,6 +1,10 @@
 import 'package:MoeLoaderFlutter/net/download.dart';
+import 'package:MoeLoaderFlutter/ui/pool_list_page.dart';
 import 'package:MoeLoaderFlutter/ui/radio_choice_chip.dart';
 import 'package:MoeLoaderFlutter/ui/url_list_dialog.dart';
+import 'package:MoeLoaderFlutter/widget/home_loading_status.dart';
+import 'package:MoeLoaderFlutter/widget/image_masonry_grid.dart';
+import 'package:MoeLoaderFlutter/widget/poll_grid.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
@@ -32,7 +36,7 @@ class HomePage extends StatefulWidget {
 class _HomeState extends State<HomePage> {
   final _log = Logger("_HomeState");
 
-  final HomeViewModel _picHomeViewModel = HomeViewModel();
+  final HomeViewModel _homeViewModel = HomeViewModel();
   final GlobalKey<ScaffoldState> _scaffoldGlobalKey = GlobalKey();
   late TextEditingController _textEditingControl;
 
@@ -55,7 +59,7 @@ class _HomeState extends State<HomePage> {
   }
 
   void _requestData({bool clearAll = false, String? page}) {
-    _picHomeViewModel.requestData(
+    _homeViewModel.requestData(
         tags: _tag?.tag,
         optionList: _yamlOptionMap.values.toList(),
         clearAll: clearAll,
@@ -72,7 +76,7 @@ class _HomeState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<HomeState>(
-      stream: _picHomeViewModel.streamHomeController.stream,
+      stream: _homeViewModel.streamHomeController.stream,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         return Scaffold(
           key: _scaffoldGlobalKey,
@@ -89,11 +93,82 @@ class _HomeState extends State<HomePage> {
                 _buildAboutAction(context)
               ]),
           drawer: _buildDrawer(context),
-          body: _buildBody(context, snapshot),
+          body: _buildListBody(snapshot),
           floatingActionButton: _buildFloatActionButton(context, snapshot),
         );
       },
     );
+  }
+
+  Widget _buildListBody(AsyncSnapshot snapshot) {
+    retryOnPressed() {
+      _requestData();
+    }
+
+    actionOnPressed(homeState) async {
+      bool? result = await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) {
+          return WebView2Page(
+            url: _url,
+            code: homeState.code,
+          );
+        }),
+      );
+      _log.fine("push result=${result}");
+      if (result != null && result) {
+        _requestData(clearAll: true);
+      }
+    }
+
+    return LoadingStatus(
+        snapshot: snapshot,
+        retryOnPressed: retryOnPressed,
+        actionOnPressed: actionOnPressed,
+        builder: (homeState) {
+          if (homeState.listType.isNotEmpty) {
+            return PoolGrid(
+              list: homeState.list,
+              headers: homeState.headers,
+              itemOnPressed: (yamlHomePageItem) async {
+                NaviResult<YamlTag>? naviResult = await Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) {
+                    return PoolListPage(href: yamlHomePageItem.href);
+                  }),
+                );
+                _log.info("naviResult=$naviResult");
+                if (naviResult?.data != null) {
+                  _updateTag(naviResult?.data);
+                  _requestData(clearAll: true);
+                }
+              },
+            );
+          }
+          return ImageMasonryGrid(
+            list: homeState.list,
+            headers: homeState.headers,
+            tagTapCallback: (yamlTag) {
+              _updateTag(yamlTag);
+              _requestData(clearAll: true);
+            },
+            itemOnPressed: (yamlHomePageItem) async {
+              NaviResult<YamlTag>? naviResult = await Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) {
+                  return DetailPage(
+                      href: yamlHomePageItem.href,
+                      commonInfo: yamlHomePageItem.commonInfo);
+                }),
+              );
+              _log.info("naviResult=$naviResult");
+              if (naviResult?.data != null) {
+                _updateTag(naviResult?.data);
+                _requestData(clearAll: true);
+              }
+            },
+          );
+        });
   }
 
   Widget _buildSettingsAction(BuildContext context) {
@@ -115,7 +190,7 @@ class _HomeState extends State<HomePage> {
   Widget _buildOptionsAction(BuildContext context) {
     return IconButton(
         onPressed: () async {
-          List<YamlOptionList> list = await _picHomeViewModel.optionList();
+          List<YamlOptionList> list = await _homeViewModel.optionList();
           if (list.isEmpty) {
             showToast("当前站点无筛选条件");
             return;
@@ -185,7 +260,16 @@ class _HomeState extends State<HomePage> {
   Widget _buildCopyAction(BuildContext context) {
     return IconButton(
         onPressed: () async {
-          FlutterClipboard.copy(_url).then((value) => showToast("链接已复制"));
+          // FlutterClipboard.copy(_url).then((value) => showToast("链接已复制"));
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) {
+              return WebView2Page(
+                url: "https://www.xsnvshen.co/album/?p=2",
+                code: 1,
+              );
+            }),
+          );
         },
         icon: const Icon(Icons.copy));
   }
@@ -193,17 +277,17 @@ class _HomeState extends State<HomePage> {
   Widget _buildSearchAction(BuildContext context, AsyncSnapshot snapshot) {
     return IconButton(
         onPressed: () {
-          if(!snapshot.hasData){
+          if (!snapshot.hasData) {
             showToast("数据没准备好");
             return;
           }
           HomeState? homeState = snapshot.data;
-          if(homeState == null){
+          if (homeState == null) {
             showToast("数据没准备好");
             return;
           }
 
-          if(!homeState.canSearch){
+          if (!homeState.canSearch) {
             showToast("当前源暂不支持搜索");
             return;
           }
@@ -269,7 +353,7 @@ class _HomeState extends State<HomePage> {
               )),
               Expanded(
                 child: FutureBuilder<List<WebPageItem>>(
-                  future: _picHomeViewModel.webPageList(),
+                  future: _homeViewModel.webPageList(),
                   builder: (BuildContext context, AsyncSnapshot snapshot) {
                     if (snapshot.hasError) {
                       return Text("Error: ${snapshot.error}");
@@ -302,7 +386,7 @@ class _HomeState extends State<HomePage> {
                               onTap: () async {
                                 _updateTag(null);
                                 _clearOptions();
-                                await _picHomeViewModel
+                                await _homeViewModel
                                     .changeGlobalWebPage(list[index]);
                                 _requestData(clearAll: true);
                                 _scaffoldGlobalKey.currentState?.closeDrawer();
@@ -334,7 +418,9 @@ class _HomeState extends State<HomePage> {
             child: const Text("点击重试")));
         if (homeState.code == ValidateResult.needChallenge ||
             homeState.code == ValidateResult.needLogin) {
-          children.add(const SizedBox(height: 10,));
+          children.add(const SizedBox(
+            height: 10,
+          ));
           children.add(ElevatedButton(
               onPressed: () async {
                 bool? result = await Navigator.push(
@@ -567,7 +653,7 @@ class _HomeState extends State<HomePage> {
 
   Widget _buildAppBatTitle(BuildContext context) {
     return StreamBuilder<UriState>(
-        stream: _picHomeViewModel.streamUriController.stream,
+        stream: _homeViewModel.streamUriController.stream,
         builder: (BuildContext context, AsyncSnapshot asyncSnapshot) {
           if (asyncSnapshot.connectionState == ConnectionState.active) {
             UriState uriState = asyncSnapshot.data;

@@ -47,6 +47,11 @@ class YamlHtmlParser extends Parser {
     return yamlDetailPage;
   }
 
+  @override
+  Future<List<YamlHomePageItem>> parsePoolList(String content, YamlMap webPage) async{
+    return parseHome(content, webPage);
+  }
+
   Future<String> preprocess(String content, YamlMap preprocessNode) async {
     String? contentType = preprocessNode["contentType"];
     _log.fine("contentType=$contentType,html=$content");
@@ -62,8 +67,8 @@ class YamlHtmlParser extends Parser {
     YamlMap list = webPage["onParseResult"]["list"];
     YamlMap foreach = list["foreach"];
 
-    YamlMap coverUrlRule = foreach["coverUrl"];
-    YamlMap hrefRule = foreach["href"];
+    YamlMap? coverUrlRule = foreach["coverUrl"];
+    YamlMap? hrefRule = foreach["href"];
     YamlMap? widthRule = foreach['width'];
     YamlMap? heightRule = foreach['height'];
 
@@ -96,6 +101,7 @@ class YamlHtmlParser extends Parser {
     YamlMap? sourceRule = yamlMap['source'];
     YamlMap? bigUrlRule = yamlMap['bigUrl'];
     YamlMap? rawUrlRule = yamlMap['rawUrl'];
+    YamlMap? descRule = yamlMap['desc'];
     YamlMap? tagsRule = yamlMap['tags'];
 
     String id = _getOne(element, idRule);
@@ -114,10 +120,12 @@ class YamlHtmlParser extends Parser {
     _log.fine("rawUrl=$rawUrl");
     String bigUrl = _getOne(element, bigUrlRule);
     _log.fine("bigUrl=$bigUrl");
+    String desc = _getOne(element, descRule);
+    _log.fine("desc=$desc");
     List<YamlTag> tagsList = _listTags(element, tagsRule);
     _log.fine("tagsList=${tagsList.length}");
     CommonInfo commonInfo = CommonInfo(id, author, characters, fileSize,
-        dimensions, source, bigUrl, rawUrl, tagsList);
+        dimensions, source, bigUrl, rawUrl, desc, tagsList);
     return commonInfo;
   }
 
@@ -330,4 +338,5 @@ class YamlHtmlParser extends Parser {
     text = text.trim();
     return text;
   }
+
 }

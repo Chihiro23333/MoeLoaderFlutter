@@ -9,20 +9,20 @@ import 'package:yaml/yaml.dart';
 import '../yamlhtmlparser/models.dart';
 import '../yamlhtmlparser/parser_factory.dart';
 
-class HomeViewModel {
+class PoolListViewModel {
   final _log = Logger('HomeViewModel');
 
   final YamlRepository repository = YamlRepository();
 
-  final StreamController<HomeState> streamHomeController = StreamController();
-  final HomeState _homeState = HomeState();
+  final StreamController<PoolListState> streamPoolListController = StreamController();
+  final PoolListState _poolListState = PoolListState();
   final StreamController<UriState> streamUriController = StreamController();
   final UriState _uriState = UriState();
 
-  HomeViewModel() {
+  PoolListViewModel() {
     DownloadManager().downloadStream().listen((downloadState) {
       List<DownloadTask> list = downloadState.tasks;
-      for (YamlHomePageItem item in _homeState.list) {
+      for (YamlHomePageItem item in _poolListState.list) {
         bool find = false;
         for (DownloadTask task in list) {
           if (task.id == item.href) {
@@ -35,74 +35,43 @@ class HomeViewModel {
           item.downloadState = DownloadTask.idle;
         }
       }
-      streamHomeController.add(_homeState);
+      streamPoolListController.add(_poolListState);
     });
   }
 
-  void requestData(
-      {String? tags,
-      String? page,
-      bool clearAll = false,
-      List<YamlOption>? optionList}) async {
+  void requestData(String url) async {
     _log.fine("optionList=$optionList");
-    if (clearAll) {
-      _clearAll();
-    }
     changeLoading(true);
 
-    String realPage = page ?? (_homeState.page + 1).toString();
     YamlMap doc = await YamlRuleFactory().create(Global.curWebPageName);
-    bool home = tags == null;
-    String url;
-    if (home) {
-      url = await _parser().getHomeUrl(doc, realPage, optionList: optionList);
-    } else {
-      url = await _parser()
-          .getSearchUrl(doc, page: realPage, tags: tags, optionList: optionList);
-    }
-
-    String siteName = await _parser().getName(doc);
-    _updateUri(siteName, url, realPage, tags, optionList);
-
-    String listType = await _parser().listType(doc);
-    _homeState.listType = listType;
+    _updateUri(url);
 
     Map<String, String>? headers = await _parser().getHeaders(doc);
-    _homeState.headers = headers;
+    _poolListState.headers = headers;
 
-    bool canSearch = await _parser().canSearch(doc);
-    _homeState.canSearch = canSearch;
-
-    ValidateResult<String> result =
-        await repository.home(url, headers: headers);
-    _homeState.code = result.code;
+    ValidateResult<String> result = await repository.poolList(url, headers: headers);
+    _poolListState.code = result.code;
     _log.info("result.code=${result.code}");
     if (result.validateSuccess) {
-      _homeState.error = false;
-      List<YamlHomePageItem> list;
-      if (home) {
-        list = await _parser().parseHome(result.data!, doc);
-      } else {
-        list = await _parser().parseSearch(result.data!, doc);
-      }
-      var dataList = _homeState.list;
+      _poolListState.error = false;
+      List<YamlHomePageItem> list = await _parser().parsePoolList(result.data!, doc);
+      var dataList = _poolListState.list;
       dataList.addAll(list);
-      _homeState.page = int.parse(realPage);
-      streamHomeController.add(_homeState);
+      streamPoolListController.add(_poolListState);
     } else {
-      _homeState.error = true;
-      _homeState.errorMessage = "Error:${result.message}";
-      streamHomeController.add(_homeState);
+      _poolListState.error = true;
+      _poolListState.errorMessage = "Error:${result.message}";
+      streamPoolListController.add(_poolListState);
     }
     changeLoading(false);
   }
 
   void changeLoading(bool loading) {
-    _homeState.loading = loading;
+    _poolListState.loading = loading;
     if (loading) {
-      _homeState.error = false;
+      _poolListState.error = false;
     }
-    streamHomeController.add(_homeState);
+    streamPoolListController.add(_poolListState);
   }
 
   Future<List<WebPageItem>> webPageList() async {
@@ -118,19 +87,8 @@ class HomeViewModel {
     await Global().updateCurWebPage(webPageItem.rule);
   }
 
-  void _clearAll() {
-    _homeState.reset();
-  }
-
-  void _updateUri(String siteName, String url, String page, String? tags,
-      List<YamlOption>? optionList) {
-    Uri uri = Uri.parse(url);
-    _uriState.baseHref = "${uri.scheme}://${uri.host}${uri.path}";
-    _uriState.page = page;
-    _uriState.tag = tags ?? "";
+  void _updateUri(String url) {
     _uriState.url = url;
-    _uriState.siteName = siteName;
-    _uriState.optionList = optionList;
     streamUriController.add(_uriState);
   }
 
@@ -139,39 +97,28 @@ class HomeViewModel {
   }
 }
 
-class HomeState {
+class PoolListState {
   List<YamlHomePageItem> list = [];
-  int page = 0;
   bool loading = false;
   bool error = false;
-  bool canSearch = true;
   String errorMessage = "";
-  String listType = "";
   int code = ValidateResult.success;
   Map<String, String>? headers;
 
   void reset() {
     list.clear();
-    page = 0;
     loading = false;
     error = false;
-    canSearch = true;
     errorMessage = "";
-    listType = "";
     headers = null;
     code = ValidateResult.success;
   }
 
-  HomeState();
+  PoolListState();
 }
 
 class UriState {
-  String siteName = "";
   String url = "";
-  String baseHref = "";
-  String page = "";
-  String tag = "";
-  List<YamlOption>? optionList;
 
   UriState();
 }

@@ -28,10 +28,11 @@ class CommonInfo{
   String source = "";
   String bigUrl = "";
   String rawUrl = "";
+  String desc = "";
   List<YamlTag> tags = [];
 
   CommonInfo(this.id, this.author, this.characters, this.fileSize,
-      this.dimensions, this.source, this.bigUrl, this.rawUrl, this.tags);
+      this.dimensions, this.source, this.bigUrl, this.rawUrl, this.desc,this.tags);
 }
 
 class YamlTag{

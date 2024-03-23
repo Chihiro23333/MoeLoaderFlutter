@@ -51,6 +51,20 @@ class MixParser extends Parser{
     }
   }
 
+  @override
+  Future<List<YamlHomePageItem>> parsePoolList(String content, YamlMap webPage) async{
+    YamlMap poolListPage = webPage["poolListPage"];
+    YamlMap onParseResult = poolListPage["onParseResult"];
+    String contentType = onParseResult["contentType"] ?? "html";
+    YamlMap? preprocessNode = poolListPage["onPreprocessResult"];
+    content =  await _preprocess(content, preprocessNode);
+    if(contentType == "json"){
+      return await _yamlJsonParser.parsePoolList(content, poolListPage);
+    }else {
+      return await _yamlHtmlParser.parsePoolList(content, poolListPage);
+    }
+  }
+
   Future<String> _preprocess(String content, YamlMap? preprocessNode) async {
     if(preprocessNode != null){
       String? preprocessContentType = preprocessNode["contentType"] ?? "html";

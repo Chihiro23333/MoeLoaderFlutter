@@ -79,6 +79,10 @@ abstract class Parser {
     return doc["meta"]?["name"] ?? "";
   }
 
+  Future<String> listType(YamlMap doc) async {
+    return doc["meta"]?["listType"] ?? "";
+  }
+
   Future<List<YamlOptionList>> optionList(YamlMap webPage) async {
     List<YamlOptionList> result = [];
     YamlList? optionsRule = webPage["options"];
@@ -162,6 +166,8 @@ abstract class Parser {
   Future<List<YamlHomePageItem>> parseHome(String content, YamlMap webPage);
 
   Future<List<YamlHomePageItem>> parseSearch(String content, YamlMap webPage);
+
+  Future<List<YamlHomePageItem>> parsePoolList(String content, YamlMap webPage);
 
   Future<YamlDetailPage> parseDetail(String content, YamlMap webPage);
 

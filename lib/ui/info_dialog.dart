@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import '../yamlhtmlparser/models.dart';
 import 'common_function.dart';
 
-typedef TagTapCallback = void Function(YamlTag yamlTag);
-
 void showInfoSheet(BuildContext context, CommonInfo? commonInfo,
     {TagTapCallback? onTagTap}) {
   List<Widget> children = [];

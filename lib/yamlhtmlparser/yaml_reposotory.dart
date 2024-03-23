@@ -22,6 +22,12 @@ class YamlRepository {
     return result;
   }
 
+  Future<ValidateResult<String>> poolList(String url, {Map<String, String>? headers}) async {
+    Validator validator = DetailValidator();
+    ValidateResult<String> result = await _request(url, validator, headers: headers);
+    return result;
+  }
+
   List<WebPageItem> webPageList() {
     List<WebPageItem> list = [];
     _ruleFactory.webPageList().forEach((element) {
