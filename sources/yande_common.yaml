@@ -29,6 +29,8 @@ homePage: &HOMEPAGE
     list:
       getElements: { cssSelector: "#post-list-posts li" }
       foreach:
+        type:
+          get: { default : "pool" }
         coverUrl:
           get: { cssSelector: "a[class=thumb] img", attr: "src" }
         href:

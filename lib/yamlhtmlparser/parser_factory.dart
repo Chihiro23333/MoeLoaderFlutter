@@ -38,6 +38,26 @@ abstract class Parser {
     return toResult(success, "解析成功", headersRule);
   }
 
+  /*
+  formatParams格式:{"page":"1","options":"key":[], key:"value"}
+   */
+  Future<String> url(String sourceName, String urlName,
+      Map<String, String> formatParams) async {
+    YamlMap yamlDoc = await YamlRuleFactory().create(sourceName);
+    YamlMap urlRule = yamlDoc['url'];
+    YamlMap homeRule = urlRule[urlName];
+
+    String url = "";
+    String link = homeRule["link"];
+    int pageBase = homeRule["pageBase"] ?? 1;
+    String page = formatParams["page"] ?? "1";
+    page = (int.parse(page) * pageBase).toString();
+    formatParams["page"] = page;
+    url = await _commonFormatUrl(yamlDoc, link, formatParams);
+    _log.fine("getJsonHomeUrl:url=$url");
+    return toResult(success, "解析成功", url);
+  }
+
   Future<String> homeUrl(String sourceName, String page,
       {List<Option>? chooseOption}) async {
     YamlMap yamlDoc = await YamlRuleFactory().create(sourceName);
@@ -87,7 +107,12 @@ abstract class Parser {
     return toResult(success, "解析成功", optionsRule);
   }
 
-  String _findOptionParam(YamlMap yamlDoc, Option option) {
+  Future<String> displayInfo(String sourceName) async {
+    YamlMap yamlDoc = await YamlRuleFactory().create(sourceName);
+    return toResult(success, "解析成功", yamlDoc["display"] ?? "");
+  }
+
+  String _findOptionParam(YamlMap yamlDoc, dynamic option) {
     var optionsRule = yamlDoc["url"]["options"];
     String result = "";
     if (optionsRule != null) {
@@ -98,6 +123,34 @@ abstract class Parser {
       }
     }
     return result;
+  }
+
+  String _findCommonOptionParam(YamlMap yamlDoc, Map<String, dynamic> option) {
+    var optionsRule = yamlDoc["url"]["options"];
+    String result = "";
+    if (optionsRule != null) {
+      for (var item in optionsRule) {
+        return item["items"][option["index"]]["param"];
+      }
+    }
+    return result;
+  }
+
+  Future<String> _commonFormatUrl(
+      YamlMap yamlDoc, String url, Map<String, String> formatParams) async {
+    String pattern = r'\${(.*?)\}';
+    // 使用正则表达式匹配被{}包围的内容
+    RegExp regExp = RegExp(pattern);
+    Iterable iterator = regExp.allMatches(url);
+    // 遍历匹配结果并打印
+    for (Match match in iterator) {
+      String? text = match.group(1);
+      _log.fine('找到匹配内容: $text');
+      String? value = formatParams[text];
+      _log.info('value= $value');
+      url = url.replaceAll("\${$text}", value ?? "");
+    }
+    return url;
   }
 
   Future<String> _formatUrl(YamlMap yamlDoc, String url, String page,
@@ -138,8 +191,8 @@ abstract class Parser {
     return url;
   }
 
-
-  Future<String> parseUseYaml(String content, String sourceName, String pageName);
+  Future<String> parseUseYaml(
+      String content, String sourceName, String pageName);
 }
 
 class Option {

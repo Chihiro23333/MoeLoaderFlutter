@@ -138,7 +138,8 @@ class YamlHtmlParser extends Parser {
     String result = "";
     //查找获取元素，可以是N
     String? css = yamlMap["cssSelector"];
-    if (css == null) throw "first rule must be cssSelector！";
+    String defaultValue = yamlMap['default'] ?? "";
+    if (css == null) return defaultValue;
     if (css == "") {
       resultElements = [element];
     } else {
@@ -181,6 +182,10 @@ class YamlHtmlParser extends Parser {
           result = result.substring(0, result.length - 1);
         }
       }
+    }
+
+    if(result.isEmpty){
+      return defaultValue;
     }
     return result;
   }

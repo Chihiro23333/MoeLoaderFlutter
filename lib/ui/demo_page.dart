@@ -87,9 +87,26 @@ class _TestState extends State<DemoPage> {
         }));
     widgets.add(const SizedBox(height: 10,));
     widgets.add(ActionChip(
+        label: const Text("url"),
+        onPressed: () async {
+          Map<String, String> params = {};
+          params["page"] = "1";
+          params["rating"] = "rating%3Asafe+";
+          String jsonHomeUrl = await parser.url(sourceName, "search",params);
+          updateResult(jsonHomeUrl);
+        }));
+    widgets.add(const SizedBox(height: 10,));
+    widgets.add(ActionChip(
         label: const Text("getJsonName"),
         onPressed: () async {
           String jsonName = await parser.webPageName(sourceName);
+          updateResult(jsonName);
+        }));
+    widgets.add(const SizedBox(height: 10,));
+    widgets.add(ActionChip(
+        label: const Text("displayInfo"),
+        onPressed: () async {
+          String jsonName = await parser.displayInfo(sourceName);
           updateResult(jsonName);
         }));
     widgets.add(const SizedBox(height: 10,));

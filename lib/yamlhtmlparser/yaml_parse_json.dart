@@ -52,10 +52,11 @@ class YamlJsonParser extends Parser{
         _log.fine("contentRule=$contentRule");
 
         YamlMap getNodesRule = contentRule["getNodes"];
-        String listJpath = _getJsonPath(getNodesRule);
+        String? listJpath = _getJsonPath(getNodesRule);
         _log.fine("listJpath=$listJpath");
+        String formatJpath = listJpath ?? "";
 
-        List<dynamic> jsonList = _jsonPathN(json, listJpath);
+        List<dynamic> jsonList = _jsonPathN(json, formatJpath);
         YamlMap foreachRule = contentRule["foreach"];
 
         var list = [];
@@ -63,7 +64,7 @@ class YamlJsonParser extends Parser{
         for (int i = 0; i < jsonList.length; i++) {
           var item = {};
           foreachRule.forEach((key, value) {
-            dynamic result = _recursionQuery(json, listJpath, value, index: i, defaultValue: value["default"] ?? "");
+            dynamic result = _recursionQuery(json, formatJpath, value, index: i);
             _log.fine("propName=$key;propValue=$result");
             item[key] = result;
           });
@@ -86,10 +87,9 @@ class YamlJsonParser extends Parser{
     return content;
   }
 
-  String _getJsonPath(YamlMap rule) {
+  String? _getJsonPath(YamlMap rule) {
     _log.fine("getJPath:rule=$rule");
     String? jpath = rule["jsonpath"];
-    if (jpath == null) throw "first rule must be jsonpath！";
     return jpath;
   }
 
@@ -100,9 +100,9 @@ class YamlJsonParser extends Parser{
     return jsonList;
   }
 
-  String _jsonPathOne(Map<String, dynamic> json, String jpath) {
+  Object? _jsonPathOne(Map<String, dynamic> json, String jpath) {
     JsonPath jsonPath = JsonPath(jpath);
-    return jsonPath.read(json).elementAt(0).value.toString();
+    return jsonPath.read(json).elementAt(0).value;
   }
 
   String _formatJsonPath(String pJPath, String curJPath, int? index) {
@@ -118,8 +118,7 @@ class YamlJsonParser extends Parser{
     if (rule == null) {
       return defaultValue;
     } else {
-      String queryJPath = _formatJsonPath(pJPath, _getJsonPath(rule["get"]), index);
-      String result = _queryOne(json, queryJPath, rule);
+      String result = _queryOne(json, pJPath, rule, index);
       _log.fine("_getOne result=$result");
       return result;
     }
@@ -133,11 +132,11 @@ class YamlJsonParser extends Parser{
 
   /// 查找单个
   /// 分为三步，每一步都返回一个字符串
-  String _queryOne(Map<String, dynamic> json, String queryJPath, YamlMap yamlMap) {
-    _log.fine("queryJPath=$queryJPath");
+  String _queryOne(Map<String, dynamic> json, String pJPath, YamlMap yamlMap, int? index) {
+    _log.fine("pJPath=$pJPath");
     String result = "";
     //第一步，定位元素并获取值
-    result = _get(json, queryJPath, yamlMap['get']);
+    result = _get(json, pJPath, index, yamlMap['get']);
     _log.fine("get=$result");
     //第二步，查找值并选择选择值
     var filterRule = yamlMap["filter"];
@@ -159,8 +158,17 @@ class YamlJsonParser extends Parser{
   }
 
   //todo 方法抽出？
-  String _get(Map<String, dynamic> json, String queryJPath, YamlMap yamlMap) {
-    return _jsonPathOne(json, queryJPath);
+  String _get(Map<String, dynamic> json, String pJPath, int? index, YamlMap yamlMap) {
+    String? jsonPath = _getJsonPath(yamlMap["get"]);
+    String defaultValue = yamlMap['default'] ?? "";
+    if(jsonPath == null) defaultValue;
+    String queryJPath = _formatJsonPath(pJPath, jsonPath! , index);
+    var result = _jsonPathOne(json, queryJPath);
+    //没查找到数据用默认结果
+    if(result == null || result.toString().isEmpty){
+      return defaultValue;
+    }
+    return result.toString();
   }
 
   String _filter(String value, YamlMap yamlMap) {
