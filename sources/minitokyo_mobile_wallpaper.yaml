@@ -10,6 +10,7 @@ display:
 
 url:
   home: {link: "http://gallery.minitokyo.net/mobile?order=id&display=extensive&page=${page}" }
+  search: {link: "http://browse.minitokyo.net/gallery?tid=${tag}&order=id&index=3&display=extensive", tagConnector: "" }
 
 homePage: &HOMEPAGE
   onParseResult:

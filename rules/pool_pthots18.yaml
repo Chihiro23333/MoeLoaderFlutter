@@ -12,7 +12,6 @@ display:
 
 url:
   home: { link: "https://www.photos18.com/sort/${sort}?page=${page}&per-page=100" }
-  search: { link: "https://www.photos18.com/sort/${sort}?page=${page}&per-page=100" }
 
 options:
   - id: "sort"

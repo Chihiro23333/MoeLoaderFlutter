@@ -21,6 +21,7 @@ class YamlRuleFactory {
 
   Future<void> init() async {
     if (!_init) {
+      await _addAssets("pool_danbooru");
       await _addAssets("pool_yande");
       await _addAssets("pool_ciyuandao");
       await _addAssets("yande");

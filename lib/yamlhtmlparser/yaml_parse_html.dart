@@ -229,6 +229,11 @@ class YamlHtmlParser extends Parser {
       resultElements = element?.querySelectorAll(css);
     }
 
+    int? index = yamlMap["index"];
+    if(index != null){
+      resultElements = [resultElements?[index]];
+    }
+
     String connector = yamlMap["connector"] ?? defaultConnector;
 
     //获取特定属性并拼接
