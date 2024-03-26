@@ -29,15 +29,21 @@ class _TestState extends State<DemoPage> {
   Widget build(BuildContext context) {
     Parser parser = ParserFactory().createParser();
     String sourceName = "yande_common";
+    String pageName = "homePage";
     List<Widget> widgets = [];
-    widgets.add(const SizedBox(height: 10,));
+    widgets.add(const SizedBox(
+      height: 10,
+    ));
     widgets.add(ActionChip(
         label: const Text("获取并缓存数据"),
-        onPressed: () async{
-          String result = await parser.homeUrl(sourceName, "1");
+        onPressed: () async {
+          Map<String, String> params = {};
+          params["page"] = "1";
+          params["rating"] = "rating%3Asafe+";
+          String result = await parser.url(sourceName, pageName, "home", params);
           var jsonResult = jsonDecode(result);
-          ValidateResult<String> html = await repository
-              .home(jsonResult["data"]);
+          ValidateResult<String> html =
+              await repository.home(jsonResult["data"]);
           String? data = html.data;
           if (html.validateSuccess) {
             _log.info("请求成功");
@@ -48,68 +54,81 @@ class _TestState extends State<DemoPage> {
             updateResult('{"content":"请求失败"}');
           }
         }));
-    widgets.add(const SizedBox(height: 10,));
+    widgets.add(const SizedBox(
+      height: 10,
+    ));
     widgets.add(ActionChip(
         label: const Text("parseHomePage"),
         onPressed: () async {
           String? data = await getHtml(sourceName);
-          String json =
-              await parser.parseUseYaml(data!, sourceName, "homePage");
+          String json = await parser.parseUseYaml(data!, sourceName, pageName);
           updateResult(json);
         }));
-    widgets.add(const SizedBox(height: 10,));
+    widgets.add(const SizedBox(
+      height: 10,
+    ));
     widgets.add(ActionChip(
         label: const Text("getOptions"),
         onPressed: () async {
-          String options = await parser.options(sourceName);
+          String options = await parser.options(sourceName, pageName, "home");
           updateResult(options);
         }));
-    widgets.add(const SizedBox(height: 10,));
+    widgets.add(const SizedBox(
+      height: 10,
+    ));
     widgets.add(ActionChip(
         label: const Text("getJsonHeaders"),
         onPressed: () async {
           String jsonHeaders = await parser.headers(sourceName);
           updateResult(jsonHeaders);
         }));
-    widgets.add(const SizedBox(height: 10,));
+    widgets.add(const SizedBox(
+      height: 10,
+    ));
     widgets.add(ActionChip(
-        label: const Text("getJsonHomeUrl"),
-        onPressed: () async {
-          String jsonHomeUrl = await parser.homeUrl(sourceName, "1");
-          updateResult(jsonHomeUrl);
-        }));
-    widgets.add(const SizedBox(height: 10,));
-    widgets.add(ActionChip(
-        label: const Text("getJsonSearchUrl"),
-        onPressed: () async {
-          String jsonSearchUrl = await parser.searchUrl(sourceName, "1", "tag");
-          updateResult(jsonSearchUrl);
-        }));
-    widgets.add(const SizedBox(height: 10,));
-    widgets.add(ActionChip(
-        label: const Text("url"),
+        label: const Text("searchUrl"),
         onPressed: () async {
           Map<String, String> params = {};
           params["page"] = "1";
           params["rating"] = "rating%3Asafe+";
-          String jsonHomeUrl = await parser.url(sourceName, "search",params);
+          String jsonHomeUrl =
+              await parser.url(sourceName, pageName, "search", params);
           updateResult(jsonHomeUrl);
         }));
-    widgets.add(const SizedBox(height: 10,));
+    widgets.add(const SizedBox(
+      height: 10,
+    ));
+    widgets.add(ActionChip(
+        label: const Text("homeUrl"),
+        onPressed: () async {
+          Map<String, String> params = {};
+          params["page"] = "1";
+          params["rating"] = "rating%3Asafe+";
+          String jsonHomeUrl =
+          await parser.url(sourceName, pageName, "home", params);
+          updateResult(jsonHomeUrl);
+        }));
+    widgets.add(const SizedBox(
+      height: 10,
+    ));
     widgets.add(ActionChip(
         label: const Text("getJsonName"),
         onPressed: () async {
           String jsonName = await parser.webPageName(sourceName);
           updateResult(jsonName);
         }));
-    widgets.add(const SizedBox(height: 10,));
+    widgets.add(const SizedBox(
+      height: 10,
+    ));
     widgets.add(ActionChip(
         label: const Text("displayInfo"),
         onPressed: () async {
-          String jsonName = await parser.displayInfo(sourceName);
+          String jsonName = await parser.displayInfo(sourceName, pageName);
           updateResult(jsonName);
         }));
-    widgets.add(const SizedBox(height: 10,));
+    widgets.add(const SizedBox(
+      height: 10,
+    ));
     return Scaffold(
       body: Row(
         mainAxisSize: MainAxisSize.min,
@@ -127,8 +146,9 @@ class _TestState extends State<DemoPage> {
           ),
           Expanded(
             child: JsonView.string(
-                _result,
-                theme: const JsonViewTheme(viewType: JsonViewType.base),),
+              _result,
+              theme: const JsonViewTheme(viewType: JsonViewType.base),
+            ),
           )
         ],
       ),
