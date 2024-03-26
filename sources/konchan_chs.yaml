@@ -7,8 +7,8 @@ display:
   aspectRatio: 1.65
 
 url:
-  home: {link: "https://gelbooru.wjcodes.com/index.php?tag=${rating}p=${page}" }
-  search: {link: "https://gelbooru.wjcodes.com/index.php?tag=${rating}${tag}&p=${page}", tagConnector: "+" }
+  home: {link: "https://konachan.wjcodes.com/index.php?tag=${rating}p=${page}" }
+  search: {link: "https://konachan.wjcodes.com/index.php?tag=${rating}${tag}&p=${page}", tagConnector: "+" }
 
 options:
   - {id: "rating", desc: "评级", items: [{desc: "safe", param: "rating:safe&"}, {desc: "all", param: "&"}, {desc: "questionable", param: "rating:questionable&"}, {desc: "explicit", param: "rating:explicit&"}]}
