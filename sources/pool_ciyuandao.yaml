@@ -9,8 +9,16 @@ display:
   aspectRatio: 0.65
 
 url:
-  home: { link: "http://ciyuandao.com/photo/list/0-0-${page}" }
-  search: { link: "https://yande.re/pool?commit=%E6%90%9C%E7%B4%A2&page=${page}&query=${tag}" }
+  home: { link: "http://ciyuandao.com/photo/list/0-${type}-${page}" }
+  search: { link: "http://ciyuandao.com/photo/list/0-${type}-${page}?key=${tag}" }
+
+options:
+  - id: "type"
+    desc: "排行榜"
+    items:
+      - { desc: "最新", param: "0" }
+      - { desc: "获赞数", param: "4" }
+      - { desc: "分享数", param: "5" }
 
 homePage: &HOMEPAGE
   onParseResult:

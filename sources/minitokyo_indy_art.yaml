@@ -10,7 +10,6 @@ display:
 
 url:
   home: {link: "http://gallery.minitokyo.net/indy-art?order=id&page=${page}&display=extensive" }
-  search: {link: "http://browse.minitokyo.net/gallery?tid=${tag}&order=id&index=2&display=extensive", tagConnector: "" }
 
 homePage: &HOMEPAGE
   onParseResult:

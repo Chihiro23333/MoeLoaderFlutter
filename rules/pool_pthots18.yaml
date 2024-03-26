@@ -11,8 +11,18 @@ display:
   aspectRatio: 0.65
 
 url:
-  home: { link: "https://www.photos18.com/?ref=porndude&page=${page}&per-page=100" }
-  search: { link: "https://yande.re/pool?commit=%E6%90%9C%E7%B4%A2&page=${page}&query=${tag}" }
+  home: { link: "https://www.photos18.com/sort/${sort}?page=${page}&per-page=100" }
+  search: { link: "https://www.photos18.com/sort/${sort}?page=${page}&per-page=100" }
+
+options:
+  - id: "sort"
+    desc: "排行"
+    items:
+      - {desc: "最新", param: "created"}
+      - {desc: "最多", param: "hits"}
+      - {desc: "最火", param: "views"}
+      - {desc: "推荐", param: "score"}
+      - {desc: "最好", param: "likes"}
 
 homePage: &HOMEPAGE
   onParseResult:

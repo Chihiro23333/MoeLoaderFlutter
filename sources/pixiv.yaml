@@ -10,11 +10,21 @@ display:
   aspectRatio: 1
 
 url:
-  home: {link: "https://www.pixiv.net/ranking.php?p=${page}&format=json${mode}" }
-  search: {link: "https://www.pixiv.net/ajax/search/artworks/${tag}?word=${tag}&order=date_d&mode=all&p=${page}&csw=0&s_mode=s_tag_full&type=all&lang=z"}
+  home: { link: "https://www.pixiv.net/ranking.php?p=${page}&format=json${mode}" }
+  search: { link: "https://www.pixiv.net/ajax/search/artworks/${tag}?word=${tag}&order=date_d&mode=all&p=${page}&csw=0&s_mode=s_tag_full&type=all&lang=z" }
 
 options:
-  - {id: "mode", desc: "排行榜", items: [{desc: "今日", param: "&mode=daily"}, {desc: "本周", param: "&mode=weekly"}, {desc: "本月", param: "&mode=monthly"}, {desc: "新人", param: "&mode=rookie"}, {desc: "原创", param: "&mode=original"}, {desc: "AI生成", param: "&mode=daily_ai"}, {desc: "受男性欢迎", param: "&mode=male"}, {desc: "受女性欢迎", param: "&mode=female"}]}
+  - id: "mode"
+    desc: "排行榜"
+    items:
+      - { desc: "今日", param: "&mode=daily" }
+      - { desc: "本周", param: "&mode=weekly" }
+      - { desc: "本月", param: "&mode=monthly" }
+      - { desc: "新人", param: "&mode=rookie" }
+      - { desc: "原创", param: "&mode=original" }
+      - { desc: "AI生成", param: "&mode=daily_ai" }
+      - { desc: "受男性欢迎", param: "&mode=male" }
+      - { desc: "受女性欢迎", param: "&mode=female" }
 
 homePage:
   onParseResult:
