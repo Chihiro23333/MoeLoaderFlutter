@@ -1,0 +1,48 @@
+meta:
+  name: "ciyuandao.com(pool)"
+  type: "custom"
+  listType: "pool"
+
+
+display:
+  columnCount: 6
+  aspectRatio: 0.65
+
+url:
+  home: { link: "http://ciyuandao.com/photo/list/0-0-${page}" }
+  search: { link: "https://yande.re/pool?commit=%E6%90%9C%E7%B4%A2&page=${page}&query=${tag}" }
+
+homePage: &HOMEPAGE
+  onParseResult:
+    list:
+      getElements: { cssSelector: "div[class=pics] ul li" }
+      foreach:
+        coverUrl:
+          get: { cssSelector: "img", attr: "src" }
+        href:
+          get: { cssSelector: "a[class*=tits]", attr: "href" }
+          format:
+            - concat: { start: "http://ciyuandao.com", end: "" }
+        id:
+          get: { cssSelector: "a[class*=tits]", attr: "href" }
+          format:
+            - replaceAll: { from: "/photo/show/", to: "" }
+        desc:
+          get: { cssSelector: "a[class*=tits]", text: "" }
+
+searchPage:
+  *HOMEPAGE
+
+poolListPage:
+  onParseResult:
+    list:
+      getElements: { cssSelector: "div[class*=talk_pic] p" }
+      foreach:
+        coverUrl:
+          get: { cssSelector: "a img", attr: "src" }
+        href:
+          get: { cssSelector: "a img", attr: "src" }
+
+detailPage:
+  onParseResult:
+    object:

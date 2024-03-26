@@ -87,14 +87,17 @@ class _SettingState extends State<SettingPage> {
                       fillColor: Colors.white,
                       suffixIcon: Padding(
                         padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
-                        child: IconButton(
+                        child: ElevatedButton(
                           onPressed: () {
                             String text = _textEditingControl.text;
                             _log.fine("text=$text");
                             _setProxy(text);
                             showToast("更新代理成功");
                           },
-                          icon: const Icon(Icons.save),
+                          child: const Text(
+                            "保存",
+                            style: TextStyle(color: Colors.black),
+                          ),
                         ),
                       ),
                       prefixIcon: Padding(
@@ -186,7 +189,7 @@ class _SettingState extends State<SettingPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            width: 320,
+            width: 350,
             color: Global.defaultColor30,
             child: Padding(
               padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
@@ -195,7 +198,7 @@ class _SettingState extends State<SettingPage> {
                   ListTile(
                     title: const Text(
                       "MoeLoaderFlutter",
-                      style: TextStyle(fontSize: 14),
+                      style: TextStyle(fontSize: 15),
                     ),
                     leading: Icon(
                       Icons.title,
@@ -205,7 +208,7 @@ class _SettingState extends State<SettingPage> {
                   ListTile(
                     title: const Text(
                       "V1.0.3",
-                      style: TextStyle(fontSize: 14),
+                      style: TextStyle(fontSize: 15),
                     ),
                     leading: Icon(
                       Icons.code,
@@ -215,7 +218,7 @@ class _SettingState extends State<SettingPage> {
                   ListTile(
                     title: const Text(
                       "@2024 by Chihiro23333",
-                      style: TextStyle(fontSize: 14),
+                      style: TextStyle(fontSize: 15),
                     ),
                     leading: Icon(
                       Icons.timelapse,
@@ -225,7 +228,7 @@ class _SettingState extends State<SettingPage> {
                   ListTile(
                     title: const Text(
                       "https://github.com/Chihiro23333",
-                      style: TextStyle(fontSize: 14),
+                      style: TextStyle(fontSize: 15),
                     ),
                     leading: Icon(
                       Icons.home,
@@ -235,7 +238,7 @@ class _SettingState extends State<SettingPage> {
                   ListTile(
                     title: const Text(
                       "zhu.20081121@gmail.com",
-                      style: TextStyle(fontSize: 14),
+                      style: TextStyle(fontSize: 15),
                     ),
                     leading: Icon(
                       Icons.mail,

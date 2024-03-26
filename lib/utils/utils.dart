@@ -26,7 +26,11 @@ bool requestByWebViewWait(String accessWay) {
 }
 
 bool isImageUrl(String url){
-  return url.toLowerCase().contains(".jpg") || url.toLowerCase().contains(".jpeg") || url.toLowerCase().contains(".png")|| url.toLowerCase().contains(".gif");
+  return url.toLowerCase().contains(".jpg") ||
+      url.toLowerCase().contains(".jpeg") ||
+      url.toLowerCase().contains(".png")||
+      url.toLowerCase().contains(".gif")||
+      url.toLowerCase().contains(".webp");
 }
 
 String tipsByCode(int code){

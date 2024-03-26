@@ -14,7 +14,6 @@ import '../utils/const.dart';
 import '../utils/sharedpreferences_utils.dart';
 import '../utils/utils.dart';
 import '../yamlhtmlparser/models.dart';
-import '../yamlhtmlparser/yaml_validator.dart';
 
 typedef ExceptionActionCallback = void Function(HomeState homeState);
 typedef ItemClickCallback = void Function(YamlHomePageItem yamlHomePageItem);

@@ -36,23 +36,31 @@ class _PoolGridState extends State<PoolGrid> {
   }
 
   Widget _buildGrid(List<YamlHomePageItem> list, Map<String, String>? headers) {
-    int crossAxisCount = 1;
-    double childAspectRatio = 16;
+    int crossAxisCount = Global.poolListColumnCount;
+    double childAspectRatio = Global.poolListAspectRatio;
     double mainAxisSpacing = 10;
+    double crossAxisSpacing = 10;
     return GridView.builder(
         itemCount: list.length,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: crossAxisCount,
+            crossAxisSpacing: crossAxisSpacing,
             childAspectRatio: childAspectRatio,
             mainAxisSpacing: mainAxisSpacing),
         itemBuilder: (BuildContext context, int index) {
           YamlHomePageItem yamlHomePageItem = list[index];
           MediaQueryData queryData = MediaQuery.of(context);
-          double screenWidth = queryData.size.width;
-          double height = screenWidth / childAspectRatio;
+          double screenWidth = queryData.size.width -
+              20 -
+              crossAxisCount * (crossAxisSpacing - 1);
+          _log.fine("screenWidth=$screenWidth");
+          double width = screenWidth / crossAxisCount;
+          _log.fine("width=$width");
+          double height = (width / childAspectRatio);
+          _log.fine("height=$height");
           return GestureDetector(
-            child: _buildItem(context, yamlHomePageItem, screenWidth, height,
-                index, crossAxisCount, headers),
+            child: _buildItem(context, yamlHomePageItem, width, height, index,
+                crossAxisCount, headers),
             onTap: () async {
               var itemOnPressed = widget.itemOnPressed;
               if (itemOnPressed != null) {
@@ -73,19 +81,24 @@ class _PoolGridState extends State<PoolGrid> {
       Map<String, String>? headers) {
     List<Widget> widgets = [];
     String url = yamlHomePageItem.url;
-    double width = height * 16 / 9;
+    const double padding = 6;
+    double descH = padding * 2 + 62;
+    double imageH = height - descH;
     if (url.isEmpty) {
       widgets.add(Container(
+        decoration: BoxDecoration(
+          borderRadius: const BorderRadius.all(Radius.circular(5)),
+          color: Global.defaultColor30,
+        ),
         width: width,
-        height: height,
-        color: Colors.black26,
+        height: imageH,
         child: const SizedBox(
           child: Center(
             child: Text(
               "图集",
               style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: Colors.black87,
                   fontSize: 18),
             ),
           ),
@@ -93,29 +106,34 @@ class _PoolGridState extends State<PoolGrid> {
       ));
     } else {
       widgets.add(ExtendedImage.network(
+        borderRadius: const BorderRadius.all(Radius.circular(5)),
         shape: BoxShape.rectangle,
         headers: headers,
         width: width,
-        height: height,
+        height: imageH,
         yamlHomePageItem.url,
         fit: BoxFit.cover,
       ));
     }
-    widgets.add(Expanded(
-        child: Padding(
-      padding: const EdgeInsets.all(10),
-      child: Text(
-        yamlHomePageItem.commonInfo?.desc ?? "暂无描述",
-        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-        overflow: TextOverflow.ellipsis,
-        maxLines: 2,
+    widgets.add(SizedBox(
+      height: descH,
+      child: Padding(
+        padding: const EdgeInsets.all(padding),
+        child: Text(
+          yamlHomePageItem.commonInfo?.desc ?? "暂无描述",
+          overflow: TextOverflow.ellipsis,
+          maxLines: 3,
+        ),
       ),
-    )));
+    ));
     return Container(
-      color: Global.defaultColor30,
-      child: Row(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.start,
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.all(Radius.circular(5)),
+        color: Global.defaultColor30,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: widgets,
       ),
     );

@@ -1,0 +1,48 @@
+meta:
+  name: "photos18.com(pool)"
+  type: "custom"
+  listType: "pool"
+  headers:
+    User-Agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    Referer: "https://www.photos18.com/?ref=porndude&page=2&per-page=100"
+
+display:
+  columnCount: 6
+  aspectRatio: 0.65
+
+url:
+  home: { link: "https://www.photos18.com/?ref=porndude&page=${page}&per-page=100" }
+  search: { link: "https://yande.re/pool?commit=%E6%90%9C%E7%B4%A2&page=${page}&query=${tag}" }
+
+homePage: &HOMEPAGE
+  onParseResult:
+    list:
+      getElements: { cssSelector: "div[class=card-columns] div[class=card]" }
+      foreach:
+        coverUrl:
+          get: { cssSelector: "img", attr: "src" }
+          format:
+            - concat: { start: "https://www.photos18.com", end: "" }
+        href:
+          get: { cssSelector: "div[class*=card-body] a", attr: "href" }
+          format:
+            - concat: { start: "https://www.photos18.com", end: "" }
+        desc:
+          get: { cssSelector: "div[class*=card-body] a", text: "" }
+
+searchPage:
+  *HOMEPAGE
+
+poolListPage:
+  onParseResult:
+    list:
+      getElements: { cssSelector: "#content div[class*=imgHolder]" }
+      foreach:
+        coverUrl:
+          get: { cssSelector: "a img", attr: "src" }
+        href:
+          get: { cssSelector: "a img", attr: "src" }
+
+detailPage:
+  onParseResult:
+    object:

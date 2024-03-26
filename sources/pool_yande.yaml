@@ -6,6 +6,8 @@ meta:
 display:
   columnCount: 6
   aspectRatio: 1.65
+  poolListColumnCount: 4
+  poolListAspectRatio: 2
 
 url:
   home: { link: "https://yande.re/pool?page=${page}" }
