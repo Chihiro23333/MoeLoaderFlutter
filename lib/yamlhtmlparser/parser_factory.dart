@@ -1,8 +1,7 @@
-import 'dart:convert';
-
 import 'package:MoeLoaderFlutter/yamlhtmlparser/utils.dart';
 import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_parse_mix.dart';
 import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_rule_factory.dart';
+import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:yaml/yaml.dart';
 
@@ -41,10 +40,10 @@ abstract class Parser {
   /*
   formatParams格式:{"page":"1","options":"key":[], key:"value"}
    */
-  Future<String> url(String sourceName, String pageName, String urlName,
+  Future<String> url(String sourceName, String pageName,
       Map<String, String> formatParams) async {
     YamlMap yamlDoc = await YamlRuleFactory().create(sourceName);
-    YamlMap? urlRule = yamlDoc['url']?[pageName]?[urlName];
+    YamlMap? urlRule = yamlDoc['url']?[pageName];
     String url = "";
     if(urlRule != null){
       String link = urlRule["link"];
@@ -63,9 +62,9 @@ abstract class Parser {
     return toResult(success, "解析成功", yamlDoc["meta"]?["name"] ?? "");
   }
 
-  Future<String> options(String sourceName, String pageName, String urlName) async {
+  Future<String> options(String sourceName, String pageName) async {
     YamlMap yamlDoc = await YamlRuleFactory().create(sourceName);
-    var optionsRule = yamlDoc["url"]?[pageName]?[urlName]?["options"];
+    var optionsRule = yamlDoc["url"]?[pageName]?["options"];
     _log.fine("optionsRule=$optionsRule");
     return toResult(success, "解析成功", optionsRule ?? []);
   }
@@ -92,13 +91,78 @@ abstract class Parser {
     return link;
   }
 
+  @protected
+  String handleResult(String result, YamlMap yamlMap){
+    //第二步，查找值
+    var findRule = yamlMap["find"];
+    if (findRule != null) {
+      result = _find(result, findRule);
+      _log.fine("find=$result");
+    }
+    //第三步，规整值
+    var formatRule = yamlMap["format"];
+    if (formatRule != null) {
+      result = _format(result, formatRule);
+      _log.fine("format=$result");
+    }
+    _log.fine("_queryOne=$result");
+    return result;
+  }
+
+  @protected
+  String regularString(String text) {
+    text = text.replaceAll("\n", "");
+    text = text.trim();
+    return text;
+  }
+
+
+  String _find(String value, YamlMap yamlMap) {
+    String result = value;
+    RegExp? linkRegExp;
+
+    String? regexRule = yamlMap["regex"];
+    if (regexRule == null) throw "first rule must be regex！";
+    linkRegExp = RegExp(regexRule);
+
+    int? indexRule = yamlMap["index"];
+    if (indexRule != null) {
+      result = linkRegExp.firstMatch(value)?.group(indexRule) ?? "";
+    }
+
+    result = regularString(result);
+    return result;
+  }
+
+  String _format(String chooseResult, YamlList formatRule) {
+    String result = chooseResult;
+    for (YamlMap? rule in formatRule) {
+      if (rule != null) {
+        YamlMap? concatRule = rule["concat"];
+        if (concatRule != null) {
+          String? startRule = concatRule["start"];
+          String? endRule = concatRule["end"];
+          if (startRule != null && !chooseResult.startsWith(startRule)) {
+            result = "$startRule$result";
+          }
+          if (endRule != null && !chooseResult.endsWith(endRule)) {
+            result = "$result$endRule";
+          }
+        }
+
+        YamlMap? replaceAllRule = rule["replaceAll"];
+        if (replaceAllRule != null) {
+          String? fromRule = replaceAllRule["from"];
+          String? toRule = replaceAllRule["to"];
+          if (fromRule != null && toRule != null) {
+            result = result.replaceAll(fromRule, toRule);
+          }
+        }
+      }
+    }
+    return result;
+  }
+
   Future<String> parseUseYaml(
       String content, String sourceName, String pageName);
-}
-
-class Option {
-  String id = "";
-  int index = 0;
-
-  Option(this.id, this.index);
 }

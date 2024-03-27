@@ -10,7 +10,6 @@ class YamlHtmlParser extends Parser {
   final _log = Logger('YamlHtmlCommonParser');
 
   static const defaultConnector = ",";
-  static const defaultSeparator = ",";
 
   @override
   Future<String> parseUseYaml(
@@ -33,8 +32,10 @@ class YamlHtmlParser extends Parser {
   dynamic _recursionQuery(Element? element, YamlMap rule) {
     String? dataType;
     for (var element in rule.keys) {
-      if (element.toString() == "contentType") continue;
-      dataType = element.toString();
+      if (element.toString() == "list" || element.toString() == "object") {
+        dataType = element.toString();
+        break;
+      }
     }
     _log.info("dataType=$dataType");
     switch (dataType) {
@@ -67,29 +68,14 @@ class YamlHtmlParser extends Parser {
         _log.fine("result=${list.toString()}");
         return list;
       default:
-        return _getOne(element, rule);
+        return _queryOne(element, rule);
     }
   }
 
   Future<String> preprocess(String content, YamlMap preprocessNode) async {
-    String? contentType = preprocessNode["contentType"];
-    _log.fine("contentType=$contentType,html=$content");
-    if (contentType != null && contentType == "html") {
-      Document document = parse(content);
-      Element? html = document.querySelector("html");
-      return _getOne(html, preprocessNode);
-    }
-    return content;
-  }
-
-  String _getOne(Element? element, YamlMap? rule, {String defaultValue = ""}) {
-    if (rule == null) {
-      return defaultValue;
-    } else {
-      String result = _queryOne(element, rule);
-      _log.fine("_getOne result=$result");
-      return result;
-    }
+    Document document = parse(content);
+    Element? html = document.querySelector("html");
+    return _queryOne(html, preprocessNode);
   }
 
   /// 查找多个
@@ -113,23 +99,7 @@ class YamlHtmlParser extends Parser {
     //第一步，定位元素并获取值
     result = _get(element, yamlMap['get']);
     _log.fine("get=$result");
-    //第二步，查找值
-    var findRule = yamlMap["find"];
-    if (findRule != null) {
-      result = _find(result, findRule);
-      _log.fine("find=$result");
-    }
-    //第三步，规整拼接值
-    var formatRule = yamlMap["format"];
-    if (formatRule != null) {
-      for (YamlMap? yamlMap in formatRule) {
-        if (yamlMap != null) {
-          result = _format(result, yamlMap);
-          _log.fine("format=$result");
-        }
-      }
-    }
-    _log.fine("_queryOne=$result");
+    result = handleResult(result, yamlMap);
     return result;
   }
 
@@ -155,7 +125,7 @@ class YamlHtmlParser extends Parser {
       if (length > 0) {
         resultElements?.forEach((element) {
           String attr = element?.attributes[attrRule] ?? "";
-          attr = _regularString(attr);
+          attr = regularString(attr);
           if (attr.isNotEmpty) {
             result = "$result$attr$connector";
           }
@@ -172,7 +142,7 @@ class YamlHtmlParser extends Parser {
       if (length > 0) {
         resultElements?.forEach((element) {
           String text = element?.text ?? "";
-          text = _regularString(text);
+          text = regularString(text);
           _log.fine("text=${text.length}");
           if (text.isNotEmpty) {
             result = "$result$text$connector";
@@ -184,7 +154,7 @@ class YamlHtmlParser extends Parser {
       }
     }
 
-    if(result.isEmpty){
+    if (result.isEmpty) {
       return defaultValue;
     }
     return result;
@@ -208,53 +178,5 @@ class YamlHtmlParser extends Parser {
         }
       }
     }
-  }
-
-  String _find(String value, YamlList yamlList) {
-    String result = value;
-    for (var item in yamlList) {
-      RegExp? linkRegExp;
-      YamlMap? regexRule = item["regex"];
-      if (regexRule != null) {
-        linkRegExp = RegExp(regexRule["regex"]);
-        int indexRule = regexRule["index"] ?? 0;
-        result = linkRegExp.firstMatch(value)?.group(indexRule) ?? "";
-      }
-      result = _regularString(result);
-    }
-    return result;
-  }
-
-  String _format(String chooseResult, YamlMap formatRule) {
-    String result = chooseResult;
-
-    YamlMap? concatRule = formatRule["concat"];
-    if (concatRule != null) {
-      String? startRule = concatRule["start"];
-      String? endRule = concatRule["end"];
-      if (startRule != null && !chooseResult.startsWith(startRule)) {
-        result = "$startRule$result";
-      }
-      if (endRule != null && !chooseResult.endsWith(endRule)) {
-        result = "$result$endRule";
-      }
-    }
-
-    YamlMap? replaceAllRule = formatRule["replaceAll"];
-    if (replaceAllRule != null) {
-      String? fromRule = replaceAllRule["from"];
-      String? toRule = replaceAllRule["to"];
-      if (fromRule != null && toRule != null) {
-        result = result.replaceAll(fromRule, toRule);
-      }
-    }
-
-    return result;
-  }
-
-  String _regularString(String text) {
-    text = text.replaceAll("\n", "");
-    text = text.trim();
-    return text;
   }
 }

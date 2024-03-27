@@ -6,27 +6,26 @@ options: &OPTIONS
   - id: "rating"
     desc: "评级"
     items:
-      - {desc: "safe", param: "rating%3Asafe+"}
-      - {desc: "all", param: ""}
-      - {desc: "questionable", param: "rating%3Aquestionable+"}
-      - {desc: "explicit", param: "rating%3Aexplicit+"}
+      - { desc: "safe", param: "rating%3Asafe+" }
+      - { desc: "all", param: "" }
+      - { desc: "questionable", param: "rating%3Aquestionable+" }
+      - { desc: "explicit", param: "rating%3Aexplicit+" }
   - id: "pageCount"
     desc: "每页数量"
     items:
-      - {desc: "默认", param: ""}
-      - {desc: "50", param: "&limit=50"}
-      - {desc: "80", param: "&limit=80"}
+      - { desc: "默认", param: "" }
+      - { desc: "50", param: "&limit=50" }
+      - { desc: "80", param: "&limit=80" }
 url:
   homePage:
-    home:
-      link: "https://yande.re/post?page=${page}&tags=${rating}${pageCount}"
-      options:
-        *OPTIONS
-    search:
-      link: "https://yande.re/post?page=${page}&tags=${rating}${tag}${pageCount}"
-      tagConnector: "_"
-      options:
-        *OPTIONS
+    link: "https://yande.re/post?page=${page}&tags=${rating}${pageCount}"
+    options:
+      *OPTIONS
+  searchPage:
+    link: "https://yande.re/post?page=${page}&tags=${rating}${tag}${pageCount}"
+    tagConnector: "_"
+    options:
+      *OPTIONS
 
 display:
   homePage:
@@ -39,7 +38,7 @@ homePage: &HOMEPAGE
       getElements: { cssSelector: "#post-list-posts li" }
       foreach:
         type:
-          get: { default : "pool" }
+          get: { default: "pool" }
         coverUrl:
           get: { cssSelector: "a[class=thumb] img", attr: "src" }
         href:
@@ -81,12 +80,15 @@ detailPage:
         get: { cssSelector: "a[class=thumb] img", attr: "height" }
       id:
         get: { cssSelector: "#stats", text: "" }
-        filter: { regex: "(?<=Id:).*?(?=Posted:)", index: 0 }
+        find:
+          - regex: { regex: "(?<=Id:).*?(?=Posted:)", index: 0 }
       author:
         get: { cssSelector: "#stats", text: "" }
-        filter: { regex: "(?<=by ).*?(?=Size:)", index: 0 }
+        find:
+          - regex: { regex: "(?<=by ).*?(?=Size:)", index: 0 }
       dimensions:
         get: { cssSelector: "#stats", text: "" }
-        filter: { regex: "(?<=Size: ).*?(?= )", index: 0 }
+        find:
+          - regex: { regex: "(?<=Size: ).*?(?= )", index: 0 }
       source:
         get: { cssSelector: "[rel^='canonical']", attr: "href" }

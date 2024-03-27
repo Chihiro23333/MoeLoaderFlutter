@@ -40,7 +40,7 @@ class _TestState extends State<DemoPage> {
           Map<String, String> params = {};
           params["page"] = "1";
           params["rating"] = "rating%3Asafe+";
-          String result = await parser.url(sourceName, pageName, "home", params);
+          String result = await parser.url(sourceName, pageName, params);
           var jsonResult = jsonDecode(result);
           ValidateResult<String> html =
               await repository.home(jsonResult["data"]);
@@ -70,7 +70,7 @@ class _TestState extends State<DemoPage> {
     widgets.add(ActionChip(
         label: const Text("getOptions"),
         onPressed: () async {
-          String options = await parser.options(sourceName, pageName, "home");
+          String options = await parser.options(sourceName, pageName);
           updateResult(options);
         }));
     widgets.add(const SizedBox(
@@ -92,7 +92,7 @@ class _TestState extends State<DemoPage> {
           params["page"] = "1";
           params["rating"] = "rating%3Asafe+";
           String jsonHomeUrl =
-              await parser.url(sourceName, pageName, "search", params);
+              await parser.url(sourceName, pageName, params);
           updateResult(jsonHomeUrl);
         }));
     widgets.add(const SizedBox(
@@ -105,7 +105,7 @@ class _TestState extends State<DemoPage> {
           params["page"] = "1";
           params["rating"] = "rating%3Asafe+";
           String jsonHomeUrl =
-          await parser.url(sourceName, pageName, "home", params);
+          await parser.url(sourceName, pageName, params);
           updateResult(jsonHomeUrl);
         }));
     widgets.add(const SizedBox(
