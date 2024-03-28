@@ -5,7 +5,7 @@ import 'package:logging/logging.dart';
 import 'dart:async';
 import 'package:webview_windows/webview_windows.dart';
 import 'package:window_manager/window_manager.dart';
-import '../utils/utils.dart';
+import '../../utils/utils.dart';
 
 class WebView2Page extends StatefulWidget {
   const WebView2Page({super.key, required this.url, required this.code});

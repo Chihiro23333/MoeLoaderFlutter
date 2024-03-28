@@ -1,19 +1,8 @@
-import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:logging/logging.dart';
-import '../init.dart';
-import '../net/download.dart';
-import '../ui/common_function.dart';
-import '../ui/download_tasks_dialog.dart';
-import '../ui/info_dialog.dart';
-import '../ui/url_list_dialog.dart';
-import '../ui/view_model_home.dart';
-import '../utils/const.dart';
-import '../utils/sharedpreferences_utils.dart';
+import '../ui/viewmodel/view_model_home.dart';
 import '../utils/utils.dart';
-import '../yamlhtmlparser/models.dart';
 import '../yamlhtmlparser/yaml_validator.dart';
 
 typedef ExceptionActionCallback = void Function(HomeState homeState);

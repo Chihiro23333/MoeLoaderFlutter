@@ -1,9 +1,9 @@
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../init.dart';
-import '../net/download.dart';
-import 'common_function.dart';
+import '../../init.dart';
+import '../../net/download.dart';
+import '../../utils/common_function.dart';
 
 void showDownloadTasks(BuildContext context) {
   showModalBottomSheet(

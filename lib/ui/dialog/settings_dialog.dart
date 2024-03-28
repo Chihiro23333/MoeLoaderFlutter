@@ -1,10 +1,10 @@
-import 'package:MoeLoaderFlutter/ui/radio_choice_chip.dart';
 import 'package:flutter/material.dart';
 import 'package:MoeLoaderFlutter/init.dart';
 import 'package:MoeLoaderFlutter/utils/sharedpreferences_utils.dart';
 import 'package:logging/logging.dart';
-import '../utils/const.dart';
-import 'common_function.dart';
+import '../../utils/const.dart';
+import '../../widget/radio_choice_chip.dart';
+import '../../utils/common_function.dart';
 
 final TextEditingController _textEditingControl = TextEditingController();
 final _log = Logger("_SettingsInfo");

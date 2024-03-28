@@ -1,11 +1,11 @@
-import 'package:MoeLoaderFlutter/ui/view_model_detail.dart';
-import 'package:MoeLoaderFlutter/ui/webview2_page.dart';
+import 'package:MoeLoaderFlutter/utils/common_function.dart';
+import 'package:MoeLoaderFlutter/ui/viewmodel/view_model_detail.dart';
+import 'package:MoeLoaderFlutter/ui/page/webview2_page.dart';
+import 'package:MoeLoaderFlutter/utils/utils.dart';
+import 'package:MoeLoaderFlutter/yamlhtmlparser/models.dart';
+import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
-import '../utils/utils.dart';
-import '../yamlhtmlparser/models.dart';
-import '../yamlhtmlparser/yaml_validator.dart';
-import 'common_function.dart';
 
 final _log = Logger('url_list_dialog');
 

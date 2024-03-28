@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import '../init.dart';
-import '../ui/view_model_home.dart';
+import '../ui/viewmodel/view_model_home.dart';
 import '../yamlhtmlparser/models.dart';
 
 typedef ExceptionActionCallback = void Function(HomeState homeState);

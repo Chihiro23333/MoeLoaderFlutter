@@ -1,8 +1,8 @@
 import 'package:MoeLoaderFlutter/net/download.dart';
-import 'package:MoeLoaderFlutter/ui/pool_list_page.dart';
-import 'package:MoeLoaderFlutter/ui/radio_choice_chip.dart';
-import 'package:MoeLoaderFlutter/ui/settings_page.dart';
-import 'package:MoeLoaderFlutter/ui/url_list_dialog.dart';
+import 'package:MoeLoaderFlutter/ui/dialog/info_dialog.dart';
+import 'package:MoeLoaderFlutter/ui/dialog/url_list_dialog.dart';
+import 'package:MoeLoaderFlutter/ui/page/pool_list_page.dart';
+import 'package:MoeLoaderFlutter/ui/page/settings_page.dart';
 import 'package:MoeLoaderFlutter/widget/home_loading_status.dart';
 import 'package:MoeLoaderFlutter/widget/image_masonry_grid.dart';
 import 'package:MoeLoaderFlutter/widget/poll_grid.dart';
@@ -12,18 +12,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:MoeLoaderFlutter/init.dart';
-import 'package:MoeLoaderFlutter/ui/common_function.dart';
-import 'package:MoeLoaderFlutter/ui/webview2_page.dart';
+import 'package:MoeLoaderFlutter/utils/common_function.dart';
+import 'package:MoeLoaderFlutter/ui/page/webview2_page.dart';
 import 'package:MoeLoaderFlutter/yamlhtmlparser/models.dart';
-import 'package:MoeLoaderFlutter/ui/view_model_home.dart';
+import 'package:MoeLoaderFlutter/ui/viewmodel/view_model_home.dart';
 import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_validator.dart';
 import 'package:logging/logging.dart';
-import '../utils/const.dart';
-import '../utils/sharedpreferences_utils.dart';
-import '../utils/utils.dart';
+import '../../utils/const.dart';
+import '../../utils/sharedpreferences_utils.dart';
+import '../../utils/utils.dart';
+import '../../widget/radio_choice_chip.dart';
 import 'detail_page.dart';
-import 'download_tasks_dialog.dart';
-import 'info_dialog.dart';
+import '../dialog/download_tasks_dialog.dart';
 
 enum MoreItem { copy, download, option, search, setting, about }
 
@@ -99,81 +99,6 @@ class _HomeState extends State<HomePage> {
         );
       },
     );
-  }
-
-  Widget _buildMoreAction(BuildContext context, AsyncSnapshot snapshot) {
-    return PopupMenuButton<MoreItem>(
-        elevation: 8,
-        initialValue: _chooseItem,
-        icon: const Icon(Icons.more_horiz),
-        onSelected: (MoreItem item) async {
-          switch (item) {
-            case MoreItem.copy:
-              FlutterClipboard.copy(_url).then((value) => showToast("链接已复制"));
-              break;
-            case MoreItem.download:
-              showDownloadTasks(context);
-              break;
-            case MoreItem.option:
-              List<YamlOptionList> list = await _homeViewModel.optionList();
-              if (list.isEmpty) {
-                showToast("当前站点无筛选条件");
-                return;
-              }
-              _showOptionsSheet(context, list);
-              break;
-            case MoreItem.search:
-              showSearch(context, snapshot);
-              break;
-            case MoreItem.setting:
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) {
-                  return SettingPage();
-                }),
-              );
-              break;
-            default:
-          }
-        },
-        itemBuilder: (BuildContext context) => <PopupMenuEntry<MoreItem>>[
-              const PopupMenuItem<MoreItem>(
-                value: MoreItem.copy,
-                child: Center(
-                  child: Text('复制链接'),
-                ),
-              ),
-              const PopupMenuItem<MoreItem>(
-                value: MoreItem.download,
-                child: Center(
-                  child: Text('下载列表'),
-                ),
-              ),
-              const PopupMenuItem<MoreItem>(
-                value: MoreItem.option,
-                child: Center(
-                  child: Text('选项'),
-                ),
-              ),
-              const PopupMenuItem<MoreItem>(
-                value: MoreItem.search,
-                child: Center(
-                  child: Text('搜索'),
-                ),
-              ),
-              const PopupMenuItem<MoreItem>(
-                value: MoreItem.setting,
-                child: Center(
-                  child: Text('设置'),
-                ),
-              ),
-              const PopupMenuItem<MoreItem>(
-                value: MoreItem.about,
-                child: Center(
-                  child: Text('关于'),
-                ),
-              ),
-            ]);
   }
 
   void showSearch(BuildContext context, AsyncSnapshot snapshot) {

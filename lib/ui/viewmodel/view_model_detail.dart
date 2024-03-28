@@ -7,8 +7,8 @@ import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_rule_factory.dart';
 import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_validator.dart';
 import 'package:logging/logging.dart';
 import 'package:yaml/yaml.dart';
-import '../utils/utils.dart';
-import '../yamlhtmlparser/models.dart';
+import '../../utils/utils.dart';
+import '../../yamlhtmlparser/models.dart';
 
 class DetailViewModel{
 

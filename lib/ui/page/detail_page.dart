@@ -1,16 +1,16 @@
+import 'package:MoeLoaderFlutter/ui/dialog/info_dialog.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
-import 'package:MoeLoaderFlutter/ui/webview2_page.dart';
-import 'package:MoeLoaderFlutter/ui/view_model_detail.dart';
+import 'package:MoeLoaderFlutter/ui/page/webview2_page.dart';
+import 'package:MoeLoaderFlutter/ui/viewmodel/view_model_detail.dart';
 import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_validator.dart';
 import 'package:logging/logging.dart';
-import '../yamlhtmlparser/models.dart';
-import '../utils/utils.dart';
-import 'common_function.dart';
-import 'download_tasks_dialog.dart';
-import 'info_dialog.dart';
-import 'keep_alive_wrapper.dart';
+import '../../yamlhtmlparser/models.dart';
+import '../../utils/utils.dart';
+import '../../utils/common_function.dart';
+import '../dialog/download_tasks_dialog.dart';
+import '../../widget/keep_alive_wrapper.dart';
 
 class DetailPage extends StatefulWidget {
   const DetailPage({super.key, required this.commonInfo, required this.href});

@@ -6,8 +6,8 @@ import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_rule_factory.dart';
 import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_validator.dart';
 import 'package:logging/logging.dart';
 import 'package:yaml/yaml.dart';
-import '../yamlhtmlparser/models.dart';
-import '../yamlhtmlparser/parser_factory.dart';
+import '../../yamlhtmlparser/models.dart';
+import '../../yamlhtmlparser/parser_factory.dart';
 
 class HomeViewModel {
   final _log = Logger('HomeViewModel');
