@@ -1,4 +1,5 @@
 import 'package:MoeLoaderFlutter/ui/dialog/info_dialog.dart';
+import 'package:MoeLoaderFlutter/ui/page/download_page.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +10,6 @@ import 'package:logging/logging.dart';
 import '../../yamlhtmlparser/models.dart';
 import '../../utils/utils.dart';
 import '../../utils/common_function.dart';
-import '../dialog/download_tasks_dialog.dart';
 import '../../widget/keep_alive_wrapper.dart';
 
 class DetailPage extends StatefulWidget {
@@ -384,7 +384,12 @@ class _DetailState extends State<DetailPage> {
   Widget _buildDownloadAction(BuildContext context) {
     return IconButton(
         onPressed: () {
-          showDownloadTasks(context);
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) {
+              return const DownloadPage();
+            }),
+          );
         },
         icon: const Icon(Icons.download));
   }

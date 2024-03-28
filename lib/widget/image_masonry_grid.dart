@@ -8,7 +8,6 @@ import 'package:logging/logging.dart';
 import '../init.dart';
 import '../net/download.dart';
 import '../utils/common_function.dart';
-import '../ui/dialog/download_tasks_dialog.dart';
 import '../ui/viewmodel/view_model_home.dart';
 import '../utils/const.dart';
 import '../utils/sharedpreferences_utils.dart';

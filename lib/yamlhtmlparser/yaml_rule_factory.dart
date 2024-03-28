@@ -21,14 +21,14 @@ class YamlRuleFactory {
 
   Future<void> init() async {
     if (!_init) {
-      await _addAssets("pool_danbooru");
-      await _addAssets("pool_yande");
-      await _addAssets("pool_ciyuandao");
       await _addAssets("yande");
-      await _addAssets("pixiv");
-      await _addAssets("danbooru");
-      await _addAssets("behoimi");
+      await _addAssets("pool_yande");
       await _addAssets("konchan");
+      await _addAssets("konchan_chs");
+      await _addAssets("pool_konchan");
+      await _addAssets("danbooru");
+      await _addAssets("pool_danbooru");
+      await _addAssets("pixiv");
       await _addAssets("gelbooru");
       await _addAssets("safebooru");
       await _addAssets("lolibooru");
@@ -39,9 +39,9 @@ class YamlRuleFactory {
       await _addAssets("minitokyo_scans");
       await _addAssets("minitokyo_wallpaper");
       await _addAssets("wallpaperscraft");
-      await _addAssets("konchan_chs");
       await _addAssets("alphacoders");
-      await _addAssets("pool_konchan");
+      await _addAssets("behoimi");
+      await _addAssets("pool_ciyuandao");
       await addCustomRules();
       _init = true;
     }

@@ -1,6 +1,7 @@
 import 'package:MoeLoaderFlutter/net/download.dart';
 import 'package:MoeLoaderFlutter/ui/dialog/info_dialog.dart';
 import 'package:MoeLoaderFlutter/ui/dialog/url_list_dialog.dart';
+import 'package:MoeLoaderFlutter/ui/page/download_page.dart';
 import 'package:MoeLoaderFlutter/ui/page/pool_list_page.dart';
 import 'package:MoeLoaderFlutter/ui/page/settings_page.dart';
 import 'package:MoeLoaderFlutter/widget/home_loading_status.dart';
@@ -23,7 +24,6 @@ import '../../utils/sharedpreferences_utils.dart';
 import '../../utils/utils.dart';
 import '../../widget/radio_choice_chip.dart';
 import 'detail_page.dart';
-import '../dialog/download_tasks_dialog.dart';
 
 enum MoreItem { copy, download, option, search, setting, about }
 
@@ -236,7 +236,7 @@ class _HomeState extends State<HomePage> {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) {
-              return SettingPage();
+              return const SettingPage();
             }),
           );
         },
@@ -308,7 +308,12 @@ class _HomeState extends State<HomePage> {
   Widget _buildDownloadAction(BuildContext context) {
     return IconButton(
         onPressed: () {
-          showDownloadTasks(context);
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) {
+              return const DownloadPage();
+            }),
+          );
         },
         icon: const Icon(Icons.download));
   }

@@ -48,6 +48,17 @@ class DownloadManager {
     _downloadNext();
   }
 
+  void retryTask(DownloadTask task){
+    _curCancelToken?.cancel();
+    _tasks().forEach((element){
+      if(task.url == element.url){
+        element.downloadState = DownloadTask.waiting;
+      }
+    });
+    _update();
+    _downloadNext();
+  }
+
   List<DownloadTask> _tasks() {
     return _downloadState.tasks;
   }
