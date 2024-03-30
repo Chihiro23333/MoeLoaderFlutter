@@ -1,14 +1,9 @@
 import 'dart:async';
+import 'package:MoeLoaderFlutter/model/home_page_item_entity.dart';
 import 'package:MoeLoaderFlutter/net/download.dart';
-import 'package:MoeLoaderFlutter/utils/sharedpreferences_utils.dart';
-import 'package:MoeLoaderFlutter/yamlhtmlparser/parser_factory.dart';
-import 'package:MoeLoaderFlutter/init.dart';
-import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_reposotory.dart';
-import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_rule_factory.dart';
-import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_validator.dart';
+import 'package:MoeLoaderFlutter/util/sharedpreferences_utils.dart';
+import 'package:MoeLoaderFlutter/util/utils.dart';
 import 'package:logging/logging.dart';
-import 'package:yaml/yaml.dart';
-import '../../utils/utils.dart';
 import '../../yamlhtmlparser/models.dart';
 
 class SettingViewModel{
@@ -33,10 +28,6 @@ class SettingViewModel{
   void changeDetailLoading(bool loading) {
     _settingState.loading = loading;
     streamSettingController.add(_settingState);
-  }
-
-  void download(String id, String url, CommonInfo? commonInfo) {
-    DownloadManager().addTask(DownloadTask(id, url, getDownloadName(url, commonInfo)));
   }
 
   void close(){

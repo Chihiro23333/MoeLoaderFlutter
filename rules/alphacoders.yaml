@@ -1,0 +1,47 @@
+meta:
+  name: "alphacoders.com"
+  headers:
+    user-agent: "Dart/3.2 (dart:io)"
+
+url:
+  homePage:
+    link: "https://alphacoders.com/anime-wallpapers?page=${page}"
+  searchPage:
+    link: "https://alphacoders.com/${tag}-wallpapers?page=${page}"
+    tagConnector: "_"
+
+display:
+  homePage:
+    columnCount: 5
+    aspectRatio: 1.65
+
+homePage: &HOMEPAGE
+  onValidateResult:
+    - exception: { code: "403",  action: "challenge" }
+  onParseResult:
+    list:
+      getElements: { cssSelector: "div[id^=content_]" }
+      foreach:
+        coverUrl:
+          get: { cssSelector: "img[class=thumb]", attr: "src" }
+        href:
+          get: { cssSelector: "meta[itemprop='url']", attr: "content" }
+        tagStr:
+          get: { cssSelector: ".thumb-tags a", text: "" }
+        tagSplit:
+          get: { default: "," }
+        id:
+          get: { cssSelector: "div[class=thumb-container-masonry]", attr: "id" }
+          format:
+            - replaceAll: { from: "content_", to: "" }
+
+searchPage:
+  *HOMEPAGE
+
+detailPage:
+  onValidateResult:
+    - exception: { code: "403",  action: "challenge" }
+  onParseResult:
+    object:
+      url:
+        get: { cssSelector: "#main-content", attr: "src" }

@@ -1,13 +1,13 @@
+import 'package:MoeLoaderFlutter/model/home_page_item_entity.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import '../init.dart';
 import '../ui/viewmodel/view_model_home.dart';
-import '../yamlhtmlparser/models.dart';
 
 typedef ExceptionActionCallback = void Function(HomeState homeState);
-typedef ItemClickCallback = void Function(YamlHomePageItem yamlHomePageItem);
+typedef ItemClickCallback = void Function(HomePageItemEntity yamlHomePageItem);
 
 class PoolGrid extends StatefulWidget {
   const PoolGrid({
@@ -17,7 +17,7 @@ class PoolGrid extends StatefulWidget {
     this.itemOnPressed,
   });
 
-  final List<YamlHomePageItem> list;
+  final List<HomePageItemEntity> list;
   final Map<String, String>? headers;
   final ItemClickCallback? itemOnPressed;
 
@@ -35,7 +35,7 @@ class _PoolGridState extends State<PoolGrid> {
     return _buildGrid(widget.list, widget.headers);
   }
 
-  Widget _buildGrid(List<YamlHomePageItem> list, Map<String, String>? headers) {
+  Widget _buildGrid(List<HomePageItemEntity> list, Map<String, String>? headers) {
     int crossAxisCount = Global.poolListColumnCount;
     double childAspectRatio = Global.poolListAspectRatio;
     double mainAxisSpacing = 10;
@@ -48,7 +48,7 @@ class _PoolGridState extends State<PoolGrid> {
             childAspectRatio: childAspectRatio,
             mainAxisSpacing: mainAxisSpacing),
         itemBuilder: (BuildContext context, int index) {
-          YamlHomePageItem yamlHomePageItem = list[index];
+          HomePageItemEntity yamlHomePageItem = list[index];
           MediaQueryData queryData = MediaQuery.of(context);
           double screenWidth = queryData.size.width -
               20 -
@@ -73,14 +73,14 @@ class _PoolGridState extends State<PoolGrid> {
 
   Widget _buildItem(
       BuildContext context,
-      YamlHomePageItem yamlHomePageItem,
+      HomePageItemEntity homePageItem,
       double width,
       double height,
       int index,
       int crossAxisCount,
       Map<String, String>? headers) {
     List<Widget> widgets = [];
-    String url = yamlHomePageItem.url;
+    String url = homePageItem.coverUrl;
     const double padding = 6;
     double descH = padding * 2 + 62;
     double imageH = height - descH;
@@ -111,7 +111,7 @@ class _PoolGridState extends State<PoolGrid> {
         headers: headers,
         width: width,
         height: imageH,
-        yamlHomePageItem.url,
+        url,
         fit: BoxFit.cover,
       ));
     }
@@ -120,7 +120,7 @@ class _PoolGridState extends State<PoolGrid> {
       child: Padding(
         padding: const EdgeInsets.all(padding),
         child: Text(
-          yamlHomePageItem.commonInfo?.desc ?? "暂无描述",
+          homePageItem.desc,
           overflow: TextOverflow.ellipsis,
           maxLines: 3,
         ),

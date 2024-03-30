@@ -1,0 +1,75 @@
+meta:
+  name: "gelbooru.com"
+
+display:
+  homePage:
+    columnCount: 7
+    aspectRatio: 0.72
+
+options: &OPTIONS
+  - id: "rating"
+    desc: "评级"
+    items:
+      - {desc: "general", param: "rating%3Ageneral+"}
+      - {desc: "all", param: "all"}
+      - {desc: "Sensitive", param: "rating%3Asensitive+"}
+      - {desc: "Questionable", param: "rating%3Aquestionable+"}
+      - {desc: "explicit", param: "rating%3Aexplicit+"}
+  - id: "pageCount"
+    desc: "每页数量"
+    items:
+      - {desc: "20", param: ""}
+      - {desc: "50", param: "&limit=50"}
+      - {desc: "80", param: "&limit=80"}
+
+url:
+  homePage:
+    link: "https://gelbooru.com/index.php?page=post&s=list&tags=${rating}&pid=${page}"
+    pageBase: 21
+    options:
+      *OPTIONS
+  searchPage:
+    link: "https://gelbooru.com/index.php?page=post&s=list&tags=${tag}&pid=${page}"
+    pageBase: 21
+    tagConnector: "_"
+    options:
+      *OPTIONS
+
+homePage: &HOMEPAGE
+  onParseResult:
+    list:
+      getElements: { cssSelector: ".thumbnail-preview" }
+      foreach:
+        coverUrl:
+          get: { cssSelector: "img", attr: "src" }
+        href:
+          get: { cssSelector: "a", attr: "href" }
+        tagStr:
+          get: { cssSelector: "img", attr: "alt" }
+          find:
+            - regex: { regex: 'Rule 34 \| ([^|]+)', index: 1 }
+        tagSplit:
+          get: { default: "," }
+        id:
+          get: { cssSelector: "a", attr: "id" }
+          format:
+            - replaceAll: { from: "p", to: "" }
+
+searchPage:
+  *HOMEPAGE
+
+detailPage:
+  onParseResult:
+    object:
+      url:
+        get: { cssSelector: "#image", attr: "src" }
+      rawUrl:
+        get: { cssSelector: "li a[rel=noopener]", attr: "href" }
+      tagStr:
+        get: { cssSelector: "section[class='image-container note-container']", attr: "data-tags" }
+      id:
+        get: { cssSelector: ".image-container", attr: "data-id" }
+      tagSplit:
+        get: { default: " " }
+      source:
+        get: { cssSelector: "li[style] a[rel=nofollow]", attr: "href" }

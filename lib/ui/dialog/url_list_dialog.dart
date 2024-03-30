@@ -1,15 +1,16 @@
-import 'package:MoeLoaderFlutter/utils/common_function.dart';
+import 'package:MoeLoaderFlutter/model/detail_page_entity.dart';
+import 'package:MoeLoaderFlutter/model/home_page_item_entity.dart';
 import 'package:MoeLoaderFlutter/ui/viewmodel/view_model_detail.dart';
 import 'package:MoeLoaderFlutter/ui/page/webview2_page.dart';
-import 'package:MoeLoaderFlutter/utils/utils.dart';
-import 'package:MoeLoaderFlutter/yamlhtmlparser/models.dart';
-import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_validator.dart';
+import 'package:MoeLoaderFlutter/util/common_function.dart';
+import 'package:MoeLoaderFlutter/util/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
+import 'package:to_json/validator.dart';
 
 final _log = Logger('url_list_dialog');
 
-void showUrlList(BuildContext context, String href, CommonInfo? commonInfo) {
+void showUrlList(BuildContext context, HomePageItemEntity homePageItem) {
   DetailViewModel detailViewModel = DetailViewModel();
   showModalBottomSheet(
       context: context,
@@ -21,8 +22,8 @@ void showUrlList(BuildContext context, String href, CommonInfo? commonInfo) {
                 builder: (BuildContext context, AsyncSnapshot snapshot) {
                   if (snapshot.connectionState != ConnectionState.active) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      detailViewModel.requestDetailData(href,
-                          commonInfo: commonInfo);
+                      detailViewModel.requestDetailData(homePageItem.href,
+                          homePageItem: homePageItem);
                     }
                     return const Center(
                       child: CircularProgressIndicator(),
@@ -45,15 +46,15 @@ void showUrlList(BuildContext context, String href, CommonInfo? commonInfo) {
                               context,
                               MaterialPageRoute(builder: (context) {
                                 return WebView2Page(
-                                  url: href,
+                                  url: homePageItem.href,
                                   code: detailState.code,
                                 );
                               }),
                             );
                             _log.fine("push result=${result}");
                             if (result != null && result) {
-                              detailViewModel.requestDetailData(href,
-                                  commonInfo: commonInfo);
+                              detailViewModel.requestDetailData(homePageItem.href,
+                                  homePageItem: homePageItem);
                             }
                           },
                         ),
@@ -63,17 +64,17 @@ void showUrlList(BuildContext context, String href, CommonInfo? commonInfo) {
                       child: Text(detailState.errorMessage),
                     );
                   } else {
-                    YamlDetailPage yamlDetailPage = detailState.yamlDetailPage;
-                    String? url = yamlDetailPage.url;
-                    String? bigUrl = yamlDetailPage.commonInfo?.bigUrl;
-                    String? rawUrl = yamlDetailPage.commonInfo?.rawUrl;
+                    DetailPageEntity detailPageEntity = detailState.detailPageEntity;
+                    String? url = detailPageEntity.url;
+                    String? bigUrl = detailPageEntity.bigUrl;
+                    String? rawUrl = detailPageEntity.rawUrl;
                     _log.fine("url=$url;rawUrl=$rawUrl;bigUrl=$bigUrl");
                     List<Widget> children = [];
                     if (isImageUrl(url) && url.isNotEmpty) {
                       children
                           .add(buildDownloadItem(context, url, "预览图($url)", () {
                         detailViewModel.download(
-                            href, url, yamlDetailPage.commonInfo);
+                            homePageItem.href, url, detailPageEntity.id);
                         showToast("已将图片加入下载列表");
                         Navigator.of(context).pop();
                       }));
@@ -85,7 +86,7 @@ void showUrlList(BuildContext context, String href, CommonInfo? commonInfo) {
                       children.add(
                           buildDownloadItem(context, bigUrl, "大图($bigUrl)", () {
                         detailViewModel.download(
-                            href, bigUrl, yamlDetailPage.commonInfo);
+                            homePageItem.href, bigUrl, detailPageEntity.id);
                         showToast("已将图片加入下载列表");
                         Navigator.of(context).pop();
                       }));
@@ -97,7 +98,7 @@ void showUrlList(BuildContext context, String href, CommonInfo? commonInfo) {
                       children.add(
                           buildDownloadItem(context, rawUrl, "原图($rawUrl)", () {
                         detailViewModel.download(
-                            href, rawUrl, yamlDetailPage.commonInfo);
+                            homePageItem.href, rawUrl, detailPageEntity.id);
                         showToast("已将图片加入下载列表");
                         Navigator.of(context).pop();
                       }));

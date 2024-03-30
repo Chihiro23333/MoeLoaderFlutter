@@ -1,22 +1,25 @@
 import 'dart:async';
+import 'dart:convert';
+import 'package:MoeLoaderFlutter/generated/json/base/json_convert_content.dart';
+import 'package:MoeLoaderFlutter/model/detail_page_entity.dart';
 import 'package:MoeLoaderFlutter/net/request_manager.dart';
-import 'package:MoeLoaderFlutter/utils/sharedpreferences_utils.dart';
-import 'package:MoeLoaderFlutter/yamlhtmlparser/models.dart';
+import 'package:MoeLoaderFlutter/util/const.dart';
+import 'package:MoeLoaderFlutter/util/sharedpreferences_utils.dart';
+import 'package:MoeLoaderFlutter/util/utils.dart';
 import 'package:dio/dio.dart';
 import 'package:logging/logging.dart';
+import 'package:to_json/parser_factory.dart';
+import 'package:to_json/validator.dart';
+import 'package:to_json/yaml_parser_base.dart';
+import 'package:to_json/yaml_rule_factory.dart';
 import 'package:yaml/yaml.dart';
-
 import '../init.dart';
-import '../utils/const.dart';
-import '../utils/utils.dart';
-import '../yamlhtmlparser/parser_factory.dart';
-import '../yamlhtmlparser/yaml_reposotory.dart';
-import '../yamlhtmlparser/yaml_rule_factory.dart';
-import '../yamlhtmlparser/yaml_validator.dart';
+import '../repo/yaml_reposotory.dart';
 
 class DownloadManager {
-
   final _log = Logger("DownloadManager");
+
+  final String _detailPageName = "detailPage";
 
   static DownloadManager? _cache;
 
@@ -41,17 +44,17 @@ class DownloadManager {
     _downloadNext();
   }
 
-  void cancelTask(DownloadTask task){
+  void cancelTask(DownloadTask task) {
     _curCancelToken?.cancel();
     _tasks().removeWhere((element) => task.url == element.url);
     _update();
     _downloadNext();
   }
 
-  void retryTask(DownloadTask task){
+  void retryTask(DownloadTask task) {
     _curCancelToken?.cancel();
-    _tasks().forEach((element){
-      if(task.url == element.url){
+    _tasks().forEach((element) {
+      if (task.url == element.url) {
         element.downloadState = DownloadTask.waiting;
       }
     });
@@ -81,62 +84,71 @@ class DownloadManager {
     DownloadTask? downloadTask = _findFirstUnDownload();
     if (downloadTask != null) {
       YamlMap doc = await YamlRuleFactory().create(Global.curWebPageName);
-      Map<String, String>? headers = await _parser().getHeaders(doc);
+      Map<String, String>? headers = await _parser().headers(doc);
       if (isImageUrl(downloadTask.url)) {
         downloadTask.downloadUrl = downloadTask.url;
         _download(downloadTask);
       } else {
-        ValidateResult<String> result =
-            await repository.detail(downloadTask.url, headers: headers);
+        Validator validator = Validator(doc, _detailPageName);
+        ValidateResult<String> result = await repository.detail(downloadTask.url, validator, headers: headers);
         print("result=${result}");
+        bool success = false;
         if (result.validateSuccess) {
-          YamlDetailPage picDetailPage =
-              await _parser().parseDetail(result.data!, doc);
-          String downloadUrl = "";
-          String previewUrl = picDetailPage.url;
-          String? rawUrl = picDetailPage.commonInfo?.rawUrl;
-          String? bigUrl = picDetailPage.commonInfo?.bigUrl;
-          String? downloadFileSize = await getDownloadFileSize();
-          _log.fine("downloadFileSize=$downloadFileSize");
-          switch (downloadFileSize) {
-            case Const.preview:
-              if (downloadUrl.isEmpty) {
-                downloadUrl = previewUrl;
-              }
-              if (downloadUrl.isEmpty) {
-                downloadUrl = bigUrl ?? "";
-              }
-              if (downloadUrl.isEmpty) {
-                downloadUrl = rawUrl ?? "";
-              }
-              break;
-            case Const.big:
-              if (downloadUrl.isEmpty) {
-                downloadUrl = bigUrl ?? "";
-              }
-              if (downloadUrl.isEmpty) {
-                downloadUrl = rawUrl ?? "";
-              }
-              if (downloadUrl.isEmpty) {
-                downloadUrl = previewUrl;
-              }
-              break;
-            case Const.raw:
-            default:
-              if (downloadUrl.isEmpty) {
-                downloadUrl = rawUrl ?? "";
-              }
-              if (downloadUrl.isEmpty) {
-                downloadUrl = bigUrl ?? "";
-              }
-              if (downloadUrl.isEmpty) {
-                downloadUrl = previewUrl;
-              }
-              break;
+          String json =
+              await _parser().parseUseYaml(result.data!, doc, _detailPageName);
+          var decode = jsonDecode(json);
+          if (decode["code"] == Parser.success) {
+            success = true;
+            DetailPageEntity detailPageEntity =
+                jsonConvert.convert<DetailPageEntity>(decode["data"]) ??
+                    DetailPageEntity();
+            String downloadUrl = "";
+            String previewUrl = detailPageEntity.url;
+            String? rawUrl = detailPageEntity.rawUrl;
+            String? bigUrl = detailPageEntity.bigUrl;
+            String? downloadFileSize = await getDownloadFileSize();
+            _log.fine("downloadFileSize=$downloadFileSize");
+            switch (downloadFileSize) {
+              case Const.preview:
+                if (downloadUrl.isEmpty) {
+                  downloadUrl = previewUrl;
+                }
+                if (downloadUrl.isEmpty) {
+                  downloadUrl = bigUrl ?? "";
+                }
+                if (downloadUrl.isEmpty) {
+                  downloadUrl = rawUrl ?? "";
+                }
+                break;
+              case Const.big:
+                if (downloadUrl.isEmpty) {
+                  downloadUrl = bigUrl ?? "";
+                }
+                if (downloadUrl.isEmpty) {
+                  downloadUrl = rawUrl ?? "";
+                }
+                if (downloadUrl.isEmpty) {
+                  downloadUrl = previewUrl;
+                }
+                break;
+              case Const.raw:
+              default:
+                if (downloadUrl.isEmpty) {
+                  downloadUrl = rawUrl ?? "";
+                }
+                if (downloadUrl.isEmpty) {
+                  downloadUrl = bigUrl ?? "";
+                }
+                if (downloadUrl.isEmpty) {
+                  downloadUrl = previewUrl;
+                }
+                break;
+            }
+            downloadTask.downloadUrl = downloadUrl;
+            _download(downloadTask);
           }
-          downloadTask.downloadUrl = downloadUrl;
-          _download(downloadTask);
-        } else {
+        }
+        if (!success) {
           downloadTask.downloadState = DownloadTask.error;
           _update();
           _downloadNext();
@@ -165,8 +177,7 @@ class DownloadManager {
         if (complete) {
           _downloadNext();
         }
-      },
-      cancelToken:_curCancelToken);
+      }, cancelToken: _curCancelToken);
     }
   }
 

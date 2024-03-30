@@ -58,6 +58,8 @@ dependencies:
       ref: main
   hive: ^2.2.3
   flutter_socks_proxy: ^0.0.3
+  to_json:
+    path: ./to_json
 
 dev_dependencies:
   flutter_test:
@@ -92,28 +94,8 @@ flutter:
   # For details regarding adding assets from package dependencies, see
   # https://flutter.dev/assets-and-images/#from-packages
   assets:
-    - sources/yande.yaml
-    - sources/behoimi.yaml
-    - sources/anim_pictures.yaml
-    - sources/konchan.yaml
-    - sources/danbooru.yaml
-    - sources/gelbooru.yaml
-    - sources/safebooru.yaml
     - sources/lolibooru.yaml
-    - sources/zerochan.yaml
-    - sources/shuushuu.yaml
-    - sources/pixiv.yaml
-    - sources/minitokyo_wallpaper.yaml
-    - sources/minitokyo_indy_art.yaml
-    - sources/minitokyo_mobile_wallpaper.yaml
-    - sources/minitokyo_scans.yaml
-    - sources/alphacoders.yaml
-    - sources/konchan_chs.yaml
-    - sources/wallpaperscraft.yaml
-    - sources/pool_yande.yaml
-    - sources/pool_konchan.yaml
     - sources/pool_ciyuandao.yaml
-    - sources/pool_danbooru.yaml
 
   # To add custom fonts to your application, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a

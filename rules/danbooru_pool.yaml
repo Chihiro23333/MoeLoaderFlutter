@@ -1,0 +1,88 @@
+meta:
+  name: "danbooru.donmai(pool)"
+  pageType: "pool"
+  headers:
+    user-agent: "Dart/3.2 (dart:io)"
+
+display:
+  homePage:
+    columnCount: 7
+    aspectRatio: 1.65
+  poolListPage:
+    columnCount: 7
+    aspectRatio: 0.5
+
+url:
+  homePage:
+    link: "https://danbooru.donmai.us/pools/gallery?page=${page}"
+
+onValidateResult: &onValidateResult
+  - exception: { code: "403",  action: "challenge" }
+
+homePage:
+  onValidateResult:
+    *onValidateResult
+  onParseResult:
+    list:
+      getElements: { cssSelector: "div[class*=posts-container] article" }
+      foreach:
+        coverUrl:
+          get: { cssSelector: "img", attr: "src" }
+        href:
+          get: { cssSelector: "a[class=post-preview-link]", attr: "href" }
+          format:
+            - concat: { start: "https://danbooru.donmai.us", end: "" }
+        id:
+          get: { cssSelector: "a[class=post-preview-link]", attr: "href" }
+          format:
+            - replaceAll: { from: "/pools/", to: "" }
+        desc:
+          get: { cssSelector: "div[class=text-center] a", text: "" }
+
+poolListPage:
+  onParseResult:
+    list:
+      getElements: { cssSelector: "div[class*=posts-container] article" }
+      foreach:
+        coverUrl:
+          get: { cssSelector: "img", attr: "src" }
+        href:
+          get: { cssSelector: "a[class=post-preview-link]", attr: "href" }
+          format:
+            - concat: { start: "https://danbooru.donmai.us", end: "" }
+        tagStr:
+          get: { cssSelector: "", attr: "data-tags" }
+        tagSplit:
+          get: { default: " " }
+        width:
+          get: { cssSelector: "img", attr: "width" }
+        height:
+          get: { cssSelector: "img", attr: "height" }
+        id:
+          get: { cssSelector: "", attr: "id" }
+          format:
+            - replaceAll: { from: "post_", to: "" }
+
+detailPage:
+  onValidateResult:
+    *onValidateResult
+  onParseResult:
+    object:
+      url:
+        get: { cssSelector: "#image", attr: "src" }
+      rawUrl:
+        get: { cssSelector: "#post-option-view-large a", attr: "href" }
+      tagStr:
+        get: { cssSelector: "section[class^=image-container]", attr: "data-tags" }
+      tagSplit:
+        get: { default: " " }
+      id:
+        get: { cssSelector: "#post-info-id", text: "" }
+        format:
+          - replaceAll: { from: "ID: ", to: "" }
+      author:
+        get: { cssSelector: "#post-info-uploader a", text: "" }
+      dimensions:
+        get: { cssSelector: "#post-info-size", text: "" }
+      source:
+        get: { cssSelector: "#post-info-source a", text: "" }

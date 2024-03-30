@@ -1,16 +1,25 @@
 import 'dart:async';
+import 'dart:convert';
+import 'package:MoeLoaderFlutter/generated/json/base/json_convert_content.dart';
 import 'package:MoeLoaderFlutter/init.dart';
+import 'package:MoeLoaderFlutter/model/tag_entity.dart';
 import 'package:MoeLoaderFlutter/net/download.dart';
-import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_reposotory.dart';
-import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_rule_factory.dart';
-import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_validator.dart';
+import 'package:MoeLoaderFlutter/repo/yaml_reposotory.dart';
 import 'package:logging/logging.dart';
+import 'package:to_json/models.dart';
+import 'package:to_json/parser_factory.dart';
+import 'package:to_json/validator.dart';
+import 'package:to_json/yaml_parser_base.dart';
 import 'package:yaml/yaml.dart';
-import '../../yamlhtmlparser/models.dart';
-import '../../yamlhtmlparser/parser_factory.dart';
+import 'package:to_json/yaml_rule_factory.dart';
+import 'package:MoeLoaderFlutter/model/home_page_item_entity.dart';
+import 'package:MoeLoaderFlutter/model/option_entity.dart';
 
 class HomeViewModel {
   final _log = Logger('HomeViewModel');
+
+  final String _homePageName = "homePage";
+  final String _searchPageName = "searchPage";
 
   final YamlRepository repository = YamlRepository();
 
@@ -22,7 +31,7 @@ class HomeViewModel {
   HomeViewModel() {
     DownloadManager().downloadStream().listen((downloadState) {
       List<DownloadTask> list = downloadState.tasks;
-      for (YamlHomePageItem item in _homeState.list) {
+      for (HomePageItemEntity item in _homeState.list) {
         bool find = false;
         for (DownloadTask task in list) {
           if (task.id == item.href) {
@@ -31,7 +40,7 @@ class HomeViewModel {
             find = true;
           }
         }
-        if(!find){
+        if (!find) {
           item.downloadState = DownloadTask.idle;
         }
       }
@@ -40,58 +49,81 @@ class HomeViewModel {
   }
 
   void requestData(
-      {String? tags,
-      String? page,
+      {String? page,
       bool clearAll = false,
-      List<YamlOption>? optionList}) async {
-    _log.fine("optionList=$optionList");
+      Map<String, String>? options}) async {
+    _log.info("options=$options");
     if (clearAll) {
       _clearAll();
     }
     changeLoading(true);
-
     String realPage = page ?? (_homeState.page + 1).toString();
     YamlMap doc = await YamlRuleFactory().create(Global.curWebPageName);
-    bool home = tags == null;
+    String tags = options?["tag"] ?? "";
+    _log.info("tags=$tags");
+    bool home = tags.isEmpty;
     String url;
+    Map<String, String> formatParams = Map.from(options ?? {});
     if (home) {
-      url = await _parser().getHomeUrl(doc, realPage, optionList: optionList);
+      formatParams["page"] = realPage;
+      url = await _parser().url(doc, _homePageName, formatParams);
     } else {
-      url = await _parser()
-          .getSearchUrl(doc, page: realPage, tags: tags, optionList: optionList);
+      formatParams["page"] = realPage;
+      url = await _parser().url(doc, _searchPageName, formatParams);
     }
+    _log.info("url=$url");
+    String siteName = await _parser().webPageName(doc);
+    _updateUri(siteName, url, realPage, options);
 
-    String siteName = await _parser().getName(doc);
-    _updateUri(siteName, url, realPage, tags, optionList);
+    String favicon = await _parser().favicon(doc);
+    _homeState.favicon = favicon;
 
-    String listType = await _parser().listType(doc);
-    _homeState.listType = listType;
-
-    Map<String, String>? headers = await _parser().getHeaders(doc);
+    Map<String, String> headers = await _parser().headers(doc);
     _homeState.headers = headers;
 
-    bool canSearch = await _parser().canSearch(doc);
-    _homeState.canSearch = canSearch;
+    String pageType = await _parser().pageType(doc);
+    _homeState.pageType = pageType;
 
-    ValidateResult<String> result =
-        await repository.home(url, headers: headers);
+    Validator validator = Validator(doc, _homePageName);
+    ValidateResult<String> result = await repository.home(url, validator, headers: headers);
     _homeState.code = result.code;
     _log.info("result.code=${result.code}");
+    bool success = false;
+    String message = "";
     if (result.validateSuccess) {
-      _homeState.error = false;
-      List<YamlHomePageItem> list;
+      String json;
       if (home) {
-        list = await _parser().parseHome(result.data!, doc);
+        json = await _parser().parseUseYaml(result.data!, doc, _homePageName);
       } else {
-        list = await _parser().parseSearch(result.data!, doc);
+        json = await _parser().parseUseYaml(result.data!, doc, _searchPageName);
       }
-      var dataList = _homeState.list;
-      dataList.addAll(list);
-      _homeState.page = int.parse(realPage);
-      streamHomeController.add(_homeState);
+      var decode = jsonDecode(json);
+      if (decode["code"] == Parser.success) {
+        _homeState.error = false;
+        List<HomePageItemEntity> dataList = _homeState.list;
+        dataList.addAll(jsonConvert.convertListNotNull(decode["data"]) ?? []);
+        for (var item in dataList) {
+          if(item.tagList.isEmpty && item.tagStr.isNotEmpty){
+            item.tagStr.split(item.tagSplit).forEach((element) {
+              TagEntity tagEntity = TagEntity();
+              tagEntity.desc = element;
+              tagEntity.tag = element;
+              item.tagList.add(tagEntity);
+            });
+          }
+        }
+        _homeState.page = int.parse(realPage);
+        streamHomeController.add(_homeState);
+        success = true;
+      } else {
+        message = decode["message"];
+      }
     } else {
+      message = result.message ?? "";
+    }
+    if (!success) {
       _homeState.error = true;
-      _homeState.errorMessage = "Error:${result.message}";
+      _homeState.errorMessage = "Error:$message";
       streamHomeController.add(_homeState);
     }
     changeLoading(false);
@@ -105,32 +137,33 @@ class HomeViewModel {
     streamHomeController.add(_homeState);
   }
 
-  Future<List<WebPageItem>> webPageList() async {
+  Future<List<Rule>> webPageList() async {
     return repository.webPageList();
   }
 
-  Future<List<YamlOptionList>> optionList() async {
+  Future<List<OptionEntity>> optionList() async {
     YamlMap doc = await YamlRuleFactory().create(Global.curWebPageName);
-    return _parser().optionList(doc);
+    var options = await _parser().options(doc, _homePageName);
+    return jsonConvert.convertListNotNull<OptionEntity>(jsonDecode(options)) ??
+        [];
   }
 
-  Future<void> changeGlobalWebPage(WebPageItem webPageItem) async {
-    await Global().updateCurWebPage(webPageItem.rule);
+  Future<void> changeGlobalWebPage(Rule rule) async {
+    await Global().updateCurWebPage(rule);
   }
 
   void _clearAll() {
     _homeState.reset();
   }
 
-  void _updateUri(String siteName, String url, String page, String? tags,
-      List<YamlOption>? optionList) {
+  void _updateUri(String siteName, String url, String page,
+      Map<String, String>? options) {
     Uri uri = Uri.parse(url);
     _uriState.baseHref = "${uri.scheme}://${uri.host}${uri.path}";
     _uriState.page = page;
-    _uriState.tag = tags ?? "";
     _uriState.url = url;
     _uriState.siteName = siteName;
-    _uriState.optionList = optionList;
+    _uriState.options = options;
     streamUriController.add(_uriState);
   }
 
@@ -140,13 +173,14 @@ class HomeViewModel {
 }
 
 class HomeState {
-  List<YamlHomePageItem> list = [];
+  List<HomePageItemEntity> list = [];
   int page = 0;
   bool loading = false;
   bool error = false;
   bool canSearch = true;
   String errorMessage = "";
-  String listType = "";
+  String pageType = "";
+  String favicon = "";
   int code = ValidateResult.success;
   Map<String, String>? headers;
 
@@ -157,7 +191,8 @@ class HomeState {
     error = false;
     canSearch = true;
     errorMessage = "";
-    listType = "";
+    pageType = "";
+    favicon = "";
     headers = null;
     code = ValidateResult.success;
   }
@@ -170,8 +205,7 @@ class UriState {
   String url = "";
   String baseHref = "";
   String page = "";
-  String tag = "";
-  List<YamlOption>? optionList;
+  Map<String, String>? options;
 
   UriState();
 }

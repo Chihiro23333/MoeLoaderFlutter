@@ -1,3 +1,4 @@
+import 'package:MoeLoaderFlutter/util/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:MoeLoaderFlutter/net/request_manager.dart';
@@ -5,7 +6,6 @@ import 'package:logging/logging.dart';
 import 'dart:async';
 import 'package:webview_windows/webview_windows.dart';
 import 'package:window_manager/window_manager.dart';
-import '../../utils/utils.dart';
 
 class WebView2Page extends StatefulWidget {
   const WebView2Page({super.key, required this.url, required this.code});
@@ -57,6 +57,7 @@ class _WebView2State extends State<WebView2Page> {
       await _controller.setBackgroundColor(Colors.transparent);
       await _controller.setPopupWindowPolicy(WebviewPopupWindowPolicy.deny);
       await _controller.loadUrl(_url);
+      _log.info("_url=$_url");
       if (!mounted) return;
       setState(() {});
     } on PlatformException catch (e) {

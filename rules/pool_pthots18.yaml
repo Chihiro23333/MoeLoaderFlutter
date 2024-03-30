@@ -1,19 +1,12 @@
 meta:
   name: "photos18.com(pool)"
-  type: "custom"
-  listType: "pool"
+  pageType: "pool"
   headers:
     User-Agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
     Referer: "https://www.photos18.com/?ref=porndude&page=2&per-page=100"
 
-display:
-  columnCount: 6
-  aspectRatio: 0.65
 
-url:
-  home: { link: "https://www.photos18.com/sort/${sort}?page=${page}&per-page=100" }
-
-options:
+options: &OPTIONS
   - id: "sort"
     desc: "排行"
     items:
@@ -22,6 +15,20 @@ options:
       - {desc: "最火", param: "views"}
       - {desc: "推荐", param: "score"}
       - {desc: "最好", param: "likes"}
+
+url:
+  homePage:
+    link: "https://www.photos18.com/sort/${sort}?page=${page}&per-page=100"
+    options:
+      *OPTIONS
+
+display:
+  homePage:
+    columnCount: 6
+    aspectRatio: 0.65
+  poolListPage:
+    columnCount: 6
+    aspectRatio: 0.65
 
 homePage: &HOMEPAGE
   onParseResult:

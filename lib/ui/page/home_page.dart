@@ -1,29 +1,26 @@
-import 'package:MoeLoaderFlutter/net/download.dart';
-import 'package:MoeLoaderFlutter/ui/dialog/info_dialog.dart';
-import 'package:MoeLoaderFlutter/ui/dialog/url_list_dialog.dart';
+import 'dart:io';
+
+import 'package:MoeLoaderFlutter/model/option_entity.dart';
+import 'package:MoeLoaderFlutter/model/tag_entity.dart';
 import 'package:MoeLoaderFlutter/ui/page/download_page.dart';
 import 'package:MoeLoaderFlutter/ui/page/pool_list_page.dart';
+import 'package:MoeLoaderFlutter/ui/page/search_page.dart';
 import 'package:MoeLoaderFlutter/ui/page/settings_page.dart';
+import 'package:MoeLoaderFlutter/util/common_function.dart';
 import 'package:MoeLoaderFlutter/widget/home_loading_status.dart';
 import 'package:MoeLoaderFlutter/widget/image_masonry_grid.dart';
 import 'package:MoeLoaderFlutter/widget/poll_grid.dart';
+import 'package:MoeLoaderFlutter/yamlhtmlparser/models.dart';
 import 'package:clipboard/clipboard.dart';
-import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:MoeLoaderFlutter/init.dart';
-import 'package:MoeLoaderFlutter/utils/common_function.dart';
 import 'package:MoeLoaderFlutter/ui/page/webview2_page.dart';
-import 'package:MoeLoaderFlutter/yamlhtmlparser/models.dart';
 import 'package:MoeLoaderFlutter/ui/viewmodel/view_model_home.dart';
-import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_validator.dart';
 import 'package:logging/logging.dart';
-import '../../utils/const.dart';
-import '../../utils/sharedpreferences_utils.dart';
-import '../../utils/utils.dart';
 import '../../widget/radio_choice_chip.dart';
 import 'detail_page.dart';
+import 'package:to_json/models.dart' as jsonModels;
 
 enum MoreItem { copy, download, option, search, setting, about }
 
@@ -40,15 +37,13 @@ class _HomeState extends State<HomePage> {
   final HomeViewModel _homeViewModel = HomeViewModel();
   final GlobalKey<ScaffoldState> _scaffoldGlobalKey = GlobalKey();
   late TextEditingController _textEditingControl;
-  MoreItem? _chooseItem;
 
-  YamlTag? _tag;
-  final Map<String, YamlOption> _yamlOptionMap = {};
+  final Map<String, String> _yamlOptionMap = {};
   String _url = "";
 
-  void _updateTag(YamlTag? tag) {
+  void _updateTag(TagEntity? tag) {
     setState(() {
-      _tag = tag;
+      _yamlOptionMap["tag"] = tag?.tag ?? "";
     });
   }
 
@@ -56,14 +51,13 @@ class _HomeState extends State<HomePage> {
     _yamlOptionMap.clear();
   }
 
-  void _removeOptions(String id) {
-    _yamlOptionMap.remove(id);
+  void _removeOptions(String key) {
+    _yamlOptionMap.remove(key);
   }
 
   void _requestData({bool clearAll = false, String? page}) {
     _homeViewModel.requestData(
-        tags: _tag?.tag,
-        optionList: _yamlOptionMap.values.toList(),
+        options: _yamlOptionMap,
         clearAll: clearAll,
         page: page);
   }
@@ -90,7 +84,7 @@ class _HomeState extends State<HomePage> {
                 _buildCopyAction(context),
                 _buildDownloadAction(context),
                 _buildOptionsAction(context),
-                _buildSearchAction(context, snapshot),
+                _buildSearchAction(context),
                 _buildSettingsAction(context),
               ]),
           drawer: _buildDrawer(context),
@@ -117,7 +111,7 @@ class _HomeState extends State<HomePage> {
       return;
     }
 
-    _textEditingControl.value = TextEditingValue(text: _tag?.desc ?? "");
+    _textEditingControl.value = TextEditingValue(text: _yamlOptionMap["tag"] ?? "");
     showModalBottomSheet(
         context: context,
         builder: (context) {
@@ -150,7 +144,10 @@ class _HomeState extends State<HomePage> {
                           helperText: "按ENTER键开始搜索",
                           filled: true),
                       onSubmitted: (String value) {
-                        _updateTag(YamlTag(value, value));
+                        var tagEntity = TagEntity();
+                        tagEntity.tag = value;
+                        tagEntity.desc = value;
+                        _updateTag(tagEntity);
                         _requestData(clearAll: true);
                         Navigator.of(context).pop();
                       }),
@@ -185,12 +182,12 @@ class _HomeState extends State<HomePage> {
         retryOnPressed: retryOnPressed,
         actionOnPressed: actionOnPressed,
         builder: (homeState) {
-          if (homeState.listType.isNotEmpty) {
+          if (homeState.pageType.isNotEmpty) {
             return PoolGrid(
               list: homeState.list,
               headers: homeState.headers,
               itemOnPressed: (yamlHomePageItem) async {
-                NaviResult<YamlTag>? naviResult = await Navigator.push(
+                NaviResult<TagEntity>? naviResult = await Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) {
                     return PoolListPage(href: yamlHomePageItem.href);
@@ -207,17 +204,17 @@ class _HomeState extends State<HomePage> {
           return ImageMasonryGrid(
             list: homeState.list,
             headers: homeState.headers,
-            tagTapCallback: (yamlTag) {
-              _updateTag(yamlTag);
+            tagTapCallback: (tag) {
+              _updateTag(tag);
               _requestData(clearAll: true);
             },
-            itemOnPressed: (yamlHomePageItem) async {
-              NaviResult<YamlTag>? naviResult = await Navigator.push(
+            itemOnPressed: (homePageItem) async {
+              NaviResult<TagEntity>? naviResult = await Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) {
                   return DetailPage(
-                      href: yamlHomePageItem.href,
-                      commonInfo: yamlHomePageItem.commonInfo);
+                      href: homePageItem.href,
+                      homePageItem: homePageItem);
                 }),
               );
               _log.info("naviResult=$naviResult");
@@ -246,7 +243,7 @@ class _HomeState extends State<HomePage> {
   Widget _buildOptionsAction(BuildContext context) {
     return IconButton(
         onPressed: () async {
-          List<YamlOptionList> list = await _homeViewModel.optionList();
+          List<OptionEntity> list = await _homeViewModel.optionList();
           if (list.isEmpty) {
             showToast("当前站点无筛选条件");
             return;
@@ -256,30 +253,30 @@ class _HomeState extends State<HomePage> {
         icon: const Icon(Icons.filter_alt));
   }
 
-  void _showOptionsSheet(BuildContext context, List<YamlOptionList> list) {
+  void _showOptionsSheet(BuildContext context, List<OptionEntity> list) {
     showModalBottomSheet(
         context: context,
         builder: (context) => StatefulBuilder(builder: (context, setState) {
               List<Widget> widgets = [];
-              for (YamlOptionList yamlOptionList in list) {
+              for (OptionEntity optionEntity in list) {
                 widgets.add(Padding(
                   padding: const EdgeInsets.only(top: 10, bottom: 10),
                   child: Text(
-                    yamlOptionList.desc,
+                    optionEntity.desc,
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ));
-                List<YamlOption> options = yamlOptionList.options;
+                List<OptionItems> options = optionEntity.items;
                 int selectedIndex = 0;
                 List<String> nameList = [];
                 for (int i = 0; i < options.length; i++) {
-                  YamlOption yamlOption = options[i];
-                  nameList.add(yamlOption.desc);
-                  YamlOption? chooseOption = _yamlOptionMap[yamlOption.pId];
+                  OptionItems optionItems = options[i];
+                  nameList.add(optionItems.desc);
+                  String? chooseOption = _yamlOptionMap[optionEntity.id];
                   if (chooseOption != null &&
-                      chooseOption.desc == yamlOption.desc) {
+                      chooseOption == optionItems.param) {
                     selectedIndex = i;
                   }
                 }
@@ -288,8 +285,7 @@ class _HomeState extends State<HomePage> {
                     index: selectedIndex,
                     radioSelectCallback: (index, name) {
                       _log.fine("selected index=$index");
-                      YamlOption yamlOption = options[index];
-                      _yamlOptionMap[yamlOption.pId] = yamlOption;
+                      _yamlOptionMap[optionEntity.id] = options[index].param;
                       setState(() {});
                       Navigator.of(context).pop();
                       _requestData(clearAll: true);
@@ -335,66 +331,15 @@ class _HomeState extends State<HomePage> {
         icon: const Icon(Icons.copy));
   }
 
-  Widget _buildSearchAction(BuildContext context, AsyncSnapshot snapshot) {
+  Widget _buildSearchAction(BuildContext context) {
     return IconButton(
         onPressed: () {
-          if (!snapshot.hasData) {
-            showToast("数据没准备好");
-            return;
-          }
-          HomeState? homeState = snapshot.data;
-          if (homeState == null) {
-            showToast("数据没准备好");
-            return;
-          }
-
-          if (!homeState.canSearch) {
-            showToast("当前源暂不支持搜索");
-            return;
-          }
-
-          if (_tag != null) {
-            _textEditingControl.value = TextEditingValue(text: _tag!.desc);
-          }
-          showModalBottomSheet(
-              context: context,
-              builder: (context) {
-                return Padding(
-                  padding: const EdgeInsets.only(
-                      top: 20, bottom: 20, left: 20, right: 20),
-                  child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        TextField(
-                            controller: _textEditingControl,
-                            decoration: InputDecoration(
-                                prefixIcon: Icon(
-                                  Icons.label,
-                                  color: Theme.of(context).iconTheme.color,
-                                ),
-                                suffixIcon: GestureDetector(
-                                  child: Icon(
-                                    Icons.clear,
-                                    color: Theme.of(context).iconTheme.color,
-                                  ),
-                                  onTap: () {
-                                    _textEditingControl.clear();
-                                  },
-                                ),
-                                border: const OutlineInputBorder(),
-                                labelText: "请输入tag",
-                                hintText: "请输入tag",
-                                helperText: "按ENTER键开始搜索",
-                                filled: true),
-                            onSubmitted: (String value) {
-                              _updateTag(YamlTag(value, value));
-                              _requestData(clearAll: true);
-                              Navigator.of(context).pop();
-                            }),
-                      ]),
-                );
-              });
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) {
+              return const SearchPage();
+            }),
+          );
         },
         icon: const Icon(Icons.image_search));
   }
@@ -407,42 +352,57 @@ class _HomeState extends State<HomePage> {
             children: [
               const ListTile(
                   title: Text(
-                "MoeLoaderFlutter",
+                "源列表",
                 style: TextStyle(
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.normal,
+                  fontSize: 17
                 ),
               )),
               Expanded(
-                child: FutureBuilder<List<WebPageItem>>(
+                child: FutureBuilder<List<jsonModels.Rule>>(
                   future: _homeViewModel.webPageList(),
                   builder: (BuildContext context, AsyncSnapshot snapshot) {
                     if (snapshot.hasError) {
                       return Text("Error: ${snapshot.error}");
                     }
                     if (snapshot.connectionState == ConnectionState.done) {
-                      List<WebPageItem> list = snapshot.data;
+                      List<jsonModels.Rule> list = snapshot.data;
                       return ListView.builder(
                           itemCount: list.length,
                           itemBuilder: (BuildContext context, int index) {
-                            return ListTile(
-                              leading: Icon(
+                            jsonModels.Rule rule = list[index];
+                            _log.fine("rule.faviconPath=${rule.faviconPath}");
+                            Widget leading;
+                            if(rule.faviconPath.isEmpty){
+                              leading = Icon(
                                 Icons.call_to_action,
                                 color: Theme.of(context).iconTheme.color,
+                              );
+                            }else{
+                              leading = Image.file(
+                                  File(rule.faviconPath),
+                                  fit: BoxFit.cover,
+                              );
+                            }
+                            return ListTile(
+                              leading: SizedBox(
+                                height: 25,
+                                width: 25,
+                                child: leading,
                               ),
                               titleTextStyle:
-                                  list[index].rule.name == Global.curWebPageName
+                                  list[index].fileName == Global.curWebPageName
                                       ? const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black)
+                                          fontWeight: FontWeight.bold)
                                       : const TextStyle(
-                                          fontWeight: FontWeight.normal,
-                                          color: Colors.black),
-                              selected: list[index].rule.name ==
-                                  Global.curWebPageName,
+                                          fontWeight: FontWeight.normal),
+                              selected:
+                                  list[index].fileName == Global.curWebPageName,
+                              selectedColor: Global.defaultColor,
                               textColor: Colors.black,
                               title: Text(
-                                list[index].rule.name,
-                                style: const TextStyle(fontSize: 18),
+                                list[index].fileName,
+                                style: const TextStyle(fontSize: 17),
                               ),
                               onTap: () async {
                                 _updateTag(null);
@@ -464,213 +424,6 @@ class _HomeState extends State<HomePage> {
               )
             ],
           )),
-    );
-  }
-
-  Widget _buildBody(BuildContext context, AsyncSnapshot snapshot) {
-    if (snapshot.connectionState == ConnectionState.active) {
-      HomeState homeState = snapshot.data;
-      if (homeState.error && homeState.page <= 1) {
-        List<Widget> children = [];
-        children.add(ElevatedButton(
-            onPressed: () {
-              _requestData();
-            },
-            child: const Text("点击重试")));
-        if (homeState.code == ValidateResult.needChallenge ||
-            homeState.code == ValidateResult.needLogin) {
-          children.add(const SizedBox(
-            height: 10,
-          ));
-          children.add(ElevatedButton(
-              onPressed: () async {
-                bool? result = await Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) {
-                    return WebView2Page(
-                      url: _url,
-                      code: homeState.code,
-                    );
-                  }),
-                );
-                _log.fine("push result=${result}");
-                if (result != null && result) {
-                  _requestData(clearAll: true);
-                }
-              },
-              child: Text(tipsByCode(homeState.code))));
-        }
-        children.add(const SizedBox(height: 20));
-        children.add(Center(
-          child: Text(
-            homeState.errorMessage,
-          ),
-        ));
-        return Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: children,
-          ),
-        );
-      }
-      if (homeState.loading && homeState.list.isEmpty) {
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
-      }
-      return Padding(
-        padding: const EdgeInsets.all(10),
-        child: _buildMasonryGrid(homeState),
-      );
-    } else {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
-    }
-  }
-
-  Widget _buildGrid(HomeState homeState) {
-    int crossAxisCount = Global.columnCount;
-    double aspectRatio = Global.aspectRatio;
-    return GridView.builder(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: crossAxisCount,
-            mainAxisExtent: 10,
-            crossAxisSpacing: 10,
-            childAspectRatio: aspectRatio),
-        itemBuilder: (BuildContext context, int index) {
-          YamlHomePageItem yamlHomePageItem = homeState.list[index];
-          return _buildItem(context, yamlHomePageItem, index, crossAxisCount, 0,
-              0, homeState.headers);
-        });
-  }
-
-  Widget _buildMasonryGrid(HomeState homeState) {
-    int crossAxisCount = Global.columnCount;
-    return MasonryGridView.count(
-        crossAxisCount: crossAxisCount,
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
-        itemCount: homeState.list.length,
-        itemBuilder: (BuildContext context, int index) {
-          MediaQueryData queryData = MediaQuery.of(context);
-          double screenWidth = queryData.size.width;
-          YamlHomePageItem yamlHomePageItem = homeState.list[index];
-          double width = screenWidth / crossAxisCount;
-          double scale = 1 / Global.aspectRatio;
-          double maxScale = 2;
-          if (yamlHomePageItem.height > 0 && yamlHomePageItem.width > 0) {
-            scale = yamlHomePageItem.height / yamlHomePageItem.width;
-          }
-          _log.fine("before scale=$scale");
-          if (scale > maxScale) scale = maxScale;
-          _log.fine("after scale=$scale");
-          double height = width * scale;
-          Color loadingBackgroundColor = const Color.fromARGB(30, 46, 176, 242);
-          return Container(
-            width: width,
-            height: height,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5),
-              color: loadingBackgroundColor,
-            ),
-            child: _buildItem(context, yamlHomePageItem, index, crossAxisCount,
-                width, height, homeState.headers),
-          );
-        });
-  }
-
-  Widget _buildItem(
-      BuildContext context,
-      YamlHomePageItem yamlHomePageItem,
-      int index,
-      int crossAxisCount,
-      double width,
-      double height,
-      Map<String, String>? headers) {
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        Positioned.fill(
-            child: GestureDetector(
-                child: ExtendedImage.network(
-                  borderRadius: const BorderRadius.all(Radius.circular(5)),
-                  shape: BoxShape.rectangle,
-                  headers: headers,
-                  width: width,
-                  height: height,
-                  yamlHomePageItem.url,
-                  fit: BoxFit.cover,
-                ),
-                onTap: () async {
-                  NaviResult<YamlTag>? naviResult = await Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) {
-                      return DetailPage(
-                          href: yamlHomePageItem.href,
-                          commonInfo: yamlHomePageItem.commonInfo);
-                    }),
-                  );
-                  _log.info("naviResult=$naviResult");
-                  if (naviResult?.data != null) {
-                    _updateTag(naviResult?.data);
-                    _requestData(clearAll: true);
-                  }
-                })),
-        Positioned(
-          right: 2,
-          bottom: 3,
-          child: Container(
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(20)),
-              color: Colors.white70,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                IconButton(
-                    onPressed: () async {
-                      if (yamlHomePageItem.downloadState != DownloadTask.idle &&
-                          yamlHomePageItem.downloadState !=
-                              DownloadTask.error) {
-                        return;
-                      }
-                      String? downloadFileSize = await getDownloadFileSize();
-                      if (downloadFileSize == Const.choose ||
-                          downloadFileSize == null) {
-                        showUrlList(context, yamlHomePageItem.href,
-                            yamlHomePageItem.commonInfo);
-                      } else {
-                        DownloadManager().addTask(DownloadTask(
-                            yamlHomePageItem.href,
-                            yamlHomePageItem.href,
-                            getDownloadName(yamlHomePageItem.href,
-                                yamlHomePageItem.commonInfo)));
-                        showToast("已将图片加入下载列表");
-                      }
-                    },
-                    icon: downloadStateIcon(
-                        context, yamlHomePageItem.downloadState)),
-                IconButton(
-                    onPressed: () {
-                      showInfoSheet(context, yamlHomePageItem.commonInfo,
-                          onTagTap: (yamlTag) {
-                        _log.fine(
-                            "yamlTag:tag=${yamlTag.tag};desc=${yamlTag.desc}");
-                        _updateTag(yamlTag);
-                        _requestData(clearAll: true);
-                        Navigator.of(context).pop();
-                      });
-                    },
-                    icon: const Icon(
-                      Icons.info,
-                      color: Colors.black,
-                    ))
-              ],
-            ),
-          ),
-        ),
-      ],
     );
   }
 
@@ -796,36 +549,10 @@ class _HomeState extends State<HomePage> {
                     });
               },
             ));
-            if (uriState.tag.isNotEmpty) {
-              children.add(
-                const SizedBox(
-                  width: 5,
-                ),
-              );
-              children.add(Chip(
-                avatar: ClipOval(
-                  child: Icon(
-                    Icons.label,
-                    color: Theme.of(context).iconTheme.color,
-                  ),
-                ),
-                label: Text(_tag?.desc ?? ""),
-                deleteIcon: ClipOval(
-                  child: Icon(
-                    Icons.delete,
-                    color: Theme.of(context).iconTheme.color,
-                  ),
-                ),
-                deleteButtonTooltipMessage: "",
-                onDeleted: () {
-                  _updateTag(null);
-                  _requestData(clearAll: true);
-                },
-              ));
-            }
-            final optionList = uriState.optionList;
-            if (optionList != null) {
-              for (var item in optionList) {
+            final options = uriState.options;
+            _log.info("homePage options=$options");
+            if (options != null) {
+              for (var keyItem in options.keys) {
                 children.add(
                   const SizedBox(
                     width: 5,
@@ -838,7 +565,7 @@ class _HomeState extends State<HomePage> {
                       color: Theme.of(context).iconTheme.color,
                     ),
                   ),
-                  label: Text(item.desc),
+                  label: Text(options[keyItem] ?? ""),
                   deleteIcon: ClipOval(
                     child: Icon(
                       Icons.delete,
@@ -847,7 +574,7 @@ class _HomeState extends State<HomePage> {
                   ),
                   deleteButtonTooltipMessage: "",
                   onDeleted: () {
-                    _removeOptions(item.pId);
+                    _removeOptions(keyItem);
                     _requestData(clearAll: true);
                   },
                 ));

@@ -1,9 +1,9 @@
 import 'package:MoeLoaderFlutter/ui/viewmodel/view_model_pool_list.dart';
+import 'package:MoeLoaderFlutter/util/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
-import '../utils/utils.dart';
-import '../yamlhtmlparser/yaml_validator.dart';
+import 'package:to_json/validator.dart';
 
 typedef ExceptionActionCallback = void Function(PoolListState poolListState);
 typedef LoadingStatusBuilder = Widget Function(PoolListState poolListState);

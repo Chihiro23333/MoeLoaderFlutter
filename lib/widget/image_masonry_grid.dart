@@ -1,5 +1,10 @@
+import 'package:MoeLoaderFlutter/model/home_page_item_entity.dart';
 import 'package:MoeLoaderFlutter/ui/dialog/info_dialog.dart';
 import 'package:MoeLoaderFlutter/ui/dialog/url_list_dialog.dart';
+import 'package:MoeLoaderFlutter/util/common_function.dart';
+import 'package:MoeLoaderFlutter/util/const.dart';
+import 'package:MoeLoaderFlutter/util/sharedpreferences_utils.dart';
+import 'package:MoeLoaderFlutter/util/utils.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,15 +12,11 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:logging/logging.dart';
 import '../init.dart';
 import '../net/download.dart';
-import '../utils/common_function.dart';
 import '../ui/viewmodel/view_model_home.dart';
-import '../utils/const.dart';
-import '../utils/sharedpreferences_utils.dart';
-import '../utils/utils.dart';
 import '../yamlhtmlparser/models.dart';
 
 typedef ExceptionActionCallback = void Function(HomeState homeState);
-typedef ItemClickCallback = void Function(YamlHomePageItem yamlHomePageItem);
+typedef ItemClickCallback = void Function(HomePageItemEntity yamlHomePageItem);
 
 class ImageMasonryGrid extends StatefulWidget {
   const ImageMasonryGrid({
@@ -26,7 +27,7 @@ class ImageMasonryGrid extends StatefulWidget {
     this.itemOnPressed,
   });
 
-  final List<YamlHomePageItem> list;
+  final List<HomePageItemEntity> list;
   final Map<String, String>? headers;
   final ItemClickCallback? itemOnPressed;
   final TagTapCallback? tagTapCallback;
@@ -45,7 +46,8 @@ class _ImageMasonryGridState extends State<ImageMasonryGrid> {
     return _buildMasonryGrid(widget.list, widget.headers);
   }
 
-  Widget _buildMasonryGrid(List<YamlHomePageItem> list, Map<String, String>? headers) {
+  Widget _buildMasonryGrid(
+      List<HomePageItemEntity> list, Map<String, String>? headers) {
     int crossAxisCount = Global.columnCount;
     return MasonryGridView.count(
         crossAxisCount: crossAxisCount,
@@ -55,12 +57,12 @@ class _ImageMasonryGridState extends State<ImageMasonryGrid> {
         itemBuilder: (BuildContext context, int index) {
           MediaQueryData queryData = MediaQuery.of(context);
           double screenWidth = queryData.size.width;
-          YamlHomePageItem yamlHomePageItem = list[index];
+          HomePageItemEntity homePageItem = list[index];
           double width = screenWidth / crossAxisCount;
           double scale = 1 / Global.aspectRatio;
           double maxScale = 2;
-          if (yamlHomePageItem.height > 0 && yamlHomePageItem.width > 0) {
-            scale = yamlHomePageItem.height / yamlHomePageItem.width;
+          if (homePageItem.height > 0 && homePageItem.width > 0) {
+            scale = homePageItem.height / homePageItem.width;
           }
           _log.fine("before scale=$scale");
           if (scale > maxScale) scale = maxScale;
@@ -74,7 +76,7 @@ class _ImageMasonryGridState extends State<ImageMasonryGrid> {
               borderRadius: BorderRadius.circular(5),
               color: loadingBackgroundColor,
             ),
-            child: _buildItem(context, yamlHomePageItem, index, crossAxisCount,
+            child: _buildItem(context, homePageItem, index, crossAxisCount,
                 width, height, headers),
           );
         });
@@ -82,7 +84,7 @@ class _ImageMasonryGridState extends State<ImageMasonryGrid> {
 
   Widget _buildItem(
       BuildContext context,
-      YamlHomePageItem yamlHomePageItem,
+      HomePageItemEntity homePageItem,
       int index,
       int crossAxisCount,
       double width,
@@ -99,13 +101,13 @@ class _ImageMasonryGridState extends State<ImageMasonryGrid> {
                   headers: headers,
                   width: width,
                   height: height,
-                  yamlHomePageItem.url,
+                  homePageItem.coverUrl,
                   fit: BoxFit.cover,
                 ),
                 onTap: () async {
                   var itemOnPressed = widget.itemOnPressed;
                   if (itemOnPressed != null) {
-                    itemOnPressed(yamlHomePageItem);
+                    itemOnPressed(homePageItem);
                   }
                 })),
         Positioned(
@@ -121,36 +123,40 @@ class _ImageMasonryGridState extends State<ImageMasonryGrid> {
               children: [
                 IconButton(
                     onPressed: () async {
-                      if (yamlHomePageItem.downloadState != DownloadTask.idle &&
-                          yamlHomePageItem.downloadState !=
-                              DownloadTask.error) {
+                      if (homePageItem.downloadState != DownloadTask.idle &&
+                          homePageItem.downloadState != DownloadTask.error) {
                         return;
                       }
                       String? downloadFileSize = await getDownloadFileSize();
                       if (downloadFileSize == Const.choose ||
                           downloadFileSize == null) {
-                        showUrlList(context, yamlHomePageItem.href,
-                            yamlHomePageItem.commonInfo);
+                        showUrlList(context, homePageItem);
                       } else {
                         DownloadManager().addTask(DownloadTask(
-                            yamlHomePageItem.href,
-                            yamlHomePageItem.href,
-                            getDownloadName(yamlHomePageItem.href,
-                                yamlHomePageItem.commonInfo)));
+                            homePageItem.href,
+                            homePageItem.href,
+                            getDownloadName(
+                                homePageItem.href, homePageItem.id)));
                         showToast("已将图片加入下载列表");
                       }
                     },
-                    icon: downloadStateIcon(
-                        context, yamlHomePageItem.downloadState)),
+                    icon:
+                        downloadStateIcon(context, homePageItem.downloadState)),
                 IconButton(
                     onPressed: () {
-                      showInfoSheet(context, yamlHomePageItem.commonInfo,
-                          onTagTap: (yamlTag) {
-                        _log.fine(
-                            "yamlTag:tag=${yamlTag.tag};desc=${yamlTag.desc}");
+                      showInfoSheet(
+                          context,
+                          homePageItem.id,
+                          homePageItem.author,
+                          homePageItem.characters,
+                          homePageItem.fileSize,
+                          homePageItem.dimensions,
+                          homePageItem.source,
+                          homePageItem.tagList, onTagTap: (tag) {
+                        _log.info("yamlTag:tag=${tag.tag};desc=${tag.desc}");
                         TagTapCallback? tagTapCallback = widget.tagTapCallback;
                         if (tagTapCallback != null) {
-                          tagTapCallback(yamlTag);
+                          tagTapCallback(tag);
                         }
                         Navigator.of(context).pop();
                       });

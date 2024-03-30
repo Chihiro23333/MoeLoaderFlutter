@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:MoeLoaderFlutter/util/db_util.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:MoeLoaderFlutter/init.dart';
 import 'package:logging/logging.dart';
-import '../utils/db_util.dart';
 
 class DioHttp {
   final _log = Logger('DioHttp');

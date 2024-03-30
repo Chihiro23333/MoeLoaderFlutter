@@ -1,18 +1,17 @@
 import 'dart:io';
 import 'dart:ui';
-import 'package:MoeLoaderFlutter/utils/const.dart';
-import 'package:MoeLoaderFlutter/utils/sharedpreferences_utils.dart';
-import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_rule_factory.dart';
+import 'package:MoeLoaderFlutter/util/const.dart';
+import 'package:MoeLoaderFlutter/util/sharedpreferences_utils.dart';
 import 'package:MoeLoaderFlutter/net/request_manager.dart';
 import 'package:flutter_socks_proxy/socks_proxy.dart';
 import 'package:hive/hive.dart';
 import 'package:logging/logging.dart';
+import 'package:to_json/models.dart';
 import 'package:webview_windows/webview_windows.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:yaml/yaml.dart';
 import 'package:path/path.dart' as path;
-
-import '../yamlhtmlparser/models.dart';
+import 'package:to_json/yaml_rule_factory.dart';
 
 class Global{
   static Global? _cache;
@@ -33,20 +32,20 @@ class Global{
         await WebviewController.initializeEnvironment(userDataPath: browserCacheDirectory.path);
       }catch(e){}
     }
-    _initHive();
-    await RequestManager().init();
-    await updateProxy();
-    await YamlRuleFactory().init();
-    await updateCurWebPage(YamlRuleFactory().webPageList()[0]);
     Logger.root.level = Level.INFO; // defaults to Level.INFO
     Logger.root.onRecord.listen((record) {
       print('${record.loggerName}:${record.level.name}: ${record.time}: ${record.message}');
     });
+    _initHive();
+    await RequestManager().init();
+    await updateProxy();
+    await YamlRuleFactory().init(rulesDirectory, imagesDirectory);
+    await updateCurWebPage(YamlRuleFactory().webPageList()[0]);
     await windowManager.ensureInitialized();
   }
 
   Future<void> updateCurWebPage(Rule rule) async{
-    YamlMap webPage = await YamlRuleFactory().create(rule.name);
+    YamlMap webPage = await YamlRuleFactory().create(rule.fileName);
     _curWebPage = WebPage(webPage, rule);
   }
 
@@ -74,12 +73,13 @@ class Global{
     Hive.init(Global.hiveDirectory.path);
   }
 
-  static get curWebPageName => _curWebPage.rule.name;
-  static get columnCount => int.parse((_curWebPage.webPage['display']?['columnCount'] ?? 6).toString());
-  static get aspectRatio => double.parse((_curWebPage.webPage['display']?['aspectRatio'] ?? 1.78).toString());
-  static get poolListColumnCount => int.parse((_curWebPage.webPage['display']?['poolListColumnCount'] ?? 5).toString());
-  static get poolListAspectRatio => double.parse((_curWebPage.webPage['display']?['poolListAspectRatio'] ?? 0.65).toString());
+  static get curWebPageName => _curWebPage.rule.fileName;
+  static get columnCount => int.parse((_curWebPage.webPage['display']?['homePage']?['columnCount'] ?? 6).toString());
+  static get aspectRatio => double.parse((_curWebPage.webPage['display']?['homePage']?['aspectRatio'] ?? 1.78).toString());
+  static get poolListColumnCount => int.parse((_curWebPage.webPage['display']?['poolListPage']?['columnCount'] ?? 5).toString());
+  static get poolListAspectRatio => double.parse((_curWebPage.webPage['display']?['poolListPage']?['aspectRatio'] ?? 0.65).toString());
   static get rulesDirectory => Directory(path.join(path.current ,"rules"));
+  static get imagesDirectory => Directory(path.join(path.current ,"images"));
   static get browserCacheDirectory => Directory(path.join(path.current ,"browserCache"));
   static get downloadsDirectory => Directory(path.join(path.current ,"downloads"));
   static get hiveDirectory => Directory(path.join(path.current ,"hive"));

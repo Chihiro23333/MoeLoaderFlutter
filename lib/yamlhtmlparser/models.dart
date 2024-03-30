@@ -1,3 +1,4 @@
+import 'package:MoeLoaderFlutter/model/home_page_item_entity.dart';
 import 'package:MoeLoaderFlutter/net/download.dart';
 
 class YamlHomePageItem{
@@ -14,9 +15,9 @@ class YamlHomePageItem{
 class YamlDetailPage{
   String url = "";
   String preview = "";
-  CommonInfo? commonInfo;
+  HomePageItemEntity? homePageItem;
 
-  YamlDetailPage(this.url, this.preview, {this.commonInfo});
+  YamlDetailPage(this.url, this.preview, {this.homePageItem});
 }
 
 class CommonInfo{
@@ -62,12 +63,6 @@ class YamlPreview{
   String url = "";
 
   YamlPreview(this.url);
-}
-
-class WebPageItem{
-  Rule rule;
-
-  WebPageItem(this.rule);
 }
 
 class Rule{

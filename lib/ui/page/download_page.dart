@@ -1,4 +1,4 @@
-import 'package:MoeLoaderFlutter/utils/common_function.dart';
+import 'package:MoeLoaderFlutter/util/common_function.dart';
 import 'package:flutter/material.dart';
 import 'package:MoeLoaderFlutter/init.dart';
 import 'package:logging/logging.dart';

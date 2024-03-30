@@ -1,46 +1,52 @@
-import 'package:MoeLoaderFlutter/utils/common_function.dart';
-import 'package:MoeLoaderFlutter/yamlhtmlparser/models.dart';
+import 'package:MoeLoaderFlutter/model/tag_entity.dart';
+import 'package:MoeLoaderFlutter/util/common_function.dart';
 import 'package:flutter/material.dart';
 
-void showInfoSheet(BuildContext context, CommonInfo? commonInfo,
+void showInfoSheet(
+    BuildContext context,
+    String id,
+    String author,
+    String characters,
+    String fileSize,
+    String dimensions,
+    String source,
+    List<TagEntity> tagList,
     {TagTapCallback? onTagTap}) {
   List<Widget> children = [];
   List<Widget> infoChildren = [];
-  if (commonInfo != null) {
-    _fillInfoChip("Id：", commonInfo.id, infoChildren);
-    _fillInfoChip("Author：", commonInfo.author, infoChildren);
-    _fillInfoChip("Characters：", commonInfo.characters, infoChildren);
-    _fillInfoChip("File Size：", commonInfo.fileSize, infoChildren);
-    _fillInfoChip("Dimensions：", commonInfo.dimensions, infoChildren);
-    _fillInfoChip("Source：", commonInfo.source, infoChildren);
-    if (infoChildren.isNotEmpty) {
-      children.add(const Padding(
-        padding: EdgeInsets.only(top: 10, bottom: 10),
-        child: Text(
-          "图片详情：",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-      ));
-      children.add(Wrap(
-        spacing: 8.0, // 主轴(水平)方向间距
-        runSpacing: 4.0, // 纵轴（垂直）方向间距
-        children: infoChildren,
-      ));
-    }
-    if (commonInfo.tags.isNotEmpty) {
-      children.add(const Padding(
-        padding: EdgeInsets.only(top: 10, bottom: 10),
-        child: Text(
-          "关联标签：",
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-      ));
-      children.add(Wrap(
-        spacing: 8.0, // 主轴(水平)方向间距
-        runSpacing: 4.0, // 纵轴（垂直）方向间距
-        children: _buildTags(context, commonInfo, onTagTap: onTagTap),
-      ));
-    }
+  _fillInfoChip("Id：", id, infoChildren);
+  _fillInfoChip("Author：", author, infoChildren);
+  _fillInfoChip("Characters：", characters, infoChildren);
+  _fillInfoChip("File Size：", fileSize, infoChildren);
+  _fillInfoChip("Dimensions：", dimensions, infoChildren);
+  _fillInfoChip("Source：", source, infoChildren);
+  if (infoChildren.isNotEmpty) {
+    children.add(const Padding(
+      padding: EdgeInsets.only(top: 10, bottom: 10),
+      child: Text(
+        "图片详情：",
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
+    ));
+    children.add(Wrap(
+      spacing: 8.0, // 主轴(水平)方向间距
+      runSpacing: 4.0, // 纵轴（垂直）方向间距
+      children: infoChildren,
+    ));
+  }
+  if (tagList.isNotEmpty) {
+    children.add(const Padding(
+      padding: EdgeInsets.only(top: 10, bottom: 10),
+      child: Text(
+        "关联标签：",
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
+    ));
+    children.add(Wrap(
+      spacing: 8.0, // 主轴(水平)方向间距
+      runSpacing: 4.0, // 纵轴（垂直）方向间距
+      children: _buildTags(context, tagList, onTagTap: onTagTap),
+    ));
   }
   if (children.isEmpty) {
     showToast("未获取到图片相关信息");
@@ -52,7 +58,7 @@ void showInfoSheet(BuildContext context, CommonInfo? commonInfo,
         return SingleChildScrollView(
           child: Padding(
             padding:
-            const EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
+                const EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: children,
@@ -82,20 +88,20 @@ void _fillInfoChip(String prefix, String info, List<Widget> infoChildren) {
   }
 }
 
-List<Widget> _buildTags(BuildContext context, CommonInfo commonInfo,
+List<Widget> _buildTags(BuildContext context, List<TagEntity> tagList,
     {TagTapCallback? onTagTap}) {
   List<Widget> result = [];
-  for (var yamlTag in commonInfo.tags) {
+  for (var tag in tagList) {
     result.add(GestureDetector(
       child: Chip(
         avatar: const ClipOval(
           child: Icon(Icons.label),
         ),
-        label: Text(yamlTag.desc),
+        label: Text(tag.desc),
       ),
       onTap: () {
         if (onTagTap != null) {
-          onTagTap(yamlTag);
+          onTagTap(tag);
         }
       },
     ));

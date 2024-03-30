@@ -1,21 +1,24 @@
+import 'package:MoeLoaderFlutter/model/detail_page_entity.dart';
+import 'package:MoeLoaderFlutter/model/home_page_item_entity.dart';
+import 'package:MoeLoaderFlutter/model/tag_entity.dart';
 import 'package:MoeLoaderFlutter/ui/dialog/info_dialog.dart';
 import 'package:MoeLoaderFlutter/ui/page/download_page.dart';
+import 'package:MoeLoaderFlutter/util/common_function.dart';
+import 'package:MoeLoaderFlutter/util/utils.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:MoeLoaderFlutter/ui/page/webview2_page.dart';
 import 'package:MoeLoaderFlutter/ui/viewmodel/view_model_detail.dart';
-import 'package:MoeLoaderFlutter/yamlhtmlparser/yaml_validator.dart';
 import 'package:logging/logging.dart';
+import 'package:to_json/validator.dart';
 import '../../yamlhtmlparser/models.dart';
-import '../../utils/utils.dart';
-import '../../utils/common_function.dart';
 import '../../widget/keep_alive_wrapper.dart';
 
 class DetailPage extends StatefulWidget {
-  const DetailPage({super.key, required this.commonInfo, required this.href});
+  const DetailPage({super.key, required this.homePageItem, required this.href});
 
-  final CommonInfo? commonInfo;
+  final HomePageItemEntity? homePageItem;
   final String href;
 
   @override
@@ -24,7 +27,7 @@ class DetailPage extends StatefulWidget {
 
 class _DetailState extends State<DetailPage> {
   final DetailViewModel _detailViewModel = DetailViewModel();
-  YamlDetailPage? _yamlDetailPage;
+  DetailPageEntity? _detailPageEntity;
   int _index = 0;
   final PageController _pageController = PageController();
   final _log = Logger('_DetailState');
@@ -37,7 +40,7 @@ class _DetailState extends State<DetailPage> {
 
   void _requestDetailData() {
     print("widget.href=${widget.href}");
-    _detailViewModel.requestDetailData(widget.href,commonInfo: widget.commonInfo);
+    _detailViewModel.requestDetailData(widget.href,homePageItem: widget.homePageItem);
   }
 
   @override
@@ -111,14 +114,14 @@ class _DetailState extends State<DetailPage> {
           child: Text(detailState.errorMessage),
         );
       }
-      _updateCommonInfo(detailState.yamlDetailPage);
-      _yamlDetailPage = detailState.yamlDetailPage;
+      _updateCommonInfo(detailState.detailPageEntity);
+      _detailPageEntity = detailState.detailPageEntity;
       List<String> urlList = [];
-      urlList.add(_yamlDetailPage!.url);
+      urlList.add(_detailPageEntity!.url);
       _log.fine("urlList=$urlList");
-      if (_yamlDetailPage!.preview.isNotEmpty) {
-        urlList.addAll(_yamlDetailPage!.preview.split(","));
-      }
+      // if (_detailPageEntity!.preview.isNotEmpty) {
+      //   urlList.addAll(_detailPageEntity!.preview.split(","));
+      // }
       return Stack(
         alignment: Alignment.center,
         children: [
@@ -175,34 +178,35 @@ class _DetailState extends State<DetailPage> {
             showToast("已经有图片正在下载中，请等待");
             return;
           }
-          if (_yamlDetailPage != null) {
-            String? url = _yamlDetailPage!.url;
-            String? bigUrl = _yamlDetailPage!.commonInfo?.bigUrl;
-            String? rawUrl = _yamlDetailPage!.commonInfo?.rawUrl;
+          if (_detailPageEntity != null) {
+            String url = _detailPageEntity!.url;
+            String bigUrl = _detailPageEntity!.bigUrl;
+            String rawUrl = _detailPageEntity!.rawUrl;
+            String id = widget.homePageItem?.id ?? "";
             _log.fine("url=$url;rawUrl=$rawUrl;bigUrl=$bigUrl");
             List<Widget> children = [];
             if (isImageUrl(url) && url.isNotEmpty) {
               children.add(buildDownloadItem(context, url, "当前预览图片($url)", () {
                 Navigator.of(context).pop();
-                _detailViewModel.download(widget.href, url, _yamlDetailPage!.commonInfo);
+                _detailViewModel.download(widget.href, url, id);
               }));
             }
-            if (bigUrl != null && bigUrl.isNotEmpty) {
+            if (bigUrl.isNotEmpty) {
               children.add(const Divider(
                 height: 10,
               ));
               children.add(buildDownloadItem(context, bigUrl, "大图($bigUrl)", () {
                 Navigator.of(context).pop();
-                _detailViewModel.download(widget.href, bigUrl, _yamlDetailPage!.commonInfo);
+                _detailViewModel.download(widget.href, bigUrl, id);
               }));
             }
-            if (rawUrl != null && rawUrl.isNotEmpty) {
+            if (rawUrl.isNotEmpty) {
               children.add(const Divider(
                 height: 10,
               ));
               children.add(buildDownloadItem(context, rawUrl, "原图($rawUrl)", () {
                 Navigator.of(context).pop();
-                _detailViewModel.download(widget.href, rawUrl, _yamlDetailPage!.commonInfo);
+                _detailViewModel.download(widget.href, rawUrl, id);
               }));
             }
             if (children.isEmpty) {
@@ -283,10 +287,7 @@ class _DetailState extends State<DetailPage> {
   }
 
   //处理部分网页没有详情页的情况
-  void _updateCommonInfo(YamlDetailPage yamlDetailPage) {
-    if (yamlDetailPage.commonInfo == null && widget.commonInfo != null) {
-      yamlDetailPage.commonInfo = widget.commonInfo;
-    }
+  void _updateCommonInfo(DetailPageEntity detailPageEntity) {
   }
 
   Widget _buildPageView(BuildContext context, List<String> urlList,
@@ -396,14 +397,22 @@ class _DetailState extends State<DetailPage> {
 
   Widget _buildInfoAction(BuildContext context, DetailState detailState) {
     bool loading = detailState.loading;
+    DetailPageEntity detailPageEntity = detailState.detailPageEntity;
     return IconButton(
         onPressed: () {
           if (loading) return;
-          showInfoSheet(context, _yamlDetailPage?.commonInfo,
-              onTagTap: (yamlTag) {
+          showInfoSheet(context,
+              detailPageEntity.id,
+              detailPageEntity.author,
+              "",
+              "",
+              detailPageEntity.dimensions,
+              "",
+              detailPageEntity.tagList,
+              onTagTap: (tag) {
             Navigator.of(context)
               ..pop()
-              ..pop(NaviResult<YamlTag>(yamlTag));
+              ..pop(NaviResult<TagEntity>(tag));
           });
         },
         icon: const Icon(Icons.info));
