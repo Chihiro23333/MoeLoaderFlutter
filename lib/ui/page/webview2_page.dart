@@ -148,7 +148,7 @@ class _WebView2State extends State<WebView2Page> {
     super.dispose();
   }
 
-  Future<void> _dispose() async{
+  Future<void> _dispose() async {
     for (var s in _subscriptions) {
       await s.cancel();
     }
@@ -156,34 +156,40 @@ class _WebView2State extends State<WebView2Page> {
   }
 
   Widget _buildAppBatTitle(BuildContext context, AsyncSnapshot snapshot) {
-    if(snapshot.hasData){
+    if (snapshot.hasData) {
       _url = snapshot.data;
       List<Widget> children = [];
-      children.add(Chip(
-        avatar: ClipOval(
-          child: Icon(
-              Icons.link,
-            color: Theme.of(context).iconTheme.color
+      children.add(
+        Chip(
+          avatar: ClipOval(
+            child: Icon(Icons.link, color: Theme.of(context).iconTheme.color),
+          ),
+          label: Text(
+            _url,
+            overflow: TextOverflow.ellipsis,
+            softWrap: false,
+            maxLines: 1,
           ),
         ),
-        label: Text(_url),
-      ));
-      return Row(
-        children: children,
       );
-    }else{
+      return FittedBox(
+        child: Row(
+          children: children,
+        ),
+      );
+    } else {
       return const SizedBox();
     }
   }
 
-  List<Widget> _buildAppbarActions(BuildContext context){
+  List<Widget> _buildAppbarActions(BuildContext context) {
     return [
       Padding(
         padding:
-        const EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
+            const EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
         child: GestureDetector(
           child: Icon(
-              Icons.refresh,
+            Icons.refresh,
             color: Theme.of(context).iconTheme.color,
           ),
           onTap: () {
@@ -194,10 +200,10 @@ class _WebView2State extends State<WebView2Page> {
       ),
       Padding(
         padding:
-        const EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
+            const EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
         child: GestureDetector(
           child: Icon(
-              Icons.developer_mode,
+            Icons.developer_mode,
             color: Theme.of(context).iconTheme.color,
           ),
           onTap: () {
@@ -207,35 +213,36 @@ class _WebView2State extends State<WebView2Page> {
       ),
       Padding(
         padding:
-        const EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
+            const EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
         child: GestureDetector(
           onTap: () {
             _controller.goBack();
           },
           child: Icon(
-              Icons.arrow_back,
+            Icons.arrow_back,
             color: Theme.of(context).iconTheme.color,
           ),
         ),
       ),
       Padding(
         padding:
-        const EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
+            const EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
         child: GestureDetector(
           onTap: () {
             _controller.goForward();
           },
           child: Icon(
             Icons.arrow_forward,
-            color: Theme.of(context).iconTheme.color,),
+            color: Theme.of(context).iconTheme.color,
+          ),
         ),
       ),
     ];
   }
 
-    Widget _buildFloatActionButton(BuildContext context) {
+  Widget _buildFloatActionButton(BuildContext context) {
     return FloatingActionButton.extended(
-        onPressed: () async{
+        onPressed: () async {
           await _saveCookies(context);
           Navigator.of(context).pop(true);
         },
@@ -247,13 +254,14 @@ class _WebView2State extends State<WebView2Page> {
               width: 10,
             ),
             Icon(
-                Icons.check,
-              color: Theme.of(context).iconTheme.color,),
+              Icons.check,
+              color: Theme.of(context).iconTheme.color,
+            ),
           ],
         ));
   }
 
-  Future<void> _saveCookies(BuildContext context) async{
+  Future<void> _saveCookies(BuildContext context) async {
     String? cookiesResult = await _controller.getCookies(_url);
     if (cookiesResult != null && cookiesResult.isNotEmpty) {
       RegExp exp = RegExp(r'\[(.*?)\]');
@@ -262,8 +270,8 @@ class _WebView2State extends State<WebView2Page> {
         String? cookieStr = match.group(1);
         _log.fine("cookieStr=$cookieStr");
         if (cookieStr != null && cookieStr.isNotEmpty) {
-          await RequestManager().saveCookiesString(
-              Uri.parse(widget.url), cookieStr);
+          await RequestManager()
+              .saveCookiesString(Uri.parse(widget.url), cookieStr);
         }
       }
     }

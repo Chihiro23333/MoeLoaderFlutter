@@ -4,9 +4,7 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
 import '../init.dart';
-import '../yamlhtmlparser/models.dart';
 
 CancelFunc? cancel;
 
@@ -87,3 +85,10 @@ Widget buildDownloadItem(
 }
 
 typedef TagTapCallback = void Function(TagEntity tagEntity);
+
+class NaviResult<T>{
+
+  T? data;
+
+  NaviResult(this.data);
+}

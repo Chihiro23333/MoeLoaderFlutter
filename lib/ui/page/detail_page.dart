@@ -12,7 +12,6 @@ import 'package:MoeLoaderFlutter/ui/page/webview2_page.dart';
 import 'package:MoeLoaderFlutter/ui/viewmodel/view_model_detail.dart';
 import 'package:logging/logging.dart';
 import 'package:to_json/validator.dart';
-import '../../yamlhtmlparser/models.dart';
 import '../../widget/keep_alive_wrapper.dart';
 
 class DetailPage extends StatefulWidget {

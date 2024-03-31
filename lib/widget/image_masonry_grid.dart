@@ -13,7 +13,6 @@ import 'package:logging/logging.dart';
 import '../init.dart';
 import '../net/download.dart';
 import '../ui/viewmodel/view_model_home.dart';
-import '../yamlhtmlparser/models.dart';
 
 typedef ExceptionActionCallback = void Function(HomeState homeState);
 typedef ItemClickCallback = void Function(HomePageItemEntity yamlHomePageItem);

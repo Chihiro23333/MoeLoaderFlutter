@@ -1,10 +1,6 @@
 import 'dart:async';
-import 'package:MoeLoaderFlutter/model/home_page_item_entity.dart';
-import 'package:MoeLoaderFlutter/net/download.dart';
 import 'package:MoeLoaderFlutter/util/sharedpreferences_utils.dart';
-import 'package:MoeLoaderFlutter/util/utils.dart';
 import 'package:logging/logging.dart';
-import '../../yamlhtmlparser/models.dart';
 
 class SettingViewModel{
 

@@ -10,7 +10,7 @@ display:
 
 url:
   homePage:
-    link: "https://e-shuushuu.net/?page=${page}"
+    link: "https://e-shuushuu.net/${order}?page=${page}"
   searchPage:
     link: "https://e-shuushuu.net/search/results/?page=${page}&tags=${tag}"
 

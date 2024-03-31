@@ -39,22 +39,34 @@ class _SearchState extends State<SearchPage> {
 
   _buildBody(BuildContext context) {
     return Center(
-      child: Row(
+      child: Column(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(
-            width: 300,
+            width: 400,
+            height: 48,
             child: TextField(
                 controller: _textEditingControl,
                 decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     labelText: "请输入关键词",
+                    labelStyle: TextStyle(
+                      fontSize: 14,
+                    ),
                     filled: true),
                 onSubmitted: (String value) {}),
           ),
-          ElevatedButton(onPressed: () {},
-              child: Text("搜索"),)
+          const SizedBox(
+            height: 15,
+          ),
+          FilledButton(
+            onPressed: () {},
+            child: const Text(
+              "搜索",
+              style: TextStyle(fontSize: 14),
+            ),
+          )
         ],
       ),
     );
