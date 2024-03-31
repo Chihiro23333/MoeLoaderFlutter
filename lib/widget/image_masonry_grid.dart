@@ -152,7 +152,7 @@ class _ImageMasonryGridState extends State<ImageMasonryGrid> {
                           homePageItem.dimensions,
                           homePageItem.source,
                           homePageItem.tagList, onTagTap: (tag) {
-                        _log.info("yamlTag:tag=${tag.tag};desc=${tag.desc}");
+                        _log.fine("yamlTag:tag=${tag.tag};desc=${tag.desc}");
                         TagTapCallback? tagTapCallback = widget.tagTapCallback;
                         if (tagTapCallback != null) {
                           tagTapCallback(tag);

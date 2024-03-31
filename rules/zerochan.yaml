@@ -10,8 +10,8 @@ url:
   homePage:
     link: "https://www.zerochan.net/?p=${page}"
   searchPage:
-    link: "https://www.zerochan.net/${tag}?p=${page}"
-    tagConnector: "+"
+    link: "https://www.zerochan.net/${keyword}?p=${page}"
+    keywordConnector: "+"
 
 homePage: &HOMEPAGE
   onParseResult:

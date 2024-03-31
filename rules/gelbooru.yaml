@@ -29,9 +29,9 @@ url:
     options:
       *OPTIONS
   searchPage:
-    link: "https://gelbooru.com/index.php?page=post&s=list&tags=${tag}&pid=${page}"
+    link: "https://gelbooru.com/index.php?page=post&s=list&tags=${keyword}&pid=${page}"
     pageBase: 21
-    tagConnector: "_"
+    keywordConnector: "_"
     options:
       *OPTIONS
 
@@ -46,7 +46,7 @@ homePage: &HOMEPAGE
           get: { cssSelector: "a", attr: "href" }
         tagStr:
           get: { cssSelector: "img", attr: "alt" }
-          find:
+          filter:
             - regex: { regex: 'Rule 34 \| ([^|]+)', index: 1 }
         tagSplit:
           get: { default: "," }

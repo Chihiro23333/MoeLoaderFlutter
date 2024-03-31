@@ -12,8 +12,8 @@ url:
   homePage:
     link: "https://anime-pictures.net/posts?page=${page}&lang=en"
   searchPage:
-    link: "https://anime-pictures.net/posts?page=${page}&search_tag=${tag}&lang=en"
-    tagConnector: "+"
+    link: "https://anime-pictures.net/posts?page=${page}&search_tag=${keyword}&lang=en"
+    keywordConnector: "+"
 
 homePage: &HOMEPAGE
   onParseResult:
@@ -31,11 +31,11 @@ homePage: &HOMEPAGE
             - replaceAll: { from: "./", to: "/" }
         width:
           get: { cssSelector: "a[class]", text: "" }
-          find:
+          filter:
             - regex: { regex: '^\d+', index: 0 }
         height:
           get: { cssSelector: "a[class]", text: "" }
-          find:
+          filter:
             - regex: { regex: '^\d+x(\d+)', index: 1 }
         dimensions:
           get: { cssSelector: "a[rel]", attr: "title" }

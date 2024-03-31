@@ -21,8 +21,8 @@ url:
     options:
       *OPTIONS
   searchPage:
-    link: "https://yande.re/post?page=${page}&tags=${rating}${tag}${pageCount}"
-    tagConnector: "_"
+    link: "https://yande.re/post?page=${page}&tags=${rating}${keyword}${pageCount}"
+    keywordConnector: "_"
     options:
       *OPTIONS
 
@@ -46,7 +46,7 @@ homePage: &HOMEPAGE
             - concat: { start: "https://yande.re", end: "" }
         tagStr:
           get: { cssSelector: "a[class=thumb] img", attr: "alt" }
-          find:
+          filter:
             - regex: { regex: "(?<=Tags:).*?(?=User:)", index: 0 }
         tagSplit:
           get: { default: " " }
@@ -79,15 +79,15 @@ detailPage:
         get: { cssSelector: "a[class=thumb] img", attr: "height" }
       id:
         get: { cssSelector: "#stats", text: "" }
-        find:
+        filter:
           - regex: { regex: "(?<=Id:).*?(?=Posted:)", index: 0 }
       author:
         get: { cssSelector: "#stats", text: "" }
-        find:
+        filter:
           - regex: { regex: "(?<=by ).*?(?=Size:)", index: 0 }
       dimensions:
         get: { cssSelector: "#stats", text: "" }
-        find:
+        filter:
           - regex: { regex: "(?<=Size: ).*?(?= )", index: 0 }
       source:
         get: { cssSelector: "[rel^='canonical']", attr: "href" }

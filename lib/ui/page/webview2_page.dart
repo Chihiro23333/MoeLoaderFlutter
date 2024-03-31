@@ -57,7 +57,7 @@ class _WebView2State extends State<WebView2Page> {
       await _controller.setBackgroundColor(Colors.transparent);
       await _controller.setPopupWindowPolicy(WebviewPopupWindowPolicy.deny);
       await _controller.loadUrl(_url);
-      _log.info("_url=$_url");
+      _log.fine("_url=$_url");
       if (!mounted) return;
       setState(() {});
     } on PlatformException catch (e) {

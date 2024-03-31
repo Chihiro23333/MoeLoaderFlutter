@@ -86,8 +86,8 @@ class _SettingState extends State<SettingPage> {
                   decoration: InputDecoration(
                       fillColor: Colors.white,
                       suffixIcon: Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
-                        child: ElevatedButton(
+                        padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
+                        child: FilledButton(
                           onPressed: () {
                             String text = _textEditingControl.text;
                             _log.fine("text=$text");
@@ -96,7 +96,6 @@ class _SettingState extends State<SettingPage> {
                           },
                           child: const Text(
                             "保存",
-                            style: TextStyle(color: Colors.black),
                           ),
                         ),
                       ),
@@ -207,7 +206,7 @@ class _SettingState extends State<SettingPage> {
                   ),
                   ListTile(
                     title: const Text(
-                      "V1.0.3",
+                      "V1.0.4",
                       style: TextStyle(fontSize: 15),
                     ),
                     leading: Icon(

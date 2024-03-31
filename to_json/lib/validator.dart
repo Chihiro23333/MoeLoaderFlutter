@@ -17,7 +17,7 @@ class Validator {
       Iterator iterator = onValidateRule.iterator;
       while (iterator.moveNext()) {
         YamlMap item = iterator.current;
-        _log.info("item=$item");
+        _log.fine("item=$item");
         YamlMap? regexRule = item["regex"];
         if (regexRule != null) {
           RegExp regExp = RegExp(regexRule["regex"]);

@@ -70,6 +70,7 @@ class YamlHtmlParser extends Parser {
     }
   }
 
+  @override
   Future<String> preprocess(String content, YamlMap preprocessNode) async {
     Document document = parse(content);
     Element? html = document.querySelector("html");
@@ -87,6 +88,7 @@ class YamlHtmlParser extends Parser {
     _log.fine("list=$list");
     //第二步，筛选元素
     _filterList(list, yamlMap);
+    _log.fine("list=$list");
     return list;
   }
 
@@ -96,8 +98,9 @@ class YamlHtmlParser extends Parser {
     String result = "";
     //第一步，定位元素并获取值
     result = _get(element, yamlMap['get']);
-    _log.info("get=$result");
+    _log.fine("get=$result");
     result = handleResult(result, yamlMap);
+    _log.fine("handleResult=$result");
     return result;
   }
 
@@ -112,6 +115,13 @@ class YamlHtmlParser extends Parser {
       resultElements = [element];
     } else {
       resultElements = element?.querySelectorAll(css);
+    }
+
+    int? index = yamlMap["index"];
+    if (index != null &&
+        resultElements != null &&
+        index <= resultElements.length - 1) {
+      resultElements = [resultElements[index]];
     }
 
     String connector = yamlMap["connector"] ?? defaultConnector;
@@ -163,13 +173,13 @@ class YamlHtmlParser extends Parser {
     if (filterRule != null) {
       for (YamlMap? yamlMap in filterRule) {
         if (yamlMap != null) {
-          YamlMap? removeRule = yamlMap["remove"];
-          if (removeRule != null) {
-            String? cssSelectorRule = removeRule["cssSelector"];
+          YamlMap? containsRule = yamlMap["contains"];
+          if (containsRule != null) {
+            String? cssSelectorRule = containsRule["cssSelector"];
             if (cssSelectorRule != null) {
               list.removeWhere((element) {
                 Element? findElement = element.querySelector(cssSelectorRule);
-                return findElement != null;
+                return findElement == null;
               });
             }
           }

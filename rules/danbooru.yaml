@@ -24,8 +24,8 @@ url:
     options:
       *OPTIONS
   searchPage:
-    link: "https://danbooru.donmai.us/posts?page=${page}&tags=${rating}${tag}${pageCount}"
-    tagConnector: "_"
+    link: "https://danbooru.donmai.us/posts?page=${page}&tags=${rating}${keyword}${pageCount}"
+    keywordConnector: "_"
     options:
       *OPTIONS
 

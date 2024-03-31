@@ -21,6 +21,7 @@ class Global{
   }
 
   static late WebPage _curWebPage;
+  static late Rule _curRule;
   static late bool _supportWebView2 = false;
   bool _proxyInited = false;
 
@@ -47,6 +48,7 @@ class Global{
   Future<void> updateCurWebPage(Rule rule) async{
     YamlMap webPage = await YamlRuleFactory().create(rule.fileName);
     _curWebPage = WebPage(webPage, rule);
+    _curRule = rule;
   }
 
   Future<void> updateProxy() async{
@@ -73,6 +75,7 @@ class Global{
     Hive.init(Global.hiveDirectory.path);
   }
 
+  static get curRule => _curRule;
   static get curWebPageName => _curWebPage.rule.fileName;
   static get columnCount => int.parse((_curWebPage.webPage['display']?['homePage']?['columnCount'] ?? 6).toString());
   static get aspectRatio => double.parse((_curWebPage.webPage['display']?['homePage']?['aspectRatio'] ?? 1.78).toString());

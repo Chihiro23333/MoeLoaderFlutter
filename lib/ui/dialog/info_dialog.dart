@@ -1,5 +1,6 @@
 import 'package:MoeLoaderFlutter/model/tag_entity.dart';
 import 'package:MoeLoaderFlutter/util/common_function.dart';
+import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 
 void showInfoSheet(
@@ -14,12 +15,12 @@ void showInfoSheet(
     {TagTapCallback? onTagTap}) {
   List<Widget> children = [];
   List<Widget> infoChildren = [];
-  _fillInfoChip("Id：", id, infoChildren);
-  _fillInfoChip("Author：", author, infoChildren);
-  _fillInfoChip("Characters：", characters, infoChildren);
-  _fillInfoChip("File Size：", fileSize, infoChildren);
-  _fillInfoChip("Dimensions：", dimensions, infoChildren);
-  _fillInfoChip("Source：", source, infoChildren);
+  _fillInfoChip(context, "Id：", id, infoChildren);
+  _fillInfoChip(context, "Author：", author, infoChildren);
+  _fillInfoChip(context, "Characters：", characters, infoChildren);
+  _fillInfoChip(context, "File Size：", fileSize, infoChildren);
+  _fillInfoChip(context, "Dimensions：", dimensions, infoChildren);
+  _fillInfoChip(context, "Source：", source, infoChildren);
   if (infoChildren.isNotEmpty) {
     children.add(const Padding(
       padding: EdgeInsets.only(top: 10, bottom: 10),
@@ -68,11 +69,14 @@ void showInfoSheet(
       });
 }
 
-void _fillInfoChip(String prefix, String info, List<Widget> infoChildren) {
+void _fillInfoChip(BuildContext context, String prefix, String info, List<Widget> infoChildren) {
   if (info.isNotEmpty) {
     infoChildren.add(Chip(
-      avatar: const ClipOval(
-        child: Icon(Icons.tag),
+      avatar: ClipOval(
+        child: Icon(
+          Icons.tag,
+          color: Theme.of(context).iconTheme.color,
+        ),
       ),
       label: Row(
         mainAxisSize: MainAxisSize.min,
@@ -94,10 +98,24 @@ List<Widget> _buildTags(BuildContext context, List<TagEntity> tagList,
   for (var tag in tagList) {
     result.add(GestureDetector(
       child: Chip(
-        avatar: const ClipOval(
-          child: Icon(Icons.label),
+        avatar: ClipOval(
+          child: Icon(
+            Icons.label,
+            color: Theme.of(context).iconTheme.color,
+          ),
         ),
         label: Text(tag.desc),
+        deleteButtonTooltipMessage: "复制",
+        deleteIcon: ClipOval(
+          clipBehavior: Clip.antiAlias,
+          child: Icon(
+            Icons.copy,
+            color: Theme.of(context).iconTheme.color,
+          ),
+        ),
+        onDeleted: () {
+          FlutterClipboard.copy(tag.desc).then((value) => showToast("文字已复制"));
+        },
       ),
       onTap: () {
         if (onTagTap != null) {

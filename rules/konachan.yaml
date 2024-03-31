@@ -22,8 +22,8 @@ url:
     options:
       *OPTIONS
   searchPage:
-    link: "https://konachan.com/post?${pageCount}page=${page}&tags=${rating}${tag}"
-    tagConnector: "_"
+    link: "https://konachan.com/post?${pageCount}page=${page}&tags=${rating}${keyword}"
+    keywordConnector: "_"
     options:
       *OPTIONS
 
@@ -45,16 +45,17 @@ homePage: &HOMEPAGE
             - concat: { start: "https://konachan.com", end: "" }
         tagStr:
           get: { cssSelector: "a[class=thumb] img", attr: "alt" }
-          find:
+          filter:
             - regex: { regex: "(?<=Tags:).*?(?=User:)", index: 0 }
         tagSplit:
           get: { default: " " }
         width:
           get: { cssSelector: "span[class=directlink-info]", text: "" }
-          filter: { regex: '^\d+', index: 0 }
+          filter:
+            - regex: { regex: '^\d+', index: 0 }
         height:
           get: { cssSelector: "span[class=directlink-info]", text: "" }
-          find:
+          filter:
             - regex: { regex: '^\d+ x (\d+)', index: 1 }
         id:
           get: { cssSelector: "", attr: "id" }
@@ -83,15 +84,15 @@ detailPage:
         get: { cssSelector: "a[class=thumb] img", attr: "height" }
       id:
         get: { cssSelector: "#stats", text: "" }
-        find:
+        filter:
           - regex: { regex: "(?<=Id:).*?(?=Posted:)", index: 0 }
       author:
         get: { cssSelector: "#stats", text: "" }
-        find:
+        filter:
           - regex: { regex: "(?<=by ).*?(?=Size:)", index: 0 }
       dimensions:
         get: { cssSelector: "#stats", text: "" }
-        find:
+        filter:
           - regex: { regex: "(?<=Size: ).*?(?= )", index: 0 }
       source:
         get: { cssSelector: "[rel^='canonical']", attr: "href" }

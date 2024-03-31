@@ -12,7 +12,7 @@ url:
   homePage:
     link: "http://gallery.minitokyo.net/scans?order=id&page=${page}&display=extensive"
   searchPage:
-    link: "http://browse.minitokyo.net/gallery?tid=${tag}&order=id&index=3&display=extensive"
+    link: "http://browse.minitokyo.net/gallery?tid=${keyword}&order=id&index=3&display=extensive"
 
 homePage: &HOMEPAGE
   onParseResult:
@@ -29,10 +29,12 @@ homePage: &HOMEPAGE
             - replaceAll: { from: "http://gallery.minitokyo.net/view/", to: "" }
         width:
           get: { cssSelector: "p", text: "" }
-          filter: { regex: '\d+(?=x)', index: 0 }
+          filter:
+            - regex: { regex: '\d+(?=x)', index: 0 }
         height:
           get: { cssSelector: "p", text: "" }
-          filter: { regex: 'x(\d+)', index: 1 }
+          filter:
+            - regex: { regex: 'x(\d+)', index: 1 }
 
 searchPage:
   *HOMEPAGE
@@ -56,9 +58,9 @@ detailPage:
           foreach:
             desc:
               get: { cssSelector: "", text: "" }
-              find:
+              filter:
                 - regex: { regex: "(?<=Browse).*?(?=Gallery:)", index: 0 }
             tag:
               get: { cssSelector: "a", attr: "href" }
-              find:
+              filter:
                 - regex: { regex: "(?<=tid=).*?(?=&)", index: 0 }

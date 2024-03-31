@@ -22,7 +22,7 @@ url:
     options:
       *OPTIONS
   searchPage:
-    link: "https://www.pixiv.net/ajax/search/artworks/${tag}?word=${tag}&order=date_d&mode=all&p=${page}&csw=0&s_mode=s_tag_full&type=all&lang=z"
+    link: "https://www.pixiv.net/ajax/search/artworks/${keyword}?word=${tag}&order=date_d&mode=all&p=${page}&csw=0&s_mode=s_tag_full&type=all&lang=z"
     options:
       *OPTIONS
 

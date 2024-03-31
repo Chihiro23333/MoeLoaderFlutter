@@ -44,8 +44,8 @@ url:
     options:
       *OPTIONS
   searchPage:
-    link: "https://wallpaperscraft.com/tag/${tag}/page${page}"
-    tagConnector: "-"
+    link: "https://wallpaperscraft.com/tag/${keyword}/page${page}"
+    keywordConnector: "-"
     options:
       *OPTIONS
 

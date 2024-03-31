@@ -2,6 +2,7 @@ import 'package:MoeLoaderFlutter/util/common_function.dart';
 import 'package:flutter/material.dart';
 import 'package:MoeLoaderFlutter/init.dart';
 import 'package:logging/logging.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../net/download.dart';
 
 class DownloadPage extends StatefulWidget {
@@ -30,8 +31,23 @@ class _DownloadState extends State<DownloadPage> {
   }
 
   AppBar _buildAppBar(BuildContext context) {
+    List<Widget> children = [];
+    children.add(Chip(
+      avatar: ClipOval(
+        child: Icon(
+          Icons.title,
+          color: Theme.of(context).iconTheme.color,
+        ),
+      ),
+      label: Text("文件存储路径：${Global.downloadsDirectory.path}"),
+    ));
     return AppBar(
-      title: const Text("下载列表"),
+      title: FittedBox(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: children,
+        ),
+      ),
       iconTheme: Theme.of(context).iconTheme,
       elevation: 10,
     );
@@ -71,11 +87,6 @@ class _DownloadState extends State<DownloadPage> {
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                IconButton(
-                    onPressed: () async {
-                      DownloadManager().retryTask(downloadTask);
-                    },
-                    icon: const Icon(Icons.folder)),
                 IconButton(
                     onPressed: () async {
                       DownloadManager().retryTask(downloadTask);

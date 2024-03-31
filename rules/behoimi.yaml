@@ -30,8 +30,8 @@ url:
     options:
       *OPTIONS
   searchPage:
-    link: "http://behoimi.org/post/index?tags=${rating}${tag}&page=${page}${pageCount}"
-    tagConnector: "-"
+    link: "http://behoimi.org/post/index?tags=${rating}${keyword}&page=${page}${pageCount}"
+    keywordConnector: "-"
     options:
       *OPTIONS
 
@@ -75,15 +75,15 @@ detailPage:
         get: { default: " " }
       id:
         get: { cssSelector: "#stats", text: "" }
-        find:
+        filter:
           - regex: { regex: "(?<=Id:).*?(?=Posted:)", index: 0 }
       author:
         get: { cssSelector: "#stats", text: "" }
-        find:
+        filter:
           - regex: { regex: "(?<=by ).*?(?=Size:)", index: 0 }
       dimensions:
         get: { cssSelector: "#stats", text: "" }
-        find:
+        filter:
           - regex: { regex: "(?<=Size: ).*?(?= )", index: 0 }
       source:
         get: { cssSelector: "[rel^='canonical']", attr: "href" }

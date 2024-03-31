@@ -7,8 +7,8 @@ import 'package:yaml/yaml.dart';
 
 class MixParser extends Parser {
 
-  final YamlHtmlParser _yamlHtmlParser = YamlHtmlParser();
-  final YamlJsonParser _yamlJsonParser = YamlJsonParser();
+  final Parser _yamlHtmlParser = YamlHtmlParser();
+  final Parser _yamlJsonParser = YamlJsonParser();
 
   Future<String> _preprocess(String content, YamlMap? preprocessNode) async {
     if (preprocessNode != null) {
@@ -48,6 +48,11 @@ class MixParser extends Parser {
           content, doc, pageName);
     }
     return toResult(Parser.success, "解析成功", jsonDecode(data));
+  }
+
+  @override
+  Future<String> preprocess(String content, YamlMap preprocessNode) async{
+    return content;
   }
 
 }

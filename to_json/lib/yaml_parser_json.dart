@@ -79,6 +79,7 @@ class YamlJsonParser extends Parser {
     }
   }
 
+  @override
   Future<String> preprocess(String content, YamlMap preprocessNode) async {
     var json = jsonDecode(content);
     return _queryOne(json, "", preprocessNode);

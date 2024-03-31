@@ -39,10 +39,17 @@ class _HomeState extends State<HomePage> {
 
   final Map<String, String> _yamlOptionMap = {};
   String _url = "";
+  final String _keyword = "keyword";
 
   void _updateTag(TagEntity? tag) {
     setState(() {
-      _yamlOptionMap["tag"] = tag?.tag ?? "";
+      _yamlOptionMap[_keyword] = tag?.tag ?? "";
+    });
+  }
+
+  void _updateKeyword(String keyword) {
+    setState(() {
+      _yamlOptionMap[_keyword] = keyword;
     });
   }
 
@@ -56,9 +63,7 @@ class _HomeState extends State<HomePage> {
 
   void _requestData({bool clearAll = false, String? page}) {
     _homeViewModel.requestData(
-        options: _yamlOptionMap,
-        clearAll: clearAll,
-        page: page);
+        options: _yamlOptionMap, clearAll: clearAll, page: page);
   }
 
   @override
@@ -83,7 +88,7 @@ class _HomeState extends State<HomePage> {
                 _buildCopyAction(context),
                 _buildDownloadAction(context),
                 _buildOptionsAction(context),
-                _buildSearchAction(context),
+                _buildSearchAction(context, snapshot),
                 _buildSettingsAction(context),
               ]),
           drawer: _buildDrawer(context),
@@ -110,7 +115,8 @@ class _HomeState extends State<HomePage> {
       return;
     }
 
-    _textEditingControl.value = TextEditingValue(text: _yamlOptionMap["tag"] ?? "");
+    _textEditingControl.value =
+        TextEditingValue(text: _yamlOptionMap[_keyword] ?? "");
     showModalBottomSheet(
         context: context,
         builder: (context) {
@@ -192,7 +198,7 @@ class _HomeState extends State<HomePage> {
                     return PoolListPage(href: yamlHomePageItem.href);
                   }),
                 );
-                _log.info("naviResult=$naviResult");
+                _log.fine("naviResult=$naviResult");
                 if (naviResult?.data != null) {
                   _updateTag(naviResult?.data);
                   _requestData(clearAll: true);
@@ -212,11 +218,10 @@ class _HomeState extends State<HomePage> {
                 context,
                 MaterialPageRoute(builder: (context) {
                   return DetailPage(
-                      href: homePageItem.href,
-                      homePageItem: homePageItem);
+                      href: homePageItem.href, homePageItem: homePageItem);
                 }),
               );
-              _log.info("naviResult=$naviResult");
+              _log.fine("naviResult=$naviResult");
               if (naviResult?.data != null) {
                 _updateTag(naviResult?.data);
                 _requestData(clearAll: true);
@@ -330,15 +335,29 @@ class _HomeState extends State<HomePage> {
         icon: const Icon(Icons.copy));
   }
 
-  Widget _buildSearchAction(BuildContext context) {
+  Widget _buildSearchAction(BuildContext context, AsyncSnapshot snapshot) {
     return IconButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) {
-              return const SearchPage();
-            }),
-          );
+        onPressed: () async {
+          if(snapshot.hasData){
+            HomeState? homeState = snapshot.data;
+            if(homeState != null){
+              if(homeState.canSearch){
+                NaviResult<String>? naviResult = await Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) {
+                    return SearchPage(keyword: _yamlOptionMap[_keyword] ?? "");
+                  }),
+                );
+                _log.fine("naviResult=$naviResult");
+                if (naviResult?.data != null) {
+                  _updateKeyword(naviResult?.data ?? "");
+                  _requestData(clearAll: true);
+                }
+              }else{
+                showToast("此源暂不支持搜索");
+              }
+            }
+          }
         },
         icon: const Icon(Icons.image_search));
   }
@@ -352,10 +371,7 @@ class _HomeState extends State<HomePage> {
               const ListTile(
                   title: Text(
                 "源列表",
-                style: TextStyle(
-                  fontWeight: FontWeight.normal,
-                  fontSize: 17
-                ),
+                style: TextStyle(fontWeight: FontWeight.normal, fontSize: 17),
               )),
               Expanded(
                 child: FutureBuilder<List<jsonModels.Rule>>(
@@ -372,15 +388,15 @@ class _HomeState extends State<HomePage> {
                             jsonModels.Rule rule = list[index];
                             _log.fine("rule.faviconPath=${rule.faviconPath}");
                             Widget leading;
-                            if(rule.faviconPath.isEmpty){
+                            if (rule.faviconPath.isEmpty) {
                               leading = Icon(
                                 Icons.call_to_action,
                                 color: Theme.of(context).iconTheme.color,
                               );
-                            }else{
+                            } else {
                               leading = Image.file(
-                                  File(rule.faviconPath),
-                                  fit: BoxFit.cover,
+                                File(rule.faviconPath),
+                                fit: BoxFit.cover,
                               );
                             }
                             return ListTile(
@@ -389,12 +405,11 @@ class _HomeState extends State<HomePage> {
                                 width: 25,
                                 child: leading,
                               ),
-                              titleTextStyle:
-                                  list[index].fileName == Global.curWebPageName
-                                      ? const TextStyle(
-                                          fontWeight: FontWeight.bold)
-                                      : const TextStyle(
-                                          fontWeight: FontWeight.normal),
+                              titleTextStyle: list[index].fileName ==
+                                      Global.curWebPageName
+                                  ? const TextStyle(fontWeight: FontWeight.bold)
+                                  : const TextStyle(
+                                      fontWeight: FontWeight.normal),
                               selected:
                                   list[index].fileName == Global.curWebPageName,
                               selectedColor: Global.defaultColor,
@@ -427,9 +442,6 @@ class _HomeState extends State<HomePage> {
   }
 
   Widget _buildFloatActionButton(BuildContext context, AsyncSnapshot snapshot) {
-    if (snapshot.hasError) {
-      return Text("Error: ${snapshot.error}");
-    }
     if (snapshot.connectionState == ConnectionState.active) {
       HomeState homeState = snapshot.data;
       return FloatingActionButton(
@@ -549,7 +561,7 @@ class _HomeState extends State<HomePage> {
               },
             ));
             final options = uriState.options;
-            _log.info("homePage options=$options");
+            _log.fine("homePage options=$options");
             if (options != null) {
               for (var keyItem in options.keys) {
                 children.add(

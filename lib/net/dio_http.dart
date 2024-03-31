@@ -30,7 +30,7 @@ class DioHttp {
   }
 
   Future<String> get(String url, {Map<String, String>? headers}) async {
-    _log.info("url=${url}");
+    _log.fine("url=${url}");
     BaseOptions baseOptions = _dio.options;
     Map<String, dynamic> nowHeaders = baseOptions.headers;
     _log.fine("nowHeaders=${nowHeaders}");
@@ -48,7 +48,7 @@ class DioHttp {
 
   Future<void> saveCookiesString(Uri uri, String cookiesString) async {
     String origin = uri.origin;
-    _log.info("origin=$origin");
+    _log.fine("origin=$origin");
     await saveCookieString(origin, cookiesString);
     await updateCookies(uri, cookiesString);
   }
@@ -72,21 +72,21 @@ class DioHttp {
         if (keyValue.length == 2) {
           String key = keyValue[0];
           String value = keyValue[1];
-          _log.info("key=$key;value=$value");
+          _log.fine("key=$key;value=$value");
           cookies.add(Cookie(key, value));
         }
       }
     }
     if (cookies.isNotEmpty) {
       await _cookieManager.cookieJar.saveFromResponse(uri, cookies);
-      _log.info("saveFromResponse,uri=$uri");
+      _log.fine("saveFromResponse,uri=$uri");
     }
   }
 
   Future<void> _loadAllCookies() async {
     Map<String, String> cookiesMap = await getAllCookieString();
     cookiesMap.forEach((key, value) async {
-      _log.info("cookiesMap:key=$key,value=$value");
+      _log.fine("cookiesMap:key=$key,value=$value");
       await updateCookies(Uri.parse(key), value);
     });
   }

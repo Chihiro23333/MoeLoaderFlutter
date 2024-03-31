@@ -27,15 +27,15 @@ class YamlRuleFactory {
   }
 
   Future<YamlMap> create(String fileName) async {
-    _log.info("fileName=$fileName");
+    _log.fine("fileName=$fileName");
     Rule? targetRule;
     for (var element in _ruleList) {
-      _log.info("element=${element.fileName}");
+      _log.fine("element=${element.fileName}");
       if (element.fileName == fileName) {
         targetRule = element;
       }
     }
-    _log.info("targetRule=$targetRule");
+    _log.fine("targetRule=$targetRule");
     if (targetRule == null) throw "yaml source not found!";
     YamlMap? targetWebPage;
     _ruleMap.forEach((key, value) {

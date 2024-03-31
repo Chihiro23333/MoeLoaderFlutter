@@ -60,7 +60,7 @@ class PoolListViewModel {
     ValidateResult<String> result =
         await repository.poolList(url, validator, headers: headers);
     _poolListState.code = result.code;
-    _log.info("result.code=${result.code}");
+    _log.fine("result.code=${result.code}");
     bool success = false;
     String message = "";
     if (result.validateSuccess) {

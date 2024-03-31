@@ -3,12 +3,43 @@ meta:
   headers:
     user-agent: "Dart/3.2 (dart:io)"
 
+options: &OPTIONS
+  - id: "category"
+    desc: "类型"
+    items:
+      - { desc: "Anime", param: "anime" }
+      - { desc: "Animal", param: "animal" }
+      - { desc: "Abstract", param: "abstract" }
+      - { desc: "Artistic", param: "artistic" }
+      - { desc: "Celebrity", param: "celebrity" }
+      - { desc: "Comic", param: "comic" }
+      - { desc: "Dark", param: "dark" }
+      - { desc: "Fantasy", param: "fantasy" }
+      - { desc: "Food", param: "food" }
+      - { desc: "Holiday", param: "holiday" }
+      - { desc: "Humor", param: "humor" }
+      - { desc: "Man Made", param: "man-made" }
+      - { desc: "Movie", param: "movie" }
+      - { desc: "Music", param: "music" }
+      - { desc: "Nature", param: "nature" }
+      - { desc: "Photography", param: "photography" }
+      - { desc: "Religious", param: "religious" }
+      - { desc: "Sci Fi", param: "sci-fi" }
+      - { desc: "Sports", param: "sports" }
+      - { desc: "Technology", param: "technology" }
+      - { desc: "TV Show", param: "tv-show" }
+      - { desc: "Vehicle", param: "vehicle" }
+      - { desc: "Video Game", param: "video-game" }
+      - { desc: "Woman", param: "woman" }
+
 url:
   homePage:
-    link: "https://alphacoders.com/anime-wallpapers?page=${page}"
+    link: "https://alphacoders.com/${category}-wallpapers?page=${page}"
+    options:
+      *OPTIONS
   searchPage:
-    link: "https://alphacoders.com/${tag}-wallpapers?page=${page}"
-    tagConnector: "_"
+    link: "https://alphacoders.com/${keyword}?page=${page}"
+    keywordConnector: "-"
 
 display:
   homePage:
@@ -34,6 +65,14 @@ homePage: &HOMEPAGE
           get: { cssSelector: "div[class=thumb-container-masonry]", attr: "id" }
           format:
             - replaceAll: { from: "content_", to: "" }
+        width:
+          get: { cssSelector: "div[class=thumb-info-masonry]", index: 0,  text: "" }
+          filter:
+            - regex: { regex: '(\d+)x(\d+)', index: 1 }
+        height:
+          get: { cssSelector: "div[class=thumb-info-masonry]",  index: 0, text: "" }
+          filter:
+            - regex: { regex: '(\d+)x(\d+)', index: 2 }
 
 searchPage:
   *HOMEPAGE

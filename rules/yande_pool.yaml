@@ -14,7 +14,7 @@ url:
   homePage:
     link: "https://yande.re/pool?page=${page}"
   searchPage:
-    link: "https://yande.re/pool?commit=%E6%90%9C%E7%B4%A2&page=${page}&query=${tag}"
+    link: "https://yande.re/pool?commit=%E6%90%9C%E7%B4%A2&page=${page}&query=${keyword}"
 
 homePage: &HOMEPAGE
   onParseResult:
@@ -48,7 +48,7 @@ poolListPage:
             - concat: { start: "https://yande.re", end: "" }
         tagStr:
           get: { cssSelector: "a[class=thumb] img", attr: "alt" }
-          find:
+          filter:
             - regex: { regex: "(?<=Tags:).*?(?=User:)", index: 0 }
         tagSplit:
           get: { default: " " }
@@ -80,12 +80,15 @@ detailPage:
         get: { cssSelector: "a[class=thumb] img", attr: "height" }
       id:
         get: { cssSelector: "#stats", text: "" }
-        filter: { regex: "(?<=Id:).*?(?=Posted:)", index: 0 }
+        filter:
+          - regex: { regex: "(?<=Id:).*?(?=Posted:)", index: 0 }
       author:
         get: { cssSelector: "#stats", text: "" }
-        filter: { regex: "(?<=by ).*?(?=Size:)", index: 0 }
+        filter:
+          - regex: { regex: "(?<=by ).*?(?=Size:)", index: 0 }
       dimensions:
         get: { cssSelector: "#stats", text: "" }
-        filter: { regex: "(?<=Size: ).*?(?= )", index: 0 }
+        filter:
+          - regex: { regex: "(?<=Size: ).*?(?= )", index: 0 }
       source:
         get: { cssSelector: "[rel^='canonical']", attr: "href" }

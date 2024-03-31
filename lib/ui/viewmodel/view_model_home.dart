@@ -59,11 +59,11 @@ class HomeViewModel {
     changeLoading(true);
     String realPage = page ?? (_homeState.page + 1).toString();
     YamlMap doc = await YamlRuleFactory().create(Global.curWebPageName);
-    String tags = options?["tag"] ?? "";
-    _log.info("tags=$tags");
-    bool home = tags.isEmpty;
+    String keyword = options?["keyword"] ?? "";
+    bool home = keyword.isEmpty;
     String url;
     Map<String, String> formatParams = Map.from(options ?? {});
+    _log.info("formatParams=$formatParams");
     if (home) {
       formatParams["page"] = realPage;
       url = await _parser().url(doc, _homePageName, formatParams);
@@ -75,19 +75,19 @@ class HomeViewModel {
     String siteName = await _parser().webPageName(doc);
     _updateUri(siteName, url, realPage, options);
 
-    String favicon = await _parser().favicon(doc);
-    _homeState.favicon = favicon;
-
     Map<String, String> headers = await _parser().headers(doc);
     _homeState.headers = headers;
 
     String pageType = await _parser().pageType(doc);
     _homeState.pageType = pageType;
 
+    String searchUrl = await _parser().url(doc, _searchPageName, {});
+    _homeState.canSearch = searchUrl.isNotEmpty;
+
     Validator validator = Validator(doc, _homePageName);
     ValidateResult<String> result = await repository.home(url, validator, headers: headers);
     _homeState.code = result.code;
-    _log.info("result.code=${result.code}");
+    _log.fine("result.code=${result.code}");
     bool success = false;
     String message = "";
     if (result.validateSuccess) {
@@ -180,7 +180,6 @@ class HomeState {
   bool canSearch = true;
   String errorMessage = "";
   String pageType = "";
-  String favicon = "";
   int code = ValidateResult.success;
   Map<String, String>? headers;
 
@@ -192,7 +191,6 @@ class HomeState {
     canSearch = true;
     errorMessage = "";
     pageType = "";
-    favicon = "";
     headers = null;
     code = ValidateResult.success;
   }

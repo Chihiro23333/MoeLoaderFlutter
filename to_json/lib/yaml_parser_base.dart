@@ -35,7 +35,7 @@ abstract class Parser {
       formatParams["page"] = page;
       url = await _commonFormatUrl(yamlDoc["url"]?[pageName], link, formatParams);
     }
-    _log.fine("getJsonHomeUrl:url=$url");
+    _log.fine("getUrl:url=$url");
     return url;
   }
 
@@ -47,10 +47,6 @@ abstract class Parser {
     return yamlDoc["meta"]?["pageType"] ?? "";
   }
 
-  Future<String> favicon(YamlMap yamlDoc) async {
-    return yamlDoc["meta"]?["favicon"] ?? "";
-  }
-
   Future<String> options(YamlMap yamlDoc, String pageName) async {
     var optionsRule = yamlDoc["url"]?[pageName]?["options"];
     _log.fine("optionsRule=$optionsRule");
@@ -58,7 +54,7 @@ abstract class Parser {
   }
 
   Future<String> displayInfo(YamlMap yamlDoc, String pageName) async {
-    return toResult(success, "解析成功", yamlDoc["display"]?[pageName] ?? {});
+    return jsonEncode(yamlDoc["display"]?[pageName] ?? {});
   }
 
   Future<String> _commonFormatUrl(YamlMap? pageUrlRule, String link,
@@ -70,9 +66,9 @@ abstract class Parser {
     // 遍历匹配结果并打印
     for (Match match in iterator) {
       String? text = match.group(1);
-      _log.info('找到匹配内容: $text');
-      String? value = formatParams[text];
-      _log.info('value= $value');
+      _log.fine('找到匹配内容: $text');
+      String? value = formatParams[text]?.toLowerCase();
+      _log.fine('value= $value');
       YamlList? optionsRule = pageUrlRule?["options"];
       //查找默认的值
       if (optionsRule != null && value == null) {
@@ -82,7 +78,7 @@ abstract class Parser {
           }
         }
       }
-      _log.info('value= $value');
+      _log.fine('value= $value');
       if(value != null && pageUrlRule != null){
         String? connector = pageUrlRule["${text}Connector"];
         if(connector != null){
@@ -96,10 +92,10 @@ abstract class Parser {
 
   @protected
   String handleResult(String result, YamlMap yamlMap) {
-    //第二步，查找值
-    var findRule = yamlMap["find"];
-    if (findRule != null) {
-      result = _find(result, findRule);
+    //第二步，筛选值
+    var filterRule = yamlMap["filter"];
+    if (filterRule != null) {
+      result = _find(result, filterRule);
       _log.fine("find=$result");
     }
     //第三步，规整值
@@ -171,6 +167,8 @@ abstract class Parser {
     }
     return result;
   }
+
+  Future<String> preprocess(String content, YamlMap preprocessNode);
 
   Future<String> parseUseYaml(String content, YamlMap doc, String pageName);
 }

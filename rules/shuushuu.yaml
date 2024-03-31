@@ -12,7 +12,7 @@ url:
   homePage:
     link: "https://e-shuushuu.net/${order}?page=${page}"
   searchPage:
-    link: "https://e-shuushuu.net/search/results/?page=${page}&tags=${tag}"
+    link: "https://e-shuushuu.net/search/results/?page=${page}&tags=${keyword}"
 
 homePage: &HOMEPAGE
   onParseResult:
@@ -29,11 +29,11 @@ homePage: &HOMEPAGE
             - concat: { start: "https://e-shuushuu.net", end: "" }
         width:
           get: { cssSelector: ".meta dl", text: "" }
-          find:
+          filter:
             - regex: { regex: 'Dimensions:\s*(\d+)x(\d+)\s*\(', index: 1 }
         height:
           get: { cssSelector: ".meta dl", text: "" }
-          find:
+          filter:
             - regex: { regex: 'Dimensions:\s*(\d+)x(\d+)\s*\(', index: 2 }
         tagList:
           list:
@@ -49,19 +49,19 @@ homePage: &HOMEPAGE
           get: { cssSelector: "", attr: "id" }
         author:
           get: { cssSelector: ".meta dl", text: "" }
-          find:
+          filter:
             - regex: { regex: 'Artist:\s*"(.*?)"', index: 1 }
         characters:
           get: { cssSelector: ".meta dl", text: "" }
-          find:
+          filter:
             - regex: { regex: "(?<=Characters:).*?(?=Artist:)", index: 0 }
         fileSize:
           get: { cssSelector: ".meta dl", text: "" }
-          find:
+          filter:
             - regex: { regex: "(?<=File size:).*?(?=Dimensions:)", index: 0 }
         dimensions:
           get: { cssSelector: ".meta dl", text: "" }
-          find:
+          filter:
             - regex: { regex: "(?<=Dimensions:).*?(?=Tags:)", index: 0 }
 
 searchPage:
