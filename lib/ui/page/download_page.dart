@@ -2,7 +2,6 @@ import 'package:MoeLoaderFlutter/util/common_function.dart';
 import 'package:flutter/material.dart';
 import 'package:MoeLoaderFlutter/init.dart';
 import 'package:logging/logging.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../../net/download.dart';
 
 class DownloadPage extends StatefulWidget {
