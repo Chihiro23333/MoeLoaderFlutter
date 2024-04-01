@@ -1,0 +1,47 @@
+meta:
+  name: "pfptown.com"
+  headers:
+    user-agent: "Dart/3.2 (dart:io)"
+
+options: &OPTIONS
+  - id: "order"
+    desc: "排序方式"
+    items:
+      - { desc: "New", param: "new" }
+      - { desc: "Best", param: "best" }
+
+url:
+  homePage:
+    link: "https://pfptown.com/${order}-pfp?page=${page}"
+    options:
+      *OPTIONS
+  searchPage:
+    link: "https://pfptown.com/${keyword}-pfp?page=${page}"
+
+display:
+  homePage:
+    columnCount: 5
+    aspectRatio: 0.65
+
+homePage: &HOMEPAGE
+  onValidateResult:
+    - exception: { code: "403",  action: "challenge" }
+  onParseResult:
+    list:
+      getElements: { cssSelector: "div[class=pfp-preview-group-container] div[class=box]" }
+      foreach:
+        coverUrl:
+          get: { cssSelector: "img[class=pfp-display]", attr: "src" }
+        href:
+          get: { cssSelector: "img[class=pfp-display]", attr: "src" }
+        width:
+          get: { cssSelector: "img[class=pfp-display]",  attr: "width" }
+        height:
+          get: { cssSelector: "img[class=pfp-display]",  attr: "height" }
+
+searchPage:
+  *HOMEPAGE
+
+detailPage:
+  onParseResult:
+    object:
