@@ -4,6 +4,7 @@ import 'package:MoeLoaderFlutter/model/tag_entity.dart';
 import 'package:MoeLoaderFlutter/ui/dialog/info_dialog.dart';
 import 'package:MoeLoaderFlutter/ui/page/download_page.dart';
 import 'package:MoeLoaderFlutter/util/common_function.dart';
+import 'package:MoeLoaderFlutter/util/entity.dart';
 import 'package:MoeLoaderFlutter/util/utils.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:extended_image/extended_image.dart';

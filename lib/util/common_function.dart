@@ -85,10 +85,3 @@ Widget buildDownloadItem(
 }
 
 typedef TagTapCallback = void Function(TagEntity tagEntity);
-
-class NaviResult<T>{
-
-  T? data;
-
-  NaviResult(this.data);
-}

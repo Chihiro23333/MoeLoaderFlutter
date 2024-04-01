@@ -7,6 +7,7 @@ import 'package:MoeLoaderFlutter/ui/page/pool_list_page.dart';
 import 'package:MoeLoaderFlutter/ui/page/search_page.dart';
 import 'package:MoeLoaderFlutter/ui/page/settings_page.dart';
 import 'package:MoeLoaderFlutter/util/common_function.dart';
+import 'package:MoeLoaderFlutter/util/entity.dart';
 import 'package:MoeLoaderFlutter/widget/home_loading_status.dart';
 import 'package:MoeLoaderFlutter/widget/image_masonry_grid.dart';
 import 'package:MoeLoaderFlutter/widget/poll_grid.dart';

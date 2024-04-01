@@ -1,7 +1,6 @@
 import 'dart:io';
-
 import 'package:MoeLoaderFlutter/init.dart';
-import 'package:MoeLoaderFlutter/util/common_function.dart';
+import 'package:MoeLoaderFlutter/util/entity.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:to_json/models.dart';
@@ -107,9 +106,10 @@ class _SearchState extends State<SearchPage> {
                       ),
                     ),
                   ),
-                  border: OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
                   labelText: "请输入关键词",
-                  labelStyle: TextStyle(
+                  helperText: "输入后按ENTER/或者点击搜索按钮",
+                  labelStyle: const TextStyle(
                     fontSize: 14,
                   ),
                   filled: true),

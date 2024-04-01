@@ -162,7 +162,7 @@ class _SettingState extends State<SettingPage> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           const Text(
-            "下载方式：",
+            "下载选项：",
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           RadioChoiceChip(
