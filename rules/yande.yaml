@@ -73,6 +73,8 @@ detailPage:
         get: { cssSelector: "#png", attr: "href" }
       tagStr:
         get: { cssSelector: "#image", attr: "alt" }
+      tagSplit:
+        get: { default: " " }
       width:
         get: { cssSelector: "a[class=thumb] img", attr: "width" }
       height:

@@ -73,7 +73,7 @@ class HomeViewModel {
     }
     _log.info("url=$url");
     String siteName = await _parser().webPageName(doc);
-    _updateUri(siteName, url, realPage, options);
+    await _updateUri(siteName, url, realPage, options);
 
     Map<String, String> headers = await _parser().headers(doc);
     _homeState.headers = headers;
@@ -85,7 +85,8 @@ class HomeViewModel {
     _homeState.canSearch = searchUrl.isNotEmpty;
 
     Validator validator = Validator(doc, _homePageName);
-    ValidateResult<String> result = await repository.home(url, validator, headers: headers);
+    ValidateResult<String> result =
+        await repository.home(url, validator, headers: headers);
     _homeState.code = result.code;
     _log.fine("result.code=${result.code}");
     bool success = false;
@@ -103,7 +104,7 @@ class HomeViewModel {
         List<HomePageItemEntity> dataList = _homeState.list;
         dataList.addAll(jsonConvert.convertListNotNull(decode["data"]) ?? []);
         for (var item in dataList) {
-          if(item.tagList.isEmpty && item.tagStr.isNotEmpty){
+          if (item.tagList.isEmpty && item.tagStr.isNotEmpty) {
             item.tagStr.split(item.tagSplit).forEach((element) {
               TagEntity tagEntity = TagEntity();
               tagEntity.desc = element;
@@ -156,15 +157,33 @@ class HomeViewModel {
     _homeState.reset();
   }
 
-  void _updateUri(String siteName, String url, String page,
-      Map<String, String>? options) {
+  _updateUri(String siteName, String url, String page,
+      Map<String, String>? options) async {
     Uri uri = Uri.parse(url);
     _uriState.baseHref = "${uri.scheme}://${uri.host}${uri.path}";
     _uriState.page = page;
     _uriState.url = url;
     _uriState.siteName = siteName;
-    _uriState.options = options;
+    _uriState.options = await transformOptions(options);
     streamUriController.add(_uriState);
+  }
+
+  Future<Map<String, String>> transformOptions(
+      Map<String, String>? options) async {
+    List<OptionEntity> optionEntityList = await optionList();
+    Map<String, String> newMap = Map.from(options ?? {});
+    newMap.forEach((key, value) {
+      for (OptionEntity element in optionEntityList) {
+        if (element.id == key) {
+          for (var item in element.items) {
+            if (item.param == value) {
+              newMap[key] = item.desc;
+            }
+          }
+        }
+      }
+    });
+    return newMap;
   }
 
   Parser _parser() {
