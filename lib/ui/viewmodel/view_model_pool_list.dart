@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:MoeLoaderFlutter/custom_rule/custom_rule_parser.dart';
 import 'package:MoeLoaderFlutter/generated/json/base/json_convert_content.dart';
 import 'package:MoeLoaderFlutter/init.dart';
 import 'package:MoeLoaderFlutter/model/home_page_item_entity.dart';
@@ -17,7 +18,7 @@ import 'package:yaml/yaml.dart';
 class PoolListViewModel {
   final _log = Logger('HomeViewModel');
 
-  final String _poolListPageName = "poolListPage";
+  final String poolListPageName = "poolListPage";
 
   final YamlRepository repository = YamlRepository();
 
@@ -53,10 +54,12 @@ class PoolListViewModel {
     YamlMap doc = await YamlRuleFactory().create(Global.curWebPageName);
     _updateUri(url);
 
-    Map<String, String> headers = await _parser().headers(doc);
+    var parser = _parser();
+    var customRuleParser = _customRuleParser();
+    Map<String, String> headers = customRuleParser.headers();
     _poolListState.headers = headers;
 
-    Validator validator = Validator(doc, _poolListPageName);
+    Validator validator = Validator(doc, poolListPageName);
     ValidateResult<String> result =
         await repository.poolList(url, validator, headers: headers);
     _poolListState.code = result.code;
@@ -67,7 +70,7 @@ class PoolListViewModel {
       _poolListState.error = false;
       List<HomePageItemEntity>? list;
       String json =
-          await _parser().parseUseYaml(result.data!, doc, _poolListPageName);
+          await _parser().parseUseYaml(result.data!, doc, poolListPageName);
       var decode = jsonDecode(json);
       if (decode["code"] == Parser.success) {
         list = jsonConvert.convertListNotNull(decode["data"]);
@@ -109,11 +112,6 @@ class PoolListViewModel {
     return repository.webPageList();
   }
 
-  // Future<List<YamlOptionList>> optionList() async {
-  //   YamlMap doc = await YamlRuleFactory().create(Global.curWebPageName);
-  //   return _parser().optionList(doc);
-  // }
-
   void _updateUri(String url) {
     _uriState.url = url;
     streamUriController.add(_uriState);
@@ -121,6 +119,10 @@ class PoolListViewModel {
 
   Parser _parser() {
     return ParserFactory().createParser();
+  }
+
+  CustomRuleParser _customRuleParser() {
+    return Global.customRuleParser;
   }
 }
 

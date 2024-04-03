@@ -1,0 +1,92 @@
+#必要
+#元信息
+meta:
+  #网页名称
+  name: "template"
+  #网页类型，目前分为两类
+  #1、默认类型，图片列表->图片详情
+  #2、pool类型，图集列表->图片列表->图片详情
+  pageType: "pool"
+  #网页请求头，目前是一整个网页配置一个请求头
+  #TODO:后续是否有每个网页单独请求头的需求
+  headers:
+    User-Agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+
+#界面展示信息
+#可选
+#第一层：网页名称
+#   第二层：columnCount为展示列数，aspectRatio为某个条目的宽高比
+display:
+  homePage:
+    columnCount: 6
+    aspectRatio: 1.65
+  poolListPage:
+    columnCount: 4
+    aspectRatio: 2
+
+options: &OPTIONS
+  - id: "category"
+    desc: "类型"
+    items:
+      - { desc: "Anime", param: "anime" }
+  - id: "order"
+    desc: "排序方式"
+    items:
+      - { desc: "Best", param: "best" }
+      - { desc: "New", param: "new" }
+
+#网址信息
+#第一层：网页名称
+#   第二层：link表示连接信息，其中的需要被替换的文本是用${key}表示，后续传入{key:value}格式的值进行动态替换
+#   key+Connector：参数可实现将空格替换为特定字符的功能，例如传入的参数是one girl，实际在连接表示为one-girl
+#   options：一些用于筛选的可选参数
+url:
+  homePage:
+    link: "https://yande.re/pool?page=${page}"
+  searchPage:
+    link: "https://yande.re/pool?commit=%E6%90%9C%E7%B4%A2&page=${page}&query=${keyword}"
+    options:
+      *OPTIONS
+    keywordConnector: "-"
+
+homePage: &HOMEPAGE
+
+  onValidateResult:
+    - regex: { regex: '"regular":null', action: "login" }
+    - exception: { code: "403",  action: "challenge" }
+
+  onPreprocessResult:
+    contentType: "html"
+    get: { cssSelector: "#meta-preload-data", attr: "content" }
+
+  onParseResult:
+    contentType: "json"
+    list:
+      getElements: { cssSelector: "#post-list-posts li" }
+      filter:
+        - contains: { cssSelector: "a img[class=thumb]" }
+      foreach:
+        type:
+          get: { default: "pool" }
+        tagStr:
+          get: { cssSelector: "a[class=thumb] img", attr: "alt" }
+          filter:
+            - regex: { regex: "(?<=Tags:).*?(?=User:)", index: 0 }
+          format:
+            - replaceAll: { from: "p", to: "" }
+            - concat: {start: "", end: ""}
+        info:
+          object:
+            width:
+              get: { cssSelector: "#image", index: 0,  attr: "width" }
+            height:
+              get: { cssSelector: "#image", index: 0,  attr: "height" }
+
+searchPage:
+  *HOMEPAGE
+
+detailPage:
+  onParseResult:
+    object:
+      url:
+        get: { cssSelector: "#image", index: 0,  attr: "src" }

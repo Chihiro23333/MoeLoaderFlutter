@@ -1,10 +1,6 @@
 meta:
   name: "konchan_chs"
 
-display:
-  columnCount: 5
-  aspectRatio: 1.65
-
 options: &OPTIONS
   - id: "rating"
     desc: "评级"
@@ -13,17 +9,20 @@ options: &OPTIONS
       - { desc: "all", param: "&" }
       - { desc: "questionable", param: "rating:questionable&" }
       - { desc: "explicit", param: "rating:explicit&" }
-
-url:
-  homePage:
-    link: "https://konachan.wjcodes.com/index.php?tag=${rating}p=${page}"
-    options:
-      *OPTIONS
-  searchPage:
-    link: "https://konachan.wjcodes.com/index.php?tag=${rating}${keyword}&p=${page}"
-    keywordConnector: "+"
-    options:
-      *OPTIONS
+custom:
+  url:
+    homePage:
+      link: "https://konachan.wjcodes.com/index.php?tag=${rating}p=${page}"
+      options:
+        *OPTIONS
+    searchPage:
+      link: "https://konachan.wjcodes.com/index.php?tag=${rating}${keyword}&p=${page}"
+      keywordConnector: "+"
+      options:
+        *OPTIONS
+  display:
+    columnCount: 5
+    aspectRatio: 1.65
 
 homePage: &HOMEPAGE
   onParseResult:

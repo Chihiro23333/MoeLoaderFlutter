@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:MoeLoaderFlutter/custom_rule/custom_rule_parser.dart';
 import 'package:MoeLoaderFlutter/generated/json/base/json_convert_content.dart';
 import 'package:MoeLoaderFlutter/init.dart';
 import 'package:MoeLoaderFlutter/model/tag_entity.dart';
@@ -18,7 +19,7 @@ import 'package:MoeLoaderFlutter/model/option_entity.dart';
 class HomeViewModel {
   final _log = Logger('HomeViewModel');
 
-  final String _homePageName = "homePage";
+  final String homePageName = "homePage";
   final String _searchPageName = "searchPage";
 
   final YamlRepository repository = YamlRepository();
@@ -58,46 +59,46 @@ class HomeViewModel {
     }
     changeLoading(true);
     String realPage = page ?? (_homeState.page + 1).toString();
-    YamlMap doc = await YamlRuleFactory().create(Global.curWebPageName);
     String keyword = options?["keyword"] ?? "";
     bool home = keyword.isEmpty;
     String url;
     Map<String, String> formatParams = Map.from(options ?? {});
     _log.info("formatParams=$formatParams");
+
+    var parser = _parser();
+    YamlMap doc = await YamlRuleFactory().create(Global.curWebPageName);
+    var customRuleParser = _customRuleParser();
+    String pageName;
     if (home) {
+      pageName = homePageName;
       formatParams["page"] = realPage;
-      url = await _parser().url(doc, _homePageName, formatParams);
+      url = customRuleParser.url(homePageName, formatParams);
     } else {
+      pageName = _searchPageName;
       formatParams["page"] = realPage;
-      url = await _parser().url(doc, _searchPageName, formatParams);
+      url = customRuleParser.url(_searchPageName, formatParams);
     }
     _log.info("url=$url");
-    String siteName = await _parser().webPageName(doc);
+    String siteName = parser.webPageName(doc);
     await _updateUri(siteName, url, realPage, options);
 
-    Map<String, String> headers = await _parser().headers(doc);
+    Map<String, String> headers = customRuleParser.headers();
     _homeState.headers = headers;
 
-    String pageType = await _parser().pageType(doc);
+    String pageType = parser.pageType(doc);
     _homeState.pageType = pageType;
 
-    String searchUrl = await _parser().url(doc, _searchPageName, {});
+    String searchUrl = customRuleParser.url(_searchPageName, {});
     _homeState.canSearch = searchUrl.isNotEmpty;
 
-    Validator validator = Validator(doc, _homePageName);
-    ValidateResult<String> result =
-        await repository.home(url, validator, headers: headers);
+    Validator validator = Validator(doc, homePageName);
+    ValidateResult<String> result = await repository.home(url, validator, headers: headers);
     _homeState.code = result.code;
     _log.fine("result.code=${result.code}");
     bool success = false;
     String message = "";
     if (result.validateSuccess) {
-      String json;
-      if (home) {
-        json = await _parser().parseUseYaml(result.data!, doc, _homePageName);
-      } else {
-        json = await _parser().parseUseYaml(result.data!, doc, _searchPageName);
-      }
+      String json = await parser.parseUseYaml(result.data!, doc, homePageName);
       var decode = jsonDecode(json);
       if (decode["code"] == Parser.success) {
         _homeState.error = false;
@@ -143,8 +144,7 @@ class HomeViewModel {
   }
 
   Future<List<OptionEntity>> optionList() async {
-    YamlMap doc = await YamlRuleFactory().create(Global.curWebPageName);
-    var options = await _parser().options(doc, _homePageName);
+    var options = _customRuleParser().options(homePageName);
     return jsonConvert.convertListNotNull<OptionEntity>(jsonDecode(options)) ??
         [];
   }
@@ -188,6 +188,10 @@ class HomeViewModel {
 
   Parser _parser() {
     return ParserFactory().createParser();
+  }
+
+  CustomRuleParser _customRuleParser() {
+    return Global.customRuleParser;
   }
 }
 

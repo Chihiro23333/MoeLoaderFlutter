@@ -1,11 +1,6 @@
 meta:
   name: "wallpaperscraft.com"
 
-display:
-  homePage:
-    columnCount: 5
-    aspectRatio: 1.65
-
 options: &OPTIONS
   - id: "type"
     desc: "类型"
@@ -38,16 +33,22 @@ options: &OPTIONS
       - { desc: "Vector", param: "vector" }
       - { desc: "Words", param: "words" }
 
-url:
-  homePage:
-    link: "https://wallpaperscraft.com/catalog/${type}/page${page}"
-    options:
-      *OPTIONS
-  searchPage:
-    link: "https://wallpaperscraft.com/tag/${keyword}/page${page}"
-    keywordConnector: "-"
-    options:
-      *OPTIONS
+custom:
+  display:
+    homePage:
+      columnCount: 5
+      aspectRatio: 1.65
+
+  url:
+    homePage:
+      link: "https://wallpaperscraft.com/catalog/${type}/page${page}"
+      options:
+        *OPTIONS
+    searchPage:
+      link: "https://wallpaperscraft.com/tag/${keyword}/page${page}"
+      keywordConnector: "-"
+      options:
+        *OPTIONS
 
 homePage: &HOMEPAGE
   onParseResult:

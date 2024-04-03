@@ -48,7 +48,7 @@ class _SearchState extends State<SearchPage> {
   }
 
   _buildBody(BuildContext context) {
-    Rule rule = Global.curRule;
+    Rule rule = Global.curWebPage.rule;
     Widget leading;
     if (rule.faviconPath.isEmpty) {
       leading = Icon(

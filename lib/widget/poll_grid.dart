@@ -12,6 +12,8 @@ typedef ItemClickCallback = void Function(HomePageItemEntity yamlHomePageItem);
 class PoolGrid extends StatefulWidget {
   const PoolGrid({
     super.key,
+    required this.columnCount,
+    required this.aspectRatio,
     required this.list,
     this.headers,
     this.itemOnPressed,
@@ -20,6 +22,8 @@ class PoolGrid extends StatefulWidget {
   final List<HomePageItemEntity> list;
   final Map<String, String>? headers;
   final ItemClickCallback? itemOnPressed;
+  final int columnCount;
+  final double aspectRatio;
 
   @override
   State<StatefulWidget> createState() {
@@ -36,8 +40,8 @@ class _PoolGridState extends State<PoolGrid> {
   }
 
   Widget _buildGrid(List<HomePageItemEntity> list, Map<String, String>? headers) {
-    int crossAxisCount = Global.poolListColumnCount;
-    double childAspectRatio = Global.poolListAspectRatio;
+    int crossAxisCount = widget.columnCount;
+    double childAspectRatio = widget.aspectRatio;
     double mainAxisSpacing = 10;
     double crossAxisSpacing = 10;
     return GridView.builder(

@@ -8,8 +8,9 @@ import 'package:webview_windows/webview_windows.dart';
 import 'package:window_manager/window_manager.dart';
 
 class WebView2Page extends StatefulWidget {
-  const WebView2Page({super.key, required this.url, required this.code});
+  WebView2Page({super.key, required this.url, required this.code, this.userAgent});
 
+  final String? userAgent;
   final String url;
   final int code;
 
@@ -54,6 +55,12 @@ class _WebView2State extends State<WebView2Page> {
       _subscriptions.add(_controller.historyChanged.listen((history) {
         _log.fine("history=$history");
       }));
+      await _controller.clearCookies();
+      await _controller.clearCache();
+      _log.info("user-agent=${widget.userAgent}");
+      if(widget.userAgent != null){
+        await _controller.setUserAgent(widget.userAgent ?? "");
+      }
       await _controller.setBackgroundColor(Colors.transparent);
       await _controller.setPopupWindowPolicy(WebviewPopupWindowPolicy.deny);
       await _controller.loadUrl(_url);

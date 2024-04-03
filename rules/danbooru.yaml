@@ -1,7 +1,5 @@
 meta:
   name: "danbooru.donmai.us"
-  headers:
-    user-agent: "Dart/3.2 (dart:io)"
 
 options: &OPTIONS
   - id: "rating"
@@ -17,22 +15,25 @@ options: &OPTIONS
       - { desc: "20", param: "" }
       - { desc: "50", param: "&limit=50" }
       - { desc: "80", param: "&limit=80" }
+custom:
+  url:
+    homePage:
+      link: "https://danbooru.donmai.us/posts?page=${page}&tags=${rating}${pageCount}"
+      options:
+        *OPTIONS
+    searchPage:
+      link: "https://danbooru.donmai.us/posts?page=${page}&tags=${rating}${keyword}${pageCount}"
+      keywordConnector: "_"
+      options:
+        *OPTIONS
 
-url:
-  homePage:
-    link: "https://danbooru.donmai.us/posts?page=${page}&tags=${rating}${pageCount}"
-    options:
-      *OPTIONS
-  searchPage:
-    link: "https://danbooru.donmai.us/posts?page=${page}&tags=${rating}${keyword}${pageCount}"
-    keywordConnector: "_"
-    options:
-      *OPTIONS
+  display:
+    homePage:
+      columnCount: 7
+      aspectRatio: 1.65
 
-display:
-  homePage:
-    columnCount: 7
-    aspectRatio: 1.65
+  headers:
+    user-agent: "Dart/3.2 (dart:io)"
 
 onValidateResult: &onValidateResult
   - exception: { code: "403",  action: "challenge" }

@@ -1,18 +1,21 @@
 meta:
   name: "e-shuushuu.net"
+
+custom:
+  display:
+    homePage:
+      columnCount: 6
+      aspectRatio: 1.65
+
+  url:
+    homePage:
+      link: "https://e-shuushuu.net/${order}?page=${page}"
+    searchPage:
+      link: "https://e-shuushuu.net/search/results/?page=${page}&tags=${keyword}"
+
   headers:
     User-Agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 
-display:
-  homePage:
-    columnCount: 6
-    aspectRatio: 1.65
-
-url:
-  homePage:
-    link: "https://e-shuushuu.net/${order}?page=${page}"
-  searchPage:
-    link: "https://e-shuushuu.net/search/results/?page=${page}&tags=${keyword}"
 
 homePage: &HOMEPAGE
   onParseResult:

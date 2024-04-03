@@ -7,6 +7,7 @@ import 'package:MoeLoaderFlutter/ui/page/pool_list_page.dart';
 import 'package:MoeLoaderFlutter/ui/page/search_page.dart';
 import 'package:MoeLoaderFlutter/ui/page/settings_page.dart';
 import 'package:MoeLoaderFlutter/util/common_function.dart';
+import 'package:MoeLoaderFlutter/util/const.dart';
 import 'package:MoeLoaderFlutter/util/entity.dart';
 import 'package:MoeLoaderFlutter/widget/home_loading_status.dart';
 import 'package:MoeLoaderFlutter/widget/image_masonry_grid.dart';
@@ -174,6 +175,7 @@ class _HomeState extends State<HomePage> {
           return WebView2Page(
             url: _url,
             code: homeState.code,
+            userAgent: homeState.headers?["user-agent"],
           );
         }),
       );
@@ -189,7 +191,11 @@ class _HomeState extends State<HomePage> {
         actionOnPressed: actionOnPressed,
         builder: (homeState) {
           if (homeState.pageType.isNotEmpty) {
+            int columnCount = Global.customRuleParser.columnCount(Const.poolListPage);
+            double aspectRatio = Global.customRuleParser.aspectRatio(Const.poolListPage);
             return PoolGrid(
+              columnCount: columnCount,
+              aspectRatio: aspectRatio,
               list: homeState.list,
               headers: homeState.headers,
               itemOnPressed: (yamlHomePageItem) async {
@@ -207,7 +213,11 @@ class _HomeState extends State<HomePage> {
               },
             );
           }
+          var columnCount = Global.customRuleParser.columnCount(Const.homePage);
+          var aspectRatio = Global.customRuleParser.aspectRatio(Const.homePage);
           return ImageMasonryGrid(
+            columnCount: columnCount,
+            aspectRatio: aspectRatio,
             list: homeState.list,
             headers: homeState.headers,
             tagTapCallback: (tag) {
@@ -322,16 +332,16 @@ class _HomeState extends State<HomePage> {
   Widget _buildCopyAction(BuildContext context) {
     return IconButton(
         onPressed: () async {
-          FlutterClipboard.copy(_url).then((value) => showToast("链接已复制"));
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(builder: (context) {
-          //     return WebView2Page(
-          //       url: "https://www.xsnvshen.co/album/?p=2",
-          //       code: 1,
-          //     );
-          //   }),
-          // );
+          // FlutterClipboard.copy(_url).then((value) => showToast("链接已复制"));
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) {
+              return WebView2Page(
+                url: _url,
+                code: 1,
+              );
+            }),
+          );
         },
         icon: const Icon(Icons.copy));
   }

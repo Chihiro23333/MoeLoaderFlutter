@@ -1,7 +1,5 @@
 meta:
   name: "alphacoders.avatars"
-  headers:
-    user-agent: "Dart/3.2 (dart:io)"
 
 options: &OPTIONS
   - id: "category"
@@ -33,17 +31,23 @@ options: &OPTIONS
       - { desc: "Vehicles", param: "31" }
       - { desc: "Video Game", param: "32" }
       - { desc: "Woman", param: "33" }
+custom:
+  url:
+    homePage:
+      link: "https://avatars.alphacoders.com/by_category/${category}?page=${page}"
+      options:
+        *OPTIONS
 
-url:
-  homePage:
-    link: "https://avatars.alphacoders.com/by_category/${category}?page=${page}"
-    options:
-      *OPTIONS
+  display:
+    homePage:
+      columnCount: 7
+      aspectRatio: 1
 
-display:
-  homePage:
-    columnCount: 7
-    aspectRatio: 1
+  headers:
+    user-agent: "MoeLoaderFlutter"
+    Referer: "https://avatars.alphacoders.com/by_category"
+    Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"
+    Accept-Language: "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7"
 
 homePage:
   onValidateResult:

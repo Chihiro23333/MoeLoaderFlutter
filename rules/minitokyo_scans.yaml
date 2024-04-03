@@ -1,18 +1,20 @@
 meta:
   name: "minitokyo.scans"
+
+custom:
+  display:
+    homePage:
+      columnCount: 5
+      aspectRatio: 1.3
+
+  url:
+    homePage:
+      link: "http://gallery.minitokyo.net/scans?order=id&page=${page}&display=extensive"
+    searchPage:
+      link: "http://browse.minitokyo.net/gallery?tid=${keyword}&order=id&index=3&display=extensive"
+
   headers:
     User-Agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-
-display:
-  homePage:
-    columnCount: 5
-    aspectRatio: 1.3
-
-url:
-  homePage:
-    link: "http://gallery.minitokyo.net/scans?order=id&page=${page}&display=extensive"
-  searchPage:
-    link: "http://browse.minitokyo.net/gallery?tid=${keyword}&order=id&index=3&display=extensive"
 
 homePage: &HOMEPAGE
   onParseResult:

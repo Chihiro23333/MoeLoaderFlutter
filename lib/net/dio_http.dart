@@ -5,6 +5,7 @@ import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:MoeLoaderFlutter/init.dart';
+import 'package:dio_http2_adapter/dio_http2_adapter.dart';
 import 'package:logging/logging.dart';
 
 class DioHttp {
@@ -25,25 +26,35 @@ class DioHttp {
   Dio _logDio([BaseOptions? options, bool http2 = false]) {
     var dio = Dio(options)
       ..interceptors.add(_cookieManager)
-      ..interceptors.add(LogInterceptor());
+      ..interceptors.add(LogInterceptor(
+      ));
+      // ..httpClientAdapter = Http2Adapter(
+      //   ConnectionManager(
+      //     idleTimeout: const Duration(seconds: 10),
+      //     onClientCreate: (_, config) => config.onBadCertificate = (_) => true,
+      //   ));
     return dio;
   }
 
   Future<String> get(String url, {Map<String, String>? headers}) async {
     _log.fine("url=${url}");
+    _updateHeaders(headers);
+    var response = await _dio.get(url);
+    var result = response.toString();
+    _log.fine("result=$result");
+    return result;
+  }
+
+  void _updateHeaders(Map<String, String>? headers) {
     BaseOptions baseOptions = _dio.options;
     Map<String, dynamic> nowHeaders = baseOptions.headers;
-    _log.fine("nowHeaders=${nowHeaders}");
     nowHeaders.clear();
     if (headers != null) {
       headers.forEach((key, value) {
         nowHeaders[key] = value;
       });
     }
-    var response = await _dio.get(url);
-    var result = response.toString();
-    _log.fine("result=$result");
-    return result;
+    _log.info("nowHeaders=${nowHeaders}");
   }
 
   Future<void> saveCookiesString(Uri uri, String cookiesString) async {
@@ -54,7 +65,10 @@ class DioHttp {
   }
 
   Future<Response> download(String url, String name,
-      {ProgressCallback? onReceiveProgress, CancelToken? cancelToken}) async {
+      {ProgressCallback? onReceiveProgress,
+      CancelToken? cancelToken,
+      Map<String, String>? headers}) async {
+    _updateHeaders(headers);
     int index = url.lastIndexOf(".");
     String suffix = url.substring(index, url.length);
     Directory directory = Global.downloadsDirectory;

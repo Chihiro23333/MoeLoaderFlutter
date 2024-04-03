@@ -10,7 +10,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:logging/logging.dart';
-import '../init.dart';
 import '../net/download.dart';
 import '../ui/viewmodel/view_model_home.dart';
 
@@ -21,6 +20,8 @@ class ImageMasonryGrid extends StatefulWidget {
   const ImageMasonryGrid({
     super.key,
     required this.list,
+    required this.columnCount,
+    required this.aspectRatio,
     this.headers,
     this.tagTapCallback,
     this.itemOnPressed,
@@ -30,6 +31,8 @@ class ImageMasonryGrid extends StatefulWidget {
   final Map<String, String>? headers;
   final ItemClickCallback? itemOnPressed;
   final TagTapCallback? tagTapCallback;
+  final int columnCount;
+  final double aspectRatio;
 
   @override
   State<StatefulWidget> createState() {
@@ -47,7 +50,7 @@ class _ImageMasonryGridState extends State<ImageMasonryGrid> {
 
   Widget _buildMasonryGrid(
       List<HomePageItemEntity> list, Map<String, String>? headers) {
-    int crossAxisCount = Global.columnCount;
+    int crossAxisCount = widget.columnCount;
     return MasonryGridView.count(
         crossAxisCount: crossAxisCount,
         crossAxisSpacing: 10,
@@ -58,7 +61,7 @@ class _ImageMasonryGridState extends State<ImageMasonryGrid> {
           double screenWidth = queryData.size.width;
           HomePageItemEntity homePageItem = list[index];
           double width = screenWidth / crossAxisCount;
-          double scale = 1 / Global.aspectRatio;
+          double scale = 1 / widget.aspectRatio;
           double maxScale = 2;
           if (homePageItem.height > 0 && homePageItem.width > 0) {
             scale = homePageItem.height / homePageItem.width;
@@ -134,8 +137,8 @@ class _ImageMasonryGridState extends State<ImageMasonryGrid> {
                         DownloadManager().addTask(DownloadTask(
                             homePageItem.href,
                             homePageItem.href,
-                            getDownloadName(
-                                homePageItem.href, homePageItem.id)));
+                            getDownloadName(homePageItem.href, homePageItem.id),
+                            headers: headers));
                         showToast("已将图片加入下载列表");
                       }
                     },

@@ -7,4 +7,9 @@ class Const{
   static const String proxySocks5 = "SOCKS5";
   static const String proxySocks4 = "SOCKS4";
   static const String proxyHttp = "PROXY";
+
+  static const String homePage = "homePage";
+  static const String searchPage = "searchPage";
+  static const String detailPage = "detailPage";
+  static const String poolListPage = "poolListPage";
 }

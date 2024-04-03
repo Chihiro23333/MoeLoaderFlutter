@@ -13,9 +13,6 @@ void main() {
     String sourceName = "yande_common";
     String pageName = "detailPage";
     YamlMap doc = await YamlRuleFactory().create(sourceName);
-    var headers = await ParserFactory().createParser().headers(doc);
-    print("headers:=$headers");
-
     var json = await ParserFactory().createParser().parseUseYaml(html, doc, pageName);
     print("json=$json");
     //

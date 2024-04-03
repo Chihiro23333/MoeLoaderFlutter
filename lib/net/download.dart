@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:MoeLoaderFlutter/custom_rule/custom_rule_parser.dart';
 import 'package:MoeLoaderFlutter/generated/json/base/json_convert_content.dart';
 import 'package:MoeLoaderFlutter/model/detail_page_entity.dart';
 import 'package:MoeLoaderFlutter/net/request_manager.dart';
@@ -84,18 +85,22 @@ class DownloadManager {
     DownloadTask? downloadTask = _findFirstUnDownload();
     if (downloadTask != null) {
       YamlMap doc = await YamlRuleFactory().create(Global.curWebPageName);
-      Map<String, String>? headers = await _parser().headers(doc);
+      var parser = _parser();
+      var customRuleDoc = parser.customRule(doc);
+      var customRuleParser = _customRuleParser();
+      Map<String, String>? headers = customRuleParser.headers();
       if (isImageUrl(downloadTask.url)) {
         downloadTask.downloadUrl = downloadTask.url;
         _download(downloadTask);
       } else {
         Validator validator = Validator(doc, _detailPageName);
-        ValidateResult<String> result = await repository.detail(downloadTask.url, validator, headers: headers);
+        ValidateResult<String> result = await repository
+            .detail(downloadTask.url, validator, headers: headers);
         print("result=${result}");
         bool success = false;
         if (result.validateSuccess) {
           String json =
-              await _parser().parseUseYaml(result.data!, doc, _detailPageName);
+              await parser.parseUseYaml(result.data!, doc, _detailPageName);
           var decode = jsonDecode(json);
           if (decode["code"] == Parser.success) {
             success = true;
@@ -161,6 +166,10 @@ class DownloadManager {
     return ParserFactory().createParser();
   }
 
+  CustomRuleParser _customRuleParser() {
+    return Global.customRuleParser;
+  }
+
   void _download(DownloadTask downloadTask) {
     if (downloadTask.downloadUrl.isEmpty) {
       _downloadNext();
@@ -177,7 +186,7 @@ class DownloadManager {
         if (complete) {
           _downloadNext();
         }
-      }, cancelToken: _curCancelToken);
+      }, cancelToken: _curCancelToken, headers: downloadTask.headers);
     }
   }
 
@@ -226,6 +235,7 @@ class DownloadTask {
   int count = 0;
   int total = 0;
   int downloadState = idle;
+  Map<String, String>? headers;
 
-  DownloadTask(this.id, this.url, this.name);
+  DownloadTask(this.id, this.url, this.name, {this.headers});
 }

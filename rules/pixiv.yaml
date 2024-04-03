@@ -1,8 +1,5 @@
 meta:
   name: "pixiv.net"
-  headers:
-    Referer: "https://www.pixiv.net/"
-    User-Agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 
 options: &OPTIONS
   - id: "mode"
@@ -16,20 +13,25 @@ options: &OPTIONS
       - { desc: "AI生成", param: "&mode=daily_ai" }
       - { desc: "受男性欢迎", param: "&mode=male" }
       - { desc: "受女性欢迎", param: "&mode=female" }
-url:
-  homePage:
-    link: "https://www.pixiv.net/ranking.php?p=${page}&format=json${mode}"
-    options:
-      *OPTIONS
-  searchPage:
-    link: "https://www.pixiv.net/ajax/search/artworks/${keyword}?word=${tag}&order=date_d&mode=all&p=${page}&csw=0&s_mode=s_tag_full&type=all&lang=z"
-    options:
-      *OPTIONS
+custom:
+  url:
+    homePage:
+      link: "https://www.pixiv.net/ranking.php?p=${page}&format=json${mode}"
+      options:
+        *OPTIONS
+    searchPage:
+      link: "https://www.pixiv.net/ajax/search/artworks/${keyword}?word=${tag}&order=date_d&mode=all&p=${page}&csw=0&s_mode=s_tag_full&type=all&lang=z"
+      options:
+        *OPTIONS
 
-display:
-  homePage:
-    columnCount: 6
-    aspectRatio: 1
+  display:
+    homePage:
+      columnCount: 6
+      aspectRatio: 1
+
+  headers:
+    Referer: "https://www.pixiv.net/"
+    User-Agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 
 homePage:
   onParseResult:

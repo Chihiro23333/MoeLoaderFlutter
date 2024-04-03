@@ -1,7 +1,5 @@
 meta:
   name: "alphacoders.mobile"
-  headers:
-    user-agent: "Dart/3.2 (dart:io)"
 
 options: &OPTIONS
   - id: "order"
@@ -10,17 +8,23 @@ options: &OPTIONS
       - { desc: "Fresh And New", param: "newest" }
       - { desc: "The Best", param: "the-best" }
       - { desc: "Recently Popular", param: "popular" }
+custom:
+  url:
+    homePage:
+      link: "https://alphacoders.com/${order}-phone-wallpapers?page=${page}"
+      options:
+        *OPTIONS
 
-url:
-  homePage:
-    link: "https://alphacoders.com/${order}-phone-wallpapers?page=${page}"
-    options:
-      *OPTIONS
+  display:
+    homePage:
+      columnCount: 6
+      aspectRatio: 0.65
 
-display:
-  homePage:
-    columnCount: 6
-    aspectRatio: 0.65
+  headers:
+    user-agent: "MoeLoaderFlutter"
+    Referer: "https://alphacoders.com/"
+    Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"
+    Accept-Language: "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7"
 
 homePage:
   onValidateResult:

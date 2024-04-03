@@ -2,19 +2,20 @@ meta:
   name: "yande.re(pool)"
   pageType: "pool"
 
-display:
-  homePage:
-    columnCount: 6
-    aspectRatio: 1.65
-  poolListPage:
-    columnCount: 4
-    aspectRatio: 2
+custom:
+  display:
+    homePage:
+      columnCount: 6
+      aspectRatio: 1.65
+    poolListPage:
+      columnCount: 4
+      aspectRatio: 2
 
-url:
-  homePage:
-    link: "https://yande.re/pool?page=${page}"
-  searchPage:
-    link: "https://yande.re/pool?commit=%E6%90%9C%E7%B4%A2&page=${page}&query=${keyword}"
+  url:
+    homePage:
+      link: "https://yande.re/pool?page=${page}"
+    searchPage:
+      link: "https://yande.re/pool?commit=%E6%90%9C%E7%B4%A2&page=${page}&query=${keyword}"
 
 homePage: &HOMEPAGE
   onParseResult:

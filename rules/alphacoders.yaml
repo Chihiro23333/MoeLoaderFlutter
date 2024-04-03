@@ -1,7 +1,5 @@
 meta:
   name: "alphacoders.com"
-  headers:
-    user-agent: "Dart/3.2 (dart:io)"
 
 options: &OPTIONS
   - id: "category"
@@ -32,19 +30,26 @@ options: &OPTIONS
       - { desc: "Video Game", param: "video-game" }
       - { desc: "Woman", param: "woman" }
 
-url:
-  homePage:
-    link: "https://alphacoders.com/${category}-wallpapers?page=${page}"
-    options:
-      *OPTIONS
-  searchPage:
-    link: "https://alphacoders.com/${keyword}?page=${page}"
-    keywordConnector: "-"
+custom:
+  url:
+    homePage:
+      link: "https://alphacoders.com/${category}-wallpapers?page=${page}"
+      options:
+        *OPTIONS
+    searchPage:
+      link: "https://alphacoders.com/${keyword}?page=${page}"
+      keywordConnector: "-"
 
-display:
-  homePage:
-    columnCount: 5
-    aspectRatio: 1.65
+  display:
+    homePage:
+      columnCount: 5
+      aspectRatio: 1.65
+
+  headers:
+    user-agent: "MoeLoaderFlutter"
+    Referer: "https://alphacoders.com/anime-wallpapers"
+    Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"
+    Accept-Language: "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7"
 
 homePage: &HOMEPAGE
   onValidateResult:

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:MoeLoaderFlutter/custom_rule/custom_rule_parser.dart';
 import 'package:MoeLoaderFlutter/generated/json/base/json_convert_content.dart';
 import 'package:MoeLoaderFlutter/model/detail_page_entity.dart';
 import 'package:MoeLoaderFlutter/model/home_page_item_entity.dart';
@@ -40,7 +41,9 @@ class DetailViewModel {
       streamDetailController.add(_detailState);
     } else {
       YamlMap doc = await YamlRuleFactory().create(Global.curWebPageName);
-      Map<String, String> headers = await _parser().headers(doc);
+      var parser = _parser();
+      var customRuleParser = _customRuleParser();
+      Map<String, String> headers = customRuleParser.headers();
       _detailState.headers = headers;
       Validator validator = Validator(doc, _detailPageName);
       ValidateResult<String> result =
@@ -86,9 +89,9 @@ class DetailViewModel {
     streamDetailController.add(_detailState);
   }
 
-  void download(String href, String url, String id) {
-    DownloadManager()
-        .addTask(DownloadTask(href, url, getDownloadName(url, id)));
+  void download(String href, String url, String id, {Map<String, String>? headers}) {
+    _log.info("headers=$headers");
+    DownloadManager().addTask(DownloadTask(href, url, getDownloadName(url, id), headers: headers));
   }
 
   void close() {
@@ -103,6 +106,10 @@ class DetailViewModel {
 
   Parser _parser() {
     return ParserFactory().createParser();
+  }
+
+  CustomRuleParser _customRuleParser() {
+    return Global.customRuleParser;
   }
 }
 

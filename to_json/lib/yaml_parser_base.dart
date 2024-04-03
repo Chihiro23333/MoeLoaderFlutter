@@ -13,81 +13,16 @@ abstract class Parser {
   static const needChallenge = 2;
   static const needLogin = 3;
 
-  Future<Map<String, String>> headers(YamlMap yamlDoc) async {
-    YamlMap meta = yamlDoc['meta'];
-    YamlMap? headersRule = meta['headers'];
-    _log.fine("getHeaders:result=$headersRule");
-    return Map.castFrom(headersRule?.value ?? {});
+  String webPageName(YamlMap yamlCustomDoc) {
+    return yamlCustomDoc["meta"]?["name"] ?? "";
   }
 
-  /*
-  formatParams格式:{"page":"1", key:"value"}
-   */
-  Future<String> url(YamlMap yamlDoc, String pageName,
-      Map<String, String> formatParams) async {
-    YamlMap? urlRule = yamlDoc['url']?[pageName];
-    String url = "";
-    if (urlRule != null) {
-      String link = urlRule["link"];
-      int pageBase = urlRule["pageBase"] ?? 1;
-      String page = formatParams["page"] ?? "1";
-      page = (int.parse(page) * pageBase).toString();
-      formatParams["page"] = page;
-      url = await _commonFormatUrl(yamlDoc["url"]?[pageName], link, formatParams);
-    }
-    _log.fine("getUrl:url=$url");
-    return url;
+  String pageType(YamlMap yamlCustomDoc) {
+    return yamlCustomDoc["meta"]?["pageType"] ?? "";
   }
 
-  Future<String> webPageName(YamlMap yamlDoc) async {
-    return yamlDoc["meta"]?["name"] ?? "";
-  }
-
-  Future<String> pageType(YamlMap yamlDoc) async {
-    return yamlDoc["meta"]?["pageType"] ?? "";
-  }
-
-  Future<String> options(YamlMap yamlDoc, String pageName) async {
-    var optionsRule = yamlDoc["url"]?[pageName]?["options"];
-    _log.fine("optionsRule=$optionsRule");
-    return jsonEncode(optionsRule ?? []);
-  }
-
-  Future<String> displayInfo(YamlMap yamlDoc, String pageName) async {
-    return jsonEncode(yamlDoc["display"]?[pageName] ?? {});
-  }
-
-  Future<String> _commonFormatUrl(YamlMap? pageUrlRule, String link,
-      Map<String, String> formatParams) async {
-    String pattern = r'\${(.*?)\}';
-    // 使用正则表达式匹配被{}包围的内容
-    RegExp regExp = RegExp(pattern);
-    Iterable iterator = regExp.allMatches(link);
-    // 遍历匹配结果并打印
-    for (Match match in iterator) {
-      String? text = match.group(1);
-      _log.fine('找到匹配内容: $text');
-      String? value = formatParams[text]?.toLowerCase();
-      _log.fine('value= $value');
-      YamlList? optionsRule = pageUrlRule?["options"];
-      //查找默认的值
-      if (optionsRule != null && value == null) {
-        for (var element in optionsRule) {
-          if(element["id"] == text){
-            value = element["items"]?[0]?["param"];
-          }
-        }
-      }
-      _log.fine('value= $value');
-      if(value != null && pageUrlRule != null){
-        String? connector = pageUrlRule["${text}Connector"];
-        if(connector != null){
-          value = value.trim().replaceAll(" ", connector);
-        }
-      }
-      link = link.replaceAll("\${$text}", value ?? "");
-    }
-    return link;
+  YamlMap customRule(YamlMap yamlCustomDoc){
+    return yamlCustomDoc["custom"];
   }
 
   @protected

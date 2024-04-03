@@ -1,17 +1,18 @@
 meta:
   name: "zerochan.net"
 
-display:
-  homePage:
-    columnCount: 6
-    aspectRatio: 1.65
+custom:
+  display:
+    homePage:
+      columnCount: 6
+      aspectRatio: 1.65
 
-url:
-  homePage:
-    link: "https://www.zerochan.net/?p=${page}"
-  searchPage:
-    link: "https://www.zerochan.net/${keyword}?p=${page}"
-    keywordConnector: "+"
+  url:
+    homePage:
+      link: "https://www.zerochan.net/?p=${page}"
+    searchPage:
+      link: "https://www.zerochan.net/${keyword}?p=${page}"
+      keywordConnector: "+"
 
 homePage: &HOMEPAGE
   onParseResult:

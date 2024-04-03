@@ -1,7 +1,5 @@
 meta:
   name: "pfptown.com"
-  headers:
-    user-agent: "Dart/3.2 (dart:io)"
 
 options: &OPTIONS
   - id: "order"
@@ -10,18 +8,22 @@ options: &OPTIONS
       - { desc: "New", param: "new" }
       - { desc: "Best", param: "best" }
 
-url:
-  homePage:
-    link: "https://pfptown.com/${order}-pfp?page=${page}"
-    options:
-      *OPTIONS
-  searchPage:
-    link: "https://pfptown.com/${keyword}-pfp?page=${page}"
+custom:
+  url:
+    homePage:
+      link: "https://pfptown.com/${order}-pfp?page=${page}"
+      options:
+        *OPTIONS
+    searchPage:
+      link: "https://pfptown.com/${keyword}-pfp?page=${page}"
 
-display:
-  homePage:
-    columnCount: 5
-    aspectRatio: 0.65
+  display:
+    homePage:
+      columnCount: 5
+      aspectRatio: 0.65
+
+  headers:
+    user-agent: "Dart/3.2 (dart:io)"
 
 homePage: &HOMEPAGE
   onValidateResult:

@@ -1,6 +1,8 @@
+import 'package:MoeLoaderFlutter/init.dart';
 import 'package:MoeLoaderFlutter/ui/viewmodel/view_model_pool_list.dart';
 import 'package:MoeLoaderFlutter/ui/page/webview2_page.dart';
 import 'package:MoeLoaderFlutter/util/common_function.dart';
+import 'package:MoeLoaderFlutter/util/const.dart';
 import 'package:MoeLoaderFlutter/widget/pool_list_loading_status.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
@@ -87,6 +89,8 @@ class _PoolListState extends State<PoolListPage> {
         actionOnPressed: actionOnPressed,
         builder: (poolListState) {
           return ImageMasonryGrid(
+            columnCount: Global.customRuleParser.columnCount(Const.poolListPage),
+            aspectRatio: Global.customRuleParser.aspectRatio(Const.poolListPage),
             list: poolListState.list,
             headers: poolListState.headers,
             itemOnPressed: (homePageItem) async {

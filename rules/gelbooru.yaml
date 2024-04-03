@@ -1,11 +1,6 @@
 meta:
   name: "gelbooru.com"
 
-display:
-  homePage:
-    columnCount: 7
-    aspectRatio: 0.72
-
 options: &OPTIONS
   - id: "rating"
     desc: "评级"
@@ -21,19 +16,23 @@ options: &OPTIONS
       - {desc: "20", param: ""}
       - {desc: "50", param: "&limit=50"}
       - {desc: "80", param: "&limit=80"}
-
-url:
-  homePage:
-    link: "https://gelbooru.com/index.php?page=post&s=list&tags=${rating}&pid=${page}"
-    pageBase: 21
-    options:
-      *OPTIONS
-  searchPage:
-    link: "https://gelbooru.com/index.php?page=post&s=list&tags=${keyword}&pid=${page}"
-    pageBase: 21
-    keywordConnector: "_"
-    options:
-      *OPTIONS
+custom:
+  display:
+    homePage:
+      columnCount: 7
+      aspectRatio: 0.65
+  url:
+    homePage:
+      link: "https://gelbooru.com/index.php?page=post&s=list&tags=${rating}&pid=${page}"
+      pageBase: 21
+      options:
+        *OPTIONS
+    searchPage:
+      link: "https://gelbooru.com/index.php?page=post&s=list&tags=${keyword}&pid=${page}"
+      pageBase: 21
+      keywordConnector: "_"
+      options:
+        *OPTIONS
 
 homePage: &HOMEPAGE
   onParseResult:

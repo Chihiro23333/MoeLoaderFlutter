@@ -74,7 +74,7 @@ void showUrlList(BuildContext context, HomePageItemEntity homePageItem) {
                       children
                           .add(buildDownloadItem(context, url, "预览图($url)", () {
                         detailViewModel.download(
-                            homePageItem.href, url, detailPageEntity.id);
+                            homePageItem.href, url, detailPageEntity.id, headers: detailState.headers);
                         showToast("已将图片加入下载列表");
                         Navigator.of(context).pop();
                       }));
@@ -86,7 +86,7 @@ void showUrlList(BuildContext context, HomePageItemEntity homePageItem) {
                       children.add(
                           buildDownloadItem(context, bigUrl, "大图($bigUrl)", () {
                         detailViewModel.download(
-                            homePageItem.href, bigUrl, detailPageEntity.id);
+                            homePageItem.href, bigUrl, detailPageEntity.id, headers: detailState.headers);
                         showToast("已将图片加入下载列表");
                         Navigator.of(context).pop();
                       }));
@@ -98,7 +98,7 @@ void showUrlList(BuildContext context, HomePageItemEntity homePageItem) {
                       children.add(
                           buildDownloadItem(context, rawUrl, "原图($rawUrl)", () {
                         detailViewModel.download(
-                            homePageItem.href, rawUrl, detailPageEntity.id);
+                            homePageItem.href, rawUrl, detailPageEntity.id, headers: detailState.headers);
                         showToast("已将图片加入下载列表");
                         Navigator.of(context).pop();
                       }));
