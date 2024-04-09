@@ -11,9 +11,9 @@ import '../../widget/image_masonry_grid.dart';
 import 'detail_page.dart';
 
 class PoolListPage extends StatefulWidget {
-  const PoolListPage({super.key, required this.href});
+  const PoolListPage({super.key, required this.id});
 
-  final String href;
+  final String id;
 
   @override
   State<StatefulWidget> createState() => _PoolListState();
@@ -26,7 +26,7 @@ class _PoolListState extends State<PoolListPage> {
   String _url = "";
 
   void _requestData() {
-    _poolListModel.requestData(widget.href);
+    _poolListModel.requestData(widget.id);
   }
 
   @override
@@ -49,9 +49,45 @@ class _PoolListState extends State<PoolListPage> {
                 _buildCopyAction(context),
               ]),
           body: _buildListBody(snapshot),
+          floatingActionButton: _buildFloatActionButton(context, snapshot),
         );
       },
     );
+  }
+
+  Widget _buildFloatActionButton(BuildContext context, AsyncSnapshot snapshot) {
+    if (snapshot.connectionState == ConnectionState.active) {
+      PoolListState poolListState = snapshot.data;
+      return FloatingActionButton(
+        onPressed: () {
+          if (poolListState.loading) return;
+          _requestData();
+        },
+        child: Stack(
+          children: [
+            Visibility(
+                visible: poolListState.loading,
+                child: const Center(
+                  child: CircularProgressIndicator(),
+                )),
+            Visibility(
+                visible: !poolListState.loading,
+                child: Center(
+                  child: Icon(
+                    poolListState.error
+                        ? Icons.refresh
+                        : Icons.keyboard_double_arrow_down,
+                    color: Theme.of(context).iconTheme.color,
+                  ),
+                ))
+          ],
+        ),
+      );
+    } else {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
   }
 
   Widget _buildCopyAction(BuildContext context) {

@@ -12,7 +12,6 @@ import 'package:MoeLoaderFlutter/util/entity.dart';
 import 'package:MoeLoaderFlutter/widget/home_loading_status.dart';
 import 'package:MoeLoaderFlutter/widget/image_masonry_grid.dart';
 import 'package:MoeLoaderFlutter/widget/poll_grid.dart';
-import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:MoeLoaderFlutter/init.dart';
@@ -41,17 +40,17 @@ class _HomeState extends State<HomePage> {
 
   final Map<String, String> _yamlOptionMap = {};
   String _url = "";
-  final String _keyword = "keyword";
+  String? _keyword;
 
   void _updateTag(TagEntity? tag) {
     setState(() {
-      _yamlOptionMap[_keyword] = tag?.tag ?? "";
+      _keyword = tag?.tag ?? "";
     });
   }
 
   void _updateKeyword(String keyword) {
     setState(() {
-      _yamlOptionMap[_keyword] = keyword;
+      _keyword = keyword;
     });
   }
 
@@ -65,7 +64,10 @@ class _HomeState extends State<HomePage> {
 
   void _requestData({bool clearAll = false, String? page}) {
     _homeViewModel.requestData(
-        options: _yamlOptionMap, clearAll: clearAll, page: page);
+        options: _yamlOptionMap,
+        clearAll: clearAll,
+        page: page,
+        keyword: _keyword);
   }
 
   @override
@@ -190,9 +192,11 @@ class _HomeState extends State<HomePage> {
         retryOnPressed: retryOnPressed,
         actionOnPressed: actionOnPressed,
         builder: (homeState) {
+          int columnCount =
+          Global.customRuleParser.columnCount(Const.homePage);
+          double aspectRatio =
+          Global.customRuleParser.aspectRatio(Const.homePage);
           if (homeState.pageType.isNotEmpty) {
-            int columnCount = Global.customRuleParser.columnCount(Const.poolListPage);
-            double aspectRatio = Global.customRuleParser.aspectRatio(Const.poolListPage);
             return PoolGrid(
               columnCount: columnCount,
               aspectRatio: aspectRatio,
@@ -202,7 +206,7 @@ class _HomeState extends State<HomePage> {
                 NaviResult<TagEntity>? naviResult = await Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) {
-                    return PoolListPage(href: yamlHomePageItem.href);
+                    return PoolListPage(id: yamlHomePageItem.id);
                   }),
                 );
                 _log.fine("naviResult=$naviResult");
@@ -213,8 +217,6 @@ class _HomeState extends State<HomePage> {
               },
             );
           }
-          var columnCount = Global.customRuleParser.columnCount(Const.homePage);
-          var aspectRatio = Global.customRuleParser.aspectRatio(Const.homePage);
           return ImageMasonryGrid(
             columnCount: columnCount,
             aspectRatio: aspectRatio,
@@ -258,7 +260,7 @@ class _HomeState extends State<HomePage> {
   Widget _buildOptionsAction(BuildContext context) {
     return IconButton(
         onPressed: () async {
-          List<OptionEntity> list = await _homeViewModel.optionList();
+          List<OptionEntity> list = await _homeViewModel.optionList(_keyword);
           if (list.isEmpty) {
             showToast("当前站点无筛选条件");
             return;
@@ -349,14 +351,14 @@ class _HomeState extends State<HomePage> {
   Widget _buildSearchAction(BuildContext context, AsyncSnapshot snapshot) {
     return IconButton(
         onPressed: () async {
-          if(snapshot.hasData){
+          if (snapshot.hasData) {
             HomeState? homeState = snapshot.data;
-            if(homeState != null){
-              if(homeState.canSearch){
+            if (homeState != null) {
+              if (homeState.canSearch) {
                 NaviResult<String>? naviResult = await Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) {
-                    return SearchPage(keyword: _yamlOptionMap[_keyword] ?? "");
+                    return SearchPage(keyword: _keyword ?? "");
                   }),
                 );
                 _log.fine("naviResult=$naviResult");
@@ -364,7 +366,7 @@ class _HomeState extends State<HomePage> {
                   _updateKeyword(naviResult?.data ?? "");
                   _requestData(clearAll: true);
                 }
-              }else{
+              } else {
                 showToast("此源暂不支持搜索");
               }
             }
@@ -374,6 +376,7 @@ class _HomeState extends State<HomePage> {
   }
 
   Widget _buildDrawer(BuildContext context) {
+    List<jsonModels.Rule> list = _homeViewModel.webPageList();
     return Drawer(
       child: MediaQuery.removePadding(
           context: context,
@@ -385,68 +388,51 @@ class _HomeState extends State<HomePage> {
                 style: TextStyle(fontWeight: FontWeight.normal, fontSize: 17),
               )),
               Expanded(
-                child: FutureBuilder<List<jsonModels.Rule>>(
-                  future: _homeViewModel.webPageList(),
-                  builder: (BuildContext context, AsyncSnapshot snapshot) {
-                    if (snapshot.hasError) {
-                      return Text("Error: ${snapshot.error}");
-                    }
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      List<jsonModels.Rule> list = snapshot.data;
-                      return ListView.builder(
-                          itemCount: list.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            jsonModels.Rule rule = list[index];
-                            _log.fine("rule.faviconPath=${rule.faviconPath}");
-                            Widget leading;
-                            if (rule.faviconPath.isEmpty) {
-                              leading = Icon(
-                                Icons.call_to_action,
-                                color: Theme.of(context).iconTheme.color,
-                              );
-                            } else {
-                              leading = Image.file(
-                                File(rule.faviconPath),
-                                fit: BoxFit.cover,
-                              );
-                            }
-                            return ListTile(
-                              leading: SizedBox(
-                                height: 25,
-                                width: 25,
-                                child: leading,
-                              ),
-                              titleTextStyle: list[index].fileName ==
-                                      Global.curWebPageName
-                                  ? const TextStyle(fontWeight: FontWeight.bold)
-                                  : const TextStyle(
-                                      fontWeight: FontWeight.normal),
-                              selected:
-                                  list[index].fileName == Global.curWebPageName,
-                              selectedColor: Global.defaultColor,
-                              textColor: Colors.black,
-                              title: Text(
-                                list[index].fileName,
-                                style: const TextStyle(fontSize: 17),
-                              ),
-                              onTap: () async {
-                                _updateTag(null);
-                                _clearOptions();
-                                await _homeViewModel
-                                    .changeGlobalWebPage(list[index]);
-                                _requestData(clearAll: true);
-                                _scaffoldGlobalKey.currentState?.closeDrawer();
-                              },
-                            );
-                          });
-                    } else {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-                  },
-                ),
-              )
+                  child: ListView.builder(
+                      itemCount: list.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        jsonModels.Rule rule = list[index];
+                        _log.fine("rule.faviconPath=${rule.faviconPath}");
+                        Widget leading;
+                        if (rule.faviconPath.isEmpty) {
+                          leading = Icon(
+                            Icons.call_to_action,
+                            color: Theme.of(context).iconTheme.color,
+                          );
+                        } else {
+                          leading = Image.file(
+                            File(rule.faviconPath),
+                            fit: BoxFit.cover,
+                          );
+                        }
+                        return ListTile(
+                          leading: SizedBox(
+                            height: 25,
+                            width: 25,
+                            child: leading,
+                          ),
+                          titleTextStyle: list[index].fileName ==
+                                  Global.curWebPageName
+                              ? const TextStyle(fontWeight: FontWeight.bold)
+                              : const TextStyle(fontWeight: FontWeight.normal),
+                          selected:
+                              list[index].fileName == Global.curWebPageName,
+                          selectedColor: Global.defaultColor,
+                          textColor: Colors.black,
+                          title: Text(
+                            list[index].fileName,
+                            style: const TextStyle(fontSize: 17),
+                          ),
+                          onTap: () async {
+                            _updateTag(null);
+                            _clearOptions();
+                            await _homeViewModel
+                                .changeGlobalWebPage(list[index]);
+                            _requestData(clearAll: true);
+                            _scaffoldGlobalKey.currentState?.closeDrawer();
+                          },
+                        );
+                      }))
             ],
           )),
     );
@@ -571,6 +557,34 @@ class _HomeState extends State<HomePage> {
                     });
               },
             ));
+            children.add(
+              const SizedBox(
+                width: 5,
+              ),
+            );
+            String keyword = uriState.keyword;
+            if (keyword.isNotEmpty) {
+              children.add(Chip(
+                avatar: ClipOval(
+                  child: Icon(
+                    Icons.filter_alt,
+                    color: Theme.of(context).iconTheme.color,
+                  ),
+                ),
+                label: Text(keyword),
+                deleteIcon: ClipOval(
+                  child: Icon(
+                    Icons.delete,
+                    color: Theme.of(context).iconTheme.color,
+                  ),
+                ),
+                deleteButtonTooltipMessage: "",
+                onDeleted: () {
+                  _updateKeyword("");
+                  _requestData(clearAll: true);
+                },
+              ));
+            }
             final options = uriState.options;
             _log.fine("homePage options=$options");
             if (options != null) {

@@ -6,14 +6,13 @@ custom:
   display:
     homePage:
       columnCount: 7
-      aspectRatio: 1.65
-    poolListPage:
-      columnCount: 7
       aspectRatio: 0.5
 
   url:
     homePage:
       link: "https://danbooru.donmai.us/pools/gallery?page=${page}"
+    poolListPage:
+      link: "https://danbooru.donmai.us/pools/${id}?page=${page}"
 
   headers:
     user-agent: "Dart/3.2 (dart:io)"

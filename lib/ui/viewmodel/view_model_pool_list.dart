@@ -18,7 +18,7 @@ import 'package:yaml/yaml.dart';
 class PoolListViewModel {
   final _log = Logger('HomeViewModel');
 
-  final String poolListPageName = "poolListPage";
+  final String _poolListPageName = "poolListPage";
 
   final YamlRepository repository = YamlRepository();
 
@@ -48,18 +48,25 @@ class PoolListViewModel {
     });
   }
 
-  void requestData(String url) async {
+  void requestData(String id, {String? page, Map<String, String>? options}) async {
     changeLoading(true);
 
-    YamlMap doc = await YamlRuleFactory().create(Global.curWebPageName);
+    String realPage = page ?? (_poolListState.page + 1).toString();
+
+    var customRuleParser = _customRuleParser();
+    Map<String, String> formatParams = Map.from(options ?? {});
+    formatParams["page"] = realPage;
+    formatParams["id"] = id;
+    _log.info("formatParams=$formatParams");
+    String url = customRuleParser.url(_poolListPageName, formatParams);
+
     _updateUri(url);
 
-    var parser = _parser();
-    var customRuleParser = _customRuleParser();
     Map<String, String> headers = customRuleParser.headers();
     _poolListState.headers = headers;
 
-    Validator validator = Validator(doc, poolListPageName);
+    YamlMap doc = await YamlRuleFactory().create(Global.curWebPageName);
+    Validator validator = Validator(doc, _poolListPageName);
     ValidateResult<String> result =
         await repository.poolList(url, validator, headers: headers);
     _poolListState.code = result.code;
@@ -70,7 +77,7 @@ class PoolListViewModel {
       _poolListState.error = false;
       List<HomePageItemEntity>? list;
       String json =
-          await _parser().parseUseYaml(result.data!, doc, poolListPageName);
+          await _parser().parseUseYaml(result.data!, doc, _poolListPageName);
       var decode = jsonDecode(json);
       if (decode["code"] == Parser.success) {
         list = jsonConvert.convertListNotNull(decode["data"]);
@@ -86,6 +93,7 @@ class PoolListViewModel {
             });
           }
         }
+        _poolListState.page = int.parse(realPage);
         streamPoolListController.add(_poolListState);
         success = true;
       } else {
@@ -94,7 +102,7 @@ class PoolListViewModel {
     }
     if (!success) {
       _poolListState.error = true;
-      _poolListState.errorMessage = "Error:${result.message}";
+      _poolListState.errorMessage = message;
       streamPoolListController.add(_poolListState);
     }
     changeLoading(false);
@@ -128,6 +136,7 @@ class PoolListViewModel {
 
 class PoolListState {
   List<HomePageItemEntity> list = [];
+  int page = 0;
   bool loading = false;
   bool error = false;
   String errorMessage = "";
@@ -136,6 +145,7 @@ class PoolListState {
 
   void reset() {
     list.clear();
+    int page = 0;
     loading = false;
     error = false;
     errorMessage = "";

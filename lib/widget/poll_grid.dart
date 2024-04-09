@@ -86,7 +86,7 @@ class _PoolGridState extends State<PoolGrid> {
     List<Widget> widgets = [];
     String url = homePageItem.coverUrl;
     const double padding = 6;
-    double descH = padding * 2 + 62;
+    double descH = padding * 2 + 64;
     double imageH = height - descH;
     if (url.isEmpty) {
       widgets.add(Container(
@@ -110,7 +110,7 @@ class _PoolGridState extends State<PoolGrid> {
       ));
     } else {
       widgets.add(ExtendedImage.network(
-        borderRadius: const BorderRadius.all(Radius.circular(5)),
+        borderRadius: const BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5)),
         shape: BoxShape.rectangle,
         headers: headers,
         width: width,

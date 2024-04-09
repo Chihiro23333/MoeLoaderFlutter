@@ -85,6 +85,7 @@ class Global{
   static get curWebPage => _curWebPage;
   static get curWebPageName => _curWebPage.rule.fileName;
   static get rulesDirectory => Directory(path.join(path.current ,"rules"));
+  // static get rulesDirectory => Directory(path.join(path.current ,"testRules"));
   static get imagesDirectory => Directory(path.join(path.current ,"images"));
   static get browserCacheDirectory => Directory(path.join(path.current ,"browserCache"));
   static get downloadsDirectory => Directory(path.join(path.current ,"downloads"));
