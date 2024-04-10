@@ -41,7 +41,7 @@ custom:
   display:
     homePage:
       columnCount: 7
-      aspectRatio: 1
+      aspectRatio: 1.0
 
   headers:
     user-agent: "MoeLoaderFlutter"
