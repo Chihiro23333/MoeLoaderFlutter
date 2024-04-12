@@ -269,7 +269,7 @@ class _DetailState extends State<DetailPage> {
             children.add(Chip(
               avatar: ClipOval(
                 child: Icon(
-                  Icons.link,
+                  Icons.title,
                   color: Theme.of(context).iconTheme.color,
                 ),
               ),

@@ -6,7 +6,6 @@ import 'package:MoeLoaderFlutter/util/const.dart';
 import 'package:MoeLoaderFlutter/util/sharedpreferences_utils.dart';
 import 'package:MoeLoaderFlutter/util/utils.dart';
 import 'package:extended_image/extended_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:logging/logging.dart';

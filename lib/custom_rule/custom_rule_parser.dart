@@ -6,7 +6,7 @@ class CustomRuleParser{
 
   final _log = Logger('CustomRuleParser');
 
-  YamlMap _customDoc;
+  final YamlMap _customDoc;
 
   CustomRuleParser(this._customDoc);
 

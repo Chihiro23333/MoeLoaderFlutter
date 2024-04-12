@@ -26,8 +26,7 @@ class DioHttp {
   Dio _logDio([BaseOptions? options, bool http2 = false]) {
     var dio = Dio(options)
       ..interceptors.add(_cookieManager)
-      ..interceptors.add(LogInterceptor(
-      ));
+      ..interceptors.add(LogInterceptor());
       // ..httpClientAdapter = Http2Adapter(
       //   ConnectionManager(
       //     idleTimeout: const Duration(seconds: 10),

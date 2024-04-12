@@ -52,6 +52,7 @@ class HomeViewModel {
   void requestData(
       {String? page,
       String? keyword,
+      TagEntity? tagEntity,
       bool clearAll = false,
       Map<String, String>? options}) async {
     _log.info("options=$options");
@@ -60,9 +61,8 @@ class HomeViewModel {
     }
     changeLoading(true);
     String realPage = page ?? (_homeState.page + 1).toString();
-    _homeState.keyword = keyword;
-    keyword = keyword ?? "";
-    bool home = keyword.isEmpty;
+    _homeState.keyword = keyword ?? tagEntity?.tag ?? "";
+    bool home = keyword == null && tagEntity == null;
     String url;
     Map<String, String> formatParams = Map.from(options ?? {});
     _log.info("formatParams=$formatParams");
@@ -72,9 +72,7 @@ class HomeViewModel {
     var customRuleParser = _customRuleParser();
     String pageName;
     formatParams["page"] = realPage;
-    if(keyword.isNotEmpty){
-      formatParams["keyword"] = keyword;
-    }
+    formatParams["keyword"] = _homeState.keyword;
     if (home) {
       pageName = _homePageName;
       url = customRuleParser.url(_homePageName, formatParams);
@@ -84,7 +82,7 @@ class HomeViewModel {
     }
     _log.info("url=$url");
     String siteName = parser.webPageName(doc);
-    await _updateUri(siteName, url, realPage, keyword, options);
+    await _updateUri(siteName, url, realPage, keyword ?? tagEntity?.desc ?? "", options);
 
     Map<String, String> headers = customRuleParser.headers();
     _homeState.headers = headers;
@@ -149,7 +147,8 @@ class HomeViewModel {
   }
 
   Future<List<OptionEntity>> optionList(String? keyword) async {
-    String pageName = keyword == null||keyword.isEmpty ? _homePageName : _searchPageName;
+    String pageName =
+        keyword == null || keyword.isEmpty ? _homePageName : _searchPageName;
     var options = _customRuleParser().options(pageName);
     return jsonConvert.convertListNotNull<OptionEntity>(jsonDecode(options)) ??
         [];
@@ -163,15 +162,15 @@ class HomeViewModel {
     _homeState.reset();
   }
 
-  _updateUri(String siteName, String url, String page, String keyword,
+  _updateUri(String siteName, String url, String page, String searchDesc,
       Map<String, String>? options) async {
     Uri uri = Uri.parse(url);
     _uriState.baseHref = "${uri.scheme}://${uri.host}${uri.path}";
     _uriState.page = page;
-    _uriState.keyword = keyword;
+    _uriState.searchDesc = searchDesc;
     _uriState.url = url;
     _uriState.siteName = siteName;
-    _uriState.options = await transformOptions(options, keyword);
+    _uriState.options = await transformOptions(options, searchDesc);
     streamUriController.add(_uriState);
   }
 
@@ -205,7 +204,7 @@ class HomeViewModel {
 class HomeState {
   List<HomePageItemEntity> list = [];
   int page = 0;
-  String? keyword;
+  String keyword = "";
   bool loading = false;
   bool error = false;
   bool canSearch = true;
@@ -217,7 +216,7 @@ class HomeState {
   void reset() {
     list.clear();
     page = 0;
-    keyword = null;
+    keyword = "";
     loading = false;
     error = false;
     canSearch = true;
@@ -235,7 +234,7 @@ class UriState {
   String url = "";
   String baseHref = "";
   String page = "";
-  String keyword = "";
+  String searchDesc = "";
   Map<String, String>? options;
 
   UriState();

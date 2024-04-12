@@ -12,6 +12,7 @@ import 'package:MoeLoaderFlutter/util/entity.dart';
 import 'package:MoeLoaderFlutter/widget/home_loading_status.dart';
 import 'package:MoeLoaderFlutter/widget/image_masonry_grid.dart';
 import 'package:MoeLoaderFlutter/widget/poll_grid.dart';
+import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:MoeLoaderFlutter/init.dart';
@@ -41,10 +42,12 @@ class _HomeState extends State<HomePage> {
   final Map<String, String> _yamlOptionMap = {};
   String _url = "";
   String? _keyword;
+  TagEntity? _tagEntity;
 
-  void _updateTag(TagEntity? tag) {
+  void _updateTag(TagEntity? tagEntity) {
     setState(() {
-      _keyword = tag?.tag ?? "";
+      _tagEntity = tagEntity;
+      _keyword = tagEntity?.desc ?? "";
     });
   }
 
@@ -67,7 +70,8 @@ class _HomeState extends State<HomePage> {
         options: _yamlOptionMap,
         clearAll: clearAll,
         page: page,
-        keyword: _keyword);
+        keyword: _keyword,
+        tagEntity: _tagEntity);
   }
 
   @override
@@ -192,10 +196,9 @@ class _HomeState extends State<HomePage> {
         retryOnPressed: retryOnPressed,
         actionOnPressed: actionOnPressed,
         builder: (homeState) {
-          int columnCount =
-          Global.customRuleParser.columnCount(Const.homePage);
+          int columnCount = Global.customRuleParser.columnCount(Const.homePage);
           double aspectRatio =
-          Global.customRuleParser.aspectRatio(Const.homePage);
+              Global.customRuleParser.aspectRatio(Const.homePage);
           if (homeState.pageType.isNotEmpty) {
             return PoolGrid(
               columnCount: columnCount,
@@ -334,16 +337,16 @@ class _HomeState extends State<HomePage> {
   Widget _buildCopyAction(BuildContext context) {
     return IconButton(
         onPressed: () async {
-          // FlutterClipboard.copy(_url).then((value) => showToast("链接已复制"));
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) {
-              return WebView2Page(
-                url: _url,
-                code: 1,
-              );
-            }),
-          );
+          FlutterClipboard.copy(_url).then((value) => showToast("链接已复制"));
+          // Navigator.push(
+          //   context,
+          //   MaterialPageRoute(builder: (context) {
+          //     return WebView2Page(
+          //       url: _url,
+          //       code: 1,
+          //     );
+          //   }),
+          // );
         },
         icon: const Icon(Icons.copy));
   }
@@ -562,7 +565,7 @@ class _HomeState extends State<HomePage> {
                 width: 5,
               ),
             );
-            String keyword = uriState.keyword;
+            String keyword = uriState.searchDesc;
             if (keyword.isNotEmpty) {
               children.add(Chip(
                 avatar: ClipOval(
