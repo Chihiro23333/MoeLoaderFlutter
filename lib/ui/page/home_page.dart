@@ -14,6 +14,7 @@ import 'package:MoeLoaderFlutter/widget/image_masonry_grid.dart';
 import 'package:MoeLoaderFlutter/widget/poll_grid.dart';
 import 'package:MoeLoaderFlutter/widget/radio_choice_chip.dart';
 import 'package:clipboard/clipboard.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:MoeLoaderFlutter/init.dart';
@@ -142,8 +143,7 @@ class _HomeState extends State<HomePage> {
         actionOnPressed: actionOnPressed,
         builder: (homeState) {
           int columnCount = Global.customRuleParser.columnCount(Const.homePage);
-          double aspectRatio =
-              Global.customRuleParser.aspectRatio(Const.homePage);
+          double aspectRatio = Global.customRuleParser.aspectRatio(Const.homePage);
           if (homeState.pageType.isNotEmpty) {
             return PoolGrid(
               columnCount: columnCount,
@@ -288,7 +288,8 @@ class _HomeState extends State<HomePage> {
   Widget _buildCopyAction(BuildContext context) {
     return IconButton(
         onPressed: () async {
-          FlutterClipboard.copy(_url).then((value) => showToast("链接已复制"));
+          clearDiskCachedImages();
+          // FlutterClipboard.copy(_url).then((value) => showToast("链接已复制"));
           // Navigator.push(
           //   context,
           //   MaterialPageRoute(builder: (context) {

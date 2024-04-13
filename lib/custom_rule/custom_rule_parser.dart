@@ -25,8 +25,9 @@ class CustomRuleParser{
     if (urlRule != null) {
       String link = urlRule["link"];
       int pageBase = urlRule["pageBase"] ?? 1;
+      int pageOffset = urlRule["pageOffset"] ?? 0;
       String page = formatParams["page"] ?? "1";
-      page = (int.parse(page) * pageBase).toString();
+      page = (int.parse(page) * pageBase + pageOffset).toString();
       formatParams["page"] = page;
       url = _commonFormatUrl(_customDoc["url"]?[pageName], link, formatParams);
     }
@@ -45,11 +46,11 @@ class CustomRuleParser{
   }
 
   int columnCount(String pageName){
-    return _customDoc["display"]?[pageName]?["columnCount"] ?? 6.toInt();
+    return (_customDoc["display"]?[pageName]?["columnCount"] ?? 6).toInt();
   }
 
   double aspectRatio(String pageName){
-    return _customDoc["display"]?[pageName]?["aspectRatio"] ?? 0.65.toDouble();
+    return (_customDoc["display"]?[pageName]?["aspectRatio"] ?? 0.65).toDouble();
   }
 
   String _commonFormatUrl(YamlMap? pageUrlRule, String link,

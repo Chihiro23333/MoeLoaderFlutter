@@ -39,11 +39,13 @@ custom:
   url:
     homePage:
       link: "https://anime-pictures.net/${type}?page=${page}${aspectRatio}${orderBy}&lang=en"
+      pageOffset: -1
       options:
         *OPTIONS
     searchPage:
       link: "https://anime-pictures.net/posts?page=${page}&search_tag=${keyword}&lang=en"
       keywordConnector: "+"
+      pageOffset: -1
 
   headers:
     user-agent: "MoeLoaderFlutter"

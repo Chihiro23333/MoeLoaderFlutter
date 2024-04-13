@@ -2,10 +2,10 @@ import 'package:MoeLoaderFlutter/ui/viewmodel/view_model_setting.dart';
 import 'package:MoeLoaderFlutter/util/common_function.dart';
 import 'package:MoeLoaderFlutter/util/const.dart';
 import 'package:MoeLoaderFlutter/util/sharedpreferences_utils.dart';
+import 'package:MoeLoaderFlutter/widget/radio_choice_chip.dart';
 import 'package:flutter/material.dart';
 import 'package:MoeLoaderFlutter/init.dart';
 import 'package:logging/logging.dart';
-import '../../widget/radio_choice_chip.dart';
 
 class SettingPage extends StatefulWidget {
   const SettingPage({super.key});
