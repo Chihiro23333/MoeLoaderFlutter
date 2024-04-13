@@ -16,6 +16,7 @@ class HomePageItemEntity {
 	late int width = 0;
 	late int height = 0;
 	late String id = '';
+	late String authorId = '';
 	late String author = '';
 	late String characters = '';
 	late String fileSize = '';

@@ -39,6 +39,10 @@ HomePageItemEntity $HomePageItemEntityFromJson(Map<String, dynamic> json) {
   if (id != null) {
     homePageItemEntity.id = id;
   }
+  final String? authorId = jsonConvert.convert<String>(json['authorId']);
+  if (authorId != null) {
+    homePageItemEntity.authorId = authorId;
+  }
   final String? author = jsonConvert.convert<String>(json['author']);
   if (author != null) {
     homePageItemEntity.author = author;
@@ -93,6 +97,7 @@ Map<String, dynamic> $HomePageItemEntityToJson(HomePageItemEntity entity) {
   data['width'] = entity.width;
   data['height'] = entity.height;
   data['id'] = entity.id;
+  data['authorId'] = entity.authorId;
   data['author'] = entity.author;
   data['characters'] = entity.characters;
   data['fileSize'] = entity.fileSize;
@@ -116,6 +121,7 @@ extension HomePageItemEntityExtension on HomePageItemEntity {
     int? width,
     int? height,
     String? id,
+    String? authorId,
     String? author,
     String? characters,
     String? fileSize,
@@ -136,6 +142,7 @@ extension HomePageItemEntityExtension on HomePageItemEntity {
       ..width = width ?? this.width
       ..height = height ?? this.height
       ..id = id ?? this.id
+      ..authorId = authorId ?? this.authorId
       ..author = author ?? this.author
       ..characters = characters ?? this.characters
       ..fileSize = fileSize ?? this.fileSize

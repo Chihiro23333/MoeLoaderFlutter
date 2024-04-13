@@ -3,11 +3,11 @@ import 'package:MoeLoaderFlutter/ui/viewmodel/view_model_pool_list.dart';
 import 'package:MoeLoaderFlutter/ui/page/webview2_page.dart';
 import 'package:MoeLoaderFlutter/util/common_function.dart';
 import 'package:MoeLoaderFlutter/util/const.dart';
+import 'package:MoeLoaderFlutter/widget/image_masonry_grid.dart';
 import 'package:MoeLoaderFlutter/widget/pool_list_loading_status.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
-import '../../widget/image_masonry_grid.dart';
 import 'detail_page.dart';
 
 class PoolListPage extends StatefulWidget {

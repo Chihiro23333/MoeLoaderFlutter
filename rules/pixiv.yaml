@@ -53,6 +53,8 @@ homePage:
           get: { jsonpath: ".illust_id" }
         author:
           get: { jsonpath: ".user_name" }
+        authorId:
+          get: { jsonpath: ".user_id" }
         characters:
           get: { jsonpath: ".title" }
         tagList:
@@ -106,3 +108,32 @@ detailPage:
               get: { jsonpath: "" }
             tag:
               get: { jsonpath: "" }
+
+authorPage:
+  onValidateResult:
+    - regex: { regex: '"regular":null', action: "login" }
+  onPreprocessResult:
+    contentType: "html"
+    get: { cssSelector: "#meta-preload-data", attr: "content" }
+  onParseResult:
+    list:
+      getElements: { cssSelector: "li[size]" }
+      foreach:
+        coverUrl:
+          get: { cssSelector: "div[type=illust] img", attr: "src" }
+        href:
+          get: { cssSelector: "div[type=illust] a", attr: "href" }
+          format:
+            - concat: { start: "https://www.pixiv.net/", end: "" }
+        tagStr:
+          get: { cssSelector: "div[type=illust] img", attr: "alt" }
+        tagSplit:
+          get: { default: " " }
+        width:
+          get: { cssSelector: "div[type=illust] > div", attr: "width" }
+        height:
+          get: { cssSelector: "div[type=illust] > div", attr: "height" }
+        id:
+          get: { cssSelector: "div[type=illust] a", attr: "href" }
+          format:
+            - replaceAll: { from: "/artworks/", to: "" }

@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:MoeLoaderFlutter/init.dart';
-import 'package:MoeLoaderFlutter/util/entity.dart';
+import 'package:MoeLoaderFlutter/ui/page/result_list_page.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:to_json/models.dart';
@@ -20,6 +20,7 @@ class _SearchState extends State<SearchPage> {
   final _log = Logger("_SearchState");
 
   late TextEditingController _textEditingControl;
+  final String _searchPageName = "searchPage";
 
   @override
   void initState() {
@@ -124,6 +125,15 @@ class _SearchState extends State<SearchPage> {
   }
 
   void _submit(BuildContext context) {
-    Navigator.of(context).pop(NaviResult<String>(_textEditingControl.text));
+    Navigator.of(context).pop();
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) {
+        return ResultListPage(
+          pageName: _searchPageName,
+          keyword: _textEditingControl.text,
+        );
+      }),
+    );
   }
 }

@@ -3,7 +3,6 @@ import 'package:MoeLoaderFlutter/model/option_entity.dart';
 import 'package:MoeLoaderFlutter/model/tag_entity.dart';
 import 'package:MoeLoaderFlutter/ui/page/download_page.dart';
 import 'package:MoeLoaderFlutter/ui/page/pool_list_page.dart';
-import 'package:MoeLoaderFlutter/ui/page/result_list_page.dart';
 import 'package:MoeLoaderFlutter/ui/page/search_page.dart';
 import 'package:MoeLoaderFlutter/ui/page/settings_page.dart';
 import 'package:MoeLoaderFlutter/util/common_function.dart';
@@ -25,21 +24,24 @@ import 'package:to_json/models.dart' as jsonModels;
 
 enum MoreItem { copy, download, option, search, setting, about }
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class ResultListPage extends StatefulWidget {
+  const ResultListPage(
+      {super.key, required this.pageName, this.keyword, this.tagEntity});
+
+  final String pageName;
+  final String? keyword;
+  final TagEntity? tagEntity;
 
   @override
-  State<StatefulWidget> createState() => _HomeState();
+  State<StatefulWidget> createState() => _ResultListState();
 }
 
-class _HomeState extends State<HomePage> {
-  final _log = Logger("_HomeState");
+class _ResultListState extends State<ResultListPage> {
+  final _log = Logger("_ResultListState");
 
   final HomeViewModel _homeViewModel = HomeViewModel();
   final GlobalKey<ScaffoldState> _scaffoldGlobalKey = GlobalKey();
-
-  final String _homePageName = "homePage";
-  final String _searchPageName = "searchPage";
+  late TextEditingController _textEditingControl;
 
   final Map<String, String> _yamlOptionMap = {};
   String _url = "";
@@ -59,10 +61,6 @@ class _HomeState extends State<HomePage> {
     });
   }
 
-  void _clearOptions() {
-    _yamlOptionMap.clear();
-  }
-
   void _removeOptions(String key) {
     _yamlOptionMap.remove(key);
   }
@@ -77,14 +75,15 @@ class _HomeState extends State<HomePage> {
   }
 
   String pageName() {
-    bool home = (_keyword == null || _keyword!.isEmpty) && _tagEntity == null;
-    String pageName = home ? _homePageName : _searchPageName;
-    return pageName;
+    return widget.pageName;
   }
 
   @override
   void initState() {
     super.initState();
+    _textEditingControl = TextEditingController();
+    _keyword = widget.keyword;
+    _tagEntity = widget.tagEntity;
     _requestData(clearAll: true);
   }
 
@@ -103,18 +102,16 @@ class _HomeState extends State<HomePage> {
                 _buildCopyAction(context),
                 _buildDownloadAction(context),
                 _buildOptionsAction(context),
-                _buildSearchAction(context, snapshot),
                 _buildSettingsAction(context),
               ]),
-          drawer: _buildDrawer(context),
-          body: _buildListBody(context, snapshot),
+          body: _buildListBody(snapshot),
           floatingActionButton: _buildFloatActionButton(context, snapshot),
         );
       },
     );
   }
 
-  Widget _buildListBody(BuildContext context, AsyncSnapshot snapshot) {
+  Widget _buildListBody(AsyncSnapshot snapshot) {
     retryOnPressed() {
       _requestData();
     }
@@ -171,13 +168,8 @@ class _HomeState extends State<HomePage> {
             list: homeState.list,
             headers: homeState.headers,
             tagTapCallback: (context, tag) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) {
-                  return ResultListPage(
-                      pageName: _searchPageName, tagEntity: tag);
-                }),
-              );
+              _updateTag(tag);
+              _requestData(clearAll: true);
             },
             itemOnPressed: (homePageItem) async {
               NaviResult<TagEntity>? naviResult = await Navigator.push(
@@ -289,102 +281,8 @@ class _HomeState extends State<HomePage> {
     return IconButton(
         onPressed: () async {
           FlutterClipboard.copy(_url).then((value) => showToast("链接已复制"));
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(builder: (context) {
-          //     return WebView2Page(
-          //       url: _url,
-          //       code: 1,
-          //     );
-          //   }),
-          // );
         },
         icon: const Icon(Icons.copy));
-  }
-
-  Widget _buildSearchAction(BuildContext context, AsyncSnapshot snapshot) {
-    return IconButton(
-        onPressed: () async {
-          if (snapshot.hasData) {
-            HomeState? homeState = snapshot.data;
-            if (homeState != null) {
-              if (homeState.canSearch) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) {
-                    return SearchPage(keyword: _keyword ?? "");
-                  }),
-                );
-              } else {
-                showToast("此源暂不支持搜索");
-              }
-            }
-          }
-        },
-        icon: const Icon(Icons.image_search));
-  }
-
-  Widget _buildDrawer(BuildContext context) {
-    List<jsonModels.Rule> list = _homeViewModel.webPageList();
-    return Drawer(
-      child: MediaQuery.removePadding(
-          context: context,
-          child: Column(
-            children: [
-              const ListTile(
-                  title: Text(
-                "源列表",
-                style: TextStyle(fontWeight: FontWeight.normal, fontSize: 17),
-              )),
-              Expanded(
-                  child: ListView.builder(
-                      itemCount: list.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        jsonModels.Rule rule = list[index];
-                        _log.fine("rule.faviconPath=${rule.faviconPath}");
-                        Widget leading;
-                        if (rule.faviconPath.isEmpty) {
-                          leading = Icon(
-                            Icons.call_to_action,
-                            color: Theme.of(context).iconTheme.color,
-                          );
-                        } else {
-                          leading = Image.file(
-                            File(rule.faviconPath),
-                            fit: BoxFit.cover,
-                          );
-                        }
-                        return ListTile(
-                          leading: SizedBox(
-                            height: 25,
-                            width: 25,
-                            child: leading,
-                          ),
-                          titleTextStyle: list[index].fileName ==
-                                  Global.curWebPageName
-                              ? const TextStyle(fontWeight: FontWeight.bold)
-                              : const TextStyle(fontWeight: FontWeight.normal),
-                          selected:
-                              list[index].fileName == Global.curWebPageName,
-                          selectedColor: Global.defaultColor,
-                          textColor: Colors.black,
-                          title: Text(
-                            list[index].fileName,
-                            style: const TextStyle(fontSize: 17),
-                          ),
-                          onTap: () async {
-                            _updateTag(null);
-                            _clearOptions();
-                            await _homeViewModel
-                                .changeGlobalWebPage(list[index]);
-                            _requestData(clearAll: true);
-                            _scaffoldGlobalKey.currentState?.closeDrawer();
-                          },
-                        );
-                      }))
-            ],
-          )),
-    );
   }
 
   Widget _buildFloatActionButton(BuildContext context, AsyncSnapshot snapshot) {

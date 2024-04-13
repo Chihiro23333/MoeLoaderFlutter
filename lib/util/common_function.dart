@@ -2,7 +2,6 @@ import 'package:MoeLoaderFlutter/model/tag_entity.dart';
 import 'package:MoeLoaderFlutter/net/download.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:clipboard/clipboard.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../init.dart';
 
@@ -84,4 +83,4 @@ Widget buildDownloadItem(
   );
 }
 
-typedef TagTapCallback = void Function(TagEntity tagEntity);
+typedef TagTapCallback = void Function(BuildContext context, TagEntity tagEntity);

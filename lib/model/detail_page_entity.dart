@@ -15,6 +15,7 @@ class DetailPageEntity {
 	late String width = '';
 	late String height = '';
 	late String id = '';
+	late String authorId = '';
 	late String author = '';
 	late String dimensions = '';
 	late String source = '';

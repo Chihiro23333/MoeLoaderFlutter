@@ -1,8 +1,9 @@
+import 'package:MoeLoaderFlutter/net/download.dart';
 import 'package:MoeLoaderFlutter/util/common_function.dart';
+import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:MoeLoaderFlutter/init.dart';
 import 'package:logging/logging.dart';
-import '../../net/download.dart';
 
 class DownloadPage extends StatefulWidget {
   const DownloadPage({super.key});
@@ -49,7 +50,16 @@ class _DownloadState extends State<DownloadPage> {
       ),
       iconTheme: Theme.of(context).iconTheme,
       elevation: 10,
+      actions: [_buildCopyAction(context)],
     );
+  }
+
+  Widget _buildCopyAction(BuildContext context) {
+    return IconButton(
+        onPressed: () async {
+          FlutterClipboard.copy(Global.downloadsDirectory.path).then((value) => showToast("存储路径已复制"));
+        },
+        icon: const Icon(Icons.copy));
   }
 
   _buildBody(BuildContext context, AsyncSnapshot snapshot) {

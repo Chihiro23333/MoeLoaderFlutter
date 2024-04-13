@@ -37,6 +37,10 @@ DetailPageEntity $DetailPageEntityFromJson(Map<String, dynamic> json) {
   if (id != null) {
     detailPageEntity.id = id;
   }
+  final String? authorId = jsonConvert.convert<String>(json['authorId']);
+  if (authorId != null) {
+    detailPageEntity.authorId = authorId;
+  }
   final String? author = jsonConvert.convert<String>(json['author']);
   if (author != null) {
     detailPageEntity.author = author;
@@ -67,6 +71,7 @@ Map<String, dynamic> $DetailPageEntityToJson(DetailPageEntity entity) {
   data['width'] = entity.width;
   data['height'] = entity.height;
   data['id'] = entity.id;
+  data['authorId'] = entity.authorId;
   data['author'] = entity.author;
   data['dimensions'] = entity.dimensions;
   data['source'] = entity.source;
@@ -84,6 +89,7 @@ extension DetailPageEntityExtension on DetailPageEntity {
     String? width,
     String? height,
     String? id,
+    String? authorId,
     String? author,
     String? dimensions,
     String? source,
@@ -98,6 +104,7 @@ extension DetailPageEntityExtension on DetailPageEntity {
       ..width = width ?? this.width
       ..height = height ?? this.height
       ..id = id ?? this.id
+      ..authorId = authorId ?? this.authorId
       ..author = author ?? this.author
       ..dimensions = dimensions ?? this.dimensions
       ..source = source ?? this.source

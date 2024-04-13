@@ -149,17 +149,18 @@ class _ImageMasonryGridState extends State<ImageMasonryGrid> {
                           context,
                           homePageItem.id,
                           homePageItem.author,
+                          homePageItem.authorId,
                           homePageItem.characters,
                           homePageItem.fileSize,
                           homePageItem.dimensions,
                           homePageItem.source,
-                          homePageItem.tagList, onTagTap: (tag) {
+                          homePageItem.tagList, onTagTap: (context, tag) {
+                        Navigator.of(context).pop();
                         _log.fine("yamlTag:tag=${tag.tag};desc=${tag.desc}");
                         TagTapCallback? tagTapCallback = widget.tagTapCallback;
                         if (tagTapCallback != null) {
-                          tagTapCallback(tag);
+                          tagTapCallback(context, tag);
                         }
-                        Navigator.of(context).pop();
                       });
                     },
                     icon: const Icon(

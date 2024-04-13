@@ -7,6 +7,7 @@ void showInfoSheet(
     BuildContext context,
     String id,
     String author,
+    String authorId,
     String characters,
     String fileSize,
     String dimensions,
@@ -69,25 +70,37 @@ void showInfoSheet(
       });
 }
 
-void _fillInfoChip(BuildContext context, String prefix, String info, List<Widget> infoChildren) {
+void _fillInfoChip(
+    BuildContext context, String prefix, String info, List<Widget> infoChildren,
+    {TagTapCallback? onTagTap, String? infoId}) {
   if (info.isNotEmpty) {
-    infoChildren.add(Chip(
-      avatar: ClipOval(
-        child: Icon(
-          Icons.tag,
-          color: Theme.of(context).iconTheme.color,
+    infoChildren.add(GestureDetector(
+      child: Chip(
+        avatar: ClipOval(
+          child: Icon(
+            Icons.tag,
+            color: Theme.of(context).iconTheme.color,
+          ),
+        ),
+        label: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              prefix,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Text(info)
+          ],
         ),
       ),
-      label: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            prefix,
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
-          Text(info)
-        ],
-      ),
+      onTap: () {
+        if (onTagTap != null) {
+          TagEntity tagEntity = TagEntity();
+          tagEntity.tag = infoId ?? "";
+          tagEntity.desc = info;
+          onTagTap(context, tagEntity);
+        }
+      },
     ));
   }
 }
@@ -119,7 +132,7 @@ List<Widget> _buildTags(BuildContext context, List<TagEntity> tagList,
       ),
       onTap: () {
         if (onTagTap != null) {
-          onTagTap(tag);
+          onTagTap(context, tag);
         }
       },
     ));

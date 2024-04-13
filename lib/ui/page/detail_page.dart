@@ -1,10 +1,9 @@
 import 'package:MoeLoaderFlutter/model/detail_page_entity.dart';
 import 'package:MoeLoaderFlutter/model/home_page_item_entity.dart';
-import 'package:MoeLoaderFlutter/model/tag_entity.dart';
 import 'package:MoeLoaderFlutter/ui/dialog/info_dialog.dart';
 import 'package:MoeLoaderFlutter/ui/page/download_page.dart';
+import 'package:MoeLoaderFlutter/ui/page/result_list_page.dart';
 import 'package:MoeLoaderFlutter/util/common_function.dart';
-import 'package:MoeLoaderFlutter/util/entity.dart';
 import 'package:MoeLoaderFlutter/util/utils.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:extended_image/extended_image.dart';
@@ -26,11 +25,13 @@ class DetailPage extends StatefulWidget {
 }
 
 class _DetailState extends State<DetailPage> {
+  final _log = Logger('_DetailState');
+
   final DetailViewModel _detailViewModel = DetailViewModel();
   DetailPageEntity? _detailPageEntity;
   int _index = 0;
   final PageController _pageController = PageController();
-  final _log = Logger('_DetailState');
+  final String _searchPageName = "searchPage";
 
   void _updateIndex(int page) {
     setState(() {
@@ -40,7 +41,8 @@ class _DetailState extends State<DetailPage> {
 
   void _requestDetailData() {
     print("widget.href=${widget.href}");
-    _detailViewModel.requestDetailData(widget.href,homePageItem: widget.homePageItem);
+    _detailViewModel.requestDetailData(widget.href,
+        homePageItem: widget.homePageItem);
   }
 
   @override
@@ -170,11 +172,11 @@ class _DetailState extends State<DetailPage> {
     }
     return FloatingActionButton(
         onPressed: () {
-          if (loading){
+          if (loading) {
             showToast("数据还没准备好");
             return;
           }
-          if(downloading){
+          if (downloading) {
             showToast("已经有图片正在下载中，请等待");
             return;
           }
@@ -188,25 +190,30 @@ class _DetailState extends State<DetailPage> {
             if (isImageUrl(url) && url.isNotEmpty) {
               children.add(buildDownloadItem(context, url, "当前预览图片($url)", () {
                 Navigator.of(context).pop();
-                _detailViewModel.download(widget.href, url, id, headers: detailState.headers);
+                _detailViewModel.download(widget.href, url, id,
+                    headers: detailState.headers);
               }));
             }
             if (bigUrl.isNotEmpty) {
               children.add(const Divider(
                 height: 10,
               ));
-              children.add(buildDownloadItem(context, bigUrl, "大图($bigUrl)", () {
+              children
+                  .add(buildDownloadItem(context, bigUrl, "大图($bigUrl)", () {
                 Navigator.of(context).pop();
-                _detailViewModel.download(widget.href, bigUrl, id, headers: detailState.headers);
+                _detailViewModel.download(widget.href, bigUrl, id,
+                    headers: detailState.headers);
               }));
             }
             if (rawUrl.isNotEmpty) {
               children.add(const Divider(
                 height: 10,
               ));
-              children.add(buildDownloadItem(context, rawUrl, "原图($rawUrl)", () {
+              children
+                  .add(buildDownloadItem(context, rawUrl, "原图($rawUrl)", () {
                 Navigator.of(context).pop();
-                _detailViewModel.download(widget.href, rawUrl, id, headers: detailState.headers);
+                _detailViewModel.download(widget.href, rawUrl, id,
+                    headers: detailState.headers);
               }));
             }
             if (children.isEmpty) {
@@ -240,8 +247,7 @@ class _DetailState extends State<DetailPage> {
           IconButton(
             icon: Icon(Icons.copy, color: Theme.of(context).iconTheme.color),
             onPressed: () {
-              FlutterClipboard.copy(url)
-                  .then((value) => showToast("链接已复制"));
+              FlutterClipboard.copy(url).then((value) => showToast("链接已复制"));
             },
           ),
           IconButton(
@@ -287,8 +293,7 @@ class _DetailState extends State<DetailPage> {
   }
 
   //处理部分网页没有详情页的情况
-  void _updateCommonInfo(DetailPageEntity detailPageEntity) {
-  }
+  void _updateCommonInfo(DetailPageEntity detailPageEntity) {}
 
   Widget _buildPageView(BuildContext context, List<String> urlList,
       Map<String, String>? headers) {
@@ -401,18 +406,24 @@ class _DetailState extends State<DetailPage> {
     return IconButton(
         onPressed: () {
           if (loading) return;
-          showInfoSheet(context,
+          showInfoSheet(
+              context,
               detailPageEntity.id,
               detailPageEntity.author,
+              detailPageEntity.authorId,
               "",
               "",
               detailPageEntity.dimensions,
               "",
-              detailPageEntity.tagList,
-              onTagTap: (tag) {
-            Navigator.of(context)
-              ..pop()
-              ..pop(NaviResult<TagEntity>(tag));
+              detailPageEntity.tagList, onTagTap: (context, tag) {
+            Navigator.of(context).pop();
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) {
+                return ResultListPage(
+                    pageName: _searchPageName, tagEntity: tag);
+              }),
+            );
           });
         },
         icon: const Icon(Icons.info));

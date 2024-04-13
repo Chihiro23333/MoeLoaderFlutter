@@ -19,9 +19,6 @@ import 'package:MoeLoaderFlutter/model/option_entity.dart';
 class HomeViewModel {
   final _log = Logger('HomeViewModel');
 
-  final String _homePageName = "homePage";
-  final String _searchPageName = "searchPage";
-
   final YamlRepository repository = YamlRepository();
 
   final StreamController<HomeState> streamHomeController = StreamController();
@@ -49,12 +46,13 @@ class HomeViewModel {
     });
   }
 
-  void requestData(
+  void requestData(String pageName,
       {String? page,
       String? keyword,
       TagEntity? tagEntity,
       bool clearAll = false,
       Map<String, String>? options}) async {
+    _log.info("keyword=$keyword");
     _log.info("options=$options");
     if (clearAll) {
       _clearAll();
@@ -62,27 +60,19 @@ class HomeViewModel {
     changeLoading(true);
     String realPage = page ?? (_homeState.page + 1).toString();
     _homeState.keyword = keyword ?? tagEntity?.tag ?? "";
-    bool home = keyword == null && tagEntity == null;
     String url;
     Map<String, String> formatParams = Map.from(options ?? {});
-    _log.info("formatParams=$formatParams");
-
     var parser = _parser();
     YamlMap doc = await YamlRuleFactory().create(Global.curWebPageName);
     var customRuleParser = _customRuleParser();
-    String pageName;
     formatParams["page"] = realPage;
     formatParams["keyword"] = _homeState.keyword;
-    if (home) {
-      pageName = _homePageName;
-      url = customRuleParser.url(_homePageName, formatParams);
-    } else {
-      pageName = _searchPageName;
-      url = customRuleParser.url(_searchPageName, formatParams);
-    }
+    _log.info("formatParams=$formatParams");
+    url = customRuleParser.url(pageName, formatParams);
     _log.info("url=$url");
     String siteName = parser.webPageName(doc);
-    await _updateUri(siteName, url, realPage, keyword ?? tagEntity?.desc ?? "", options);
+    await _updateUri(pageName, siteName, url, realPage,
+        keyword ?? tagEntity?.desc ?? "", options);
 
     Map<String, String> headers = customRuleParser.headers();
     _homeState.headers = headers;
@@ -90,10 +80,10 @@ class HomeViewModel {
     String pageType = parser.pageType(doc);
     _homeState.pageType = pageType;
 
-    String searchUrl = customRuleParser.url(_searchPageName, {});
+    String searchUrl = customRuleParser.url(pageName, {});
     _homeState.canSearch = searchUrl.isNotEmpty;
 
-    Validator validator = Validator(doc, _homePageName);
+    Validator validator = Validator(doc, pageName);
     ValidateResult<String> result =
         await repository.home(url, validator, headers: headers);
     _homeState.code = result.code;
@@ -146,9 +136,8 @@ class HomeViewModel {
     return repository.webPageList();
   }
 
-  Future<List<OptionEntity>> optionList(String? keyword) async {
-    String pageName =
-        keyword == null || keyword.isEmpty ? _homePageName : _searchPageName;
+  Future<List<OptionEntity>> optionList(
+      String pageName, String? keyword) async {
     var options = _customRuleParser().options(pageName);
     return jsonConvert.convertListNotNull<OptionEntity>(jsonDecode(options)) ??
         [];
@@ -162,21 +151,21 @@ class HomeViewModel {
     _homeState.reset();
   }
 
-  _updateUri(String siteName, String url, String page, String searchDesc,
-      Map<String, String>? options) async {
+  _updateUri(String pageName, String siteName, String url, String page,
+      String searchDesc, Map<String, String>? options) async {
     Uri uri = Uri.parse(url);
     _uriState.baseHref = "${uri.scheme}://${uri.host}${uri.path}";
     _uriState.page = page;
     _uriState.searchDesc = searchDesc;
     _uriState.url = url;
     _uriState.siteName = siteName;
-    _uriState.options = await transformOptions(options, searchDesc);
+    _uriState.options = await transformOptions(pageName, options, searchDesc);
     streamUriController.add(_uriState);
   }
 
   Future<Map<String, String>> transformOptions(
-      Map<String, String>? options, String keyword) async {
-    List<OptionEntity> optionEntityList = await optionList(keyword);
+      String pageName, Map<String, String>? options, String keyword) async {
+    List<OptionEntity> optionEntityList = await optionList(pageName, keyword);
     Map<String, String> newMap = Map.from(options ?? {});
     newMap.forEach((key, value) {
       for (OptionEntity element in optionEntityList) {
