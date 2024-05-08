@@ -96,7 +96,7 @@ detailPage:
         format:
           - concat: { start: "https:", end: "" }
       rawUrl:
-        get: { cssSelector: "a[class^=download_icon]", attr: "href" }
+        get: { cssSelector: "a[download]", attr: "href" }
       tagStr:
         get: { cssSelector: "ul[itemprop=keywords] a", text: "" }
       tagSplit:

@@ -278,7 +278,7 @@ class _WebView2State extends State<WebView2Page> {
         _log.fine("cookieStr=$cookieStr");
         if (cookieStr != null && cookieStr.isNotEmpty) {
           await RequestManager()
-              .saveCookiesString(Uri.parse(widget.url), cookieStr);
+              .saveCookiesString(cookieStr);
         }
       }
     }

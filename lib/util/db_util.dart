@@ -4,15 +4,15 @@ const _cookiesDb = "cookies";
 
 Future<bool> saveCookieString(String domain, String cookiesString) async{
   var box = await Hive.openBox(_cookiesDb);
-  box.put(domain, cookiesString);
-  box.close();
+  await box.put(domain, cookiesString);
+  await box.close();
   return true;
 }
 
 Future<bool> deleteCookie(String domain) async{
   var box = await Hive.openBox(_cookiesDb);
-  box.delete(domain);
-  box.close();
+  await box.delete(domain);
+  await box.close();
   return true;
 }
 
@@ -27,6 +27,6 @@ Future<Map<String, String>> getAllCookieString() async{
   box.toMap().forEach((key, value) {
     result[key.toString()] = value.toString();
   });
-  box.close();
+  await box.close();
   return result;
 }

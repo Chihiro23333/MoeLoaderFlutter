@@ -32,8 +32,8 @@ class RequestManager{
     }
   }
 
-  Future<void> saveCookiesString(Uri uri, String cookiesString) async{
-    await _dioHttp.saveCookiesString(uri, cookiesString);
+  Future<void> saveCookiesString(String cookiesString) async{
+    await _dioHttp.saveCookiesString(cookiesString);
   }
 
   Future<Response> download(String url, String name, {ProgressCallback? onReceiveProgress, CancelToken? cancelToken, Map<String, String>? headers}) async {
