@@ -57,7 +57,7 @@ class PoolListViewModel {
     Map<String, String> formatParams = Map.from(options ?? {});
     formatParams["page"] = realPage;
     formatParams["id"] = id;
-    _log.info("formatParams=$formatParams");
+    _log.fine("formatParams=$formatParams");
     String url = customRuleParser.url(_poolListPageName, formatParams);
 
     _updateUri(url);

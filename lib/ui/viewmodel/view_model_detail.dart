@@ -90,7 +90,7 @@ class DetailViewModel {
   }
 
   void download(String href, String url, String id, {Map<String, String>? headers}) {
-    _log.info("headers=$headers");
+    _log.fine("headers=$headers");
     DownloadManager().addTask(DownloadTask(href, url, getDownloadName(url, id), headers: headers));
   }
 

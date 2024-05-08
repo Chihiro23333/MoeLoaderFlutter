@@ -52,8 +52,8 @@ class HomeViewModel {
       TagEntity? tagEntity,
       bool clearAll = false,
       Map<String, String>? options}) async {
-    _log.info("keyword=$keyword");
-    _log.info("options=$options");
+    _log.fine("keyword=$keyword");
+    _log.fine("options=$options");
     if (clearAll) {
       _clearAll();
     }
@@ -67,9 +67,9 @@ class HomeViewModel {
     var customRuleParser = _customRuleParser();
     formatParams["page"] = realPage;
     formatParams["keyword"] = _homeState.keyword;
-    _log.info("formatParams=$formatParams");
+    _log.fine("formatParams=$formatParams");
     url = customRuleParser.url(pageName, formatParams);
-    _log.info("url=$url");
+    _log.fine("url=$url");
     String siteName = parser.webPageName(doc);
     await _updateUri(pageName, siteName, url, realPage,
         keyword ?? tagEntity?.desc ?? "", options);

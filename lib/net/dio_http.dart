@@ -53,7 +53,7 @@ class DioHttp {
         nowHeaders[key] = value;
       });
     }
-    _log.info("nowHeaders=${nowHeaders}");
+    _log.fine("nowHeaders=${nowHeaders}");
   }
 
   Future<void> saveCookiesString(String cookiesString) async {
@@ -83,7 +83,7 @@ class DioHttp {
           String domain = keyValue[0];
           String key = keyValue[1];
           String value = keyValue[2];
-          _log.info("domain=$domain;key=$key;value=$value");
+          _log.fine("domain=$domain;key=$key;value=$value");
           var cookieList = cookieMap[domain];
           String cookieStr = "$key:$value";
           if(cookieList != null){
@@ -109,7 +109,7 @@ class DioHttp {
         if (keyValue.length == 2) {
           String key = keyValue[0];
           String value = keyValue[1];
-          _log.info("key=$key;value=$value");
+          _log.fine("key=$key;value=$value");
           cookies.add(Cookie(key, value));
         }
       }

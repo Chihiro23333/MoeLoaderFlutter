@@ -57,7 +57,7 @@ class _WebView2State extends State<WebView2Page> {
       }));
       await _controller.clearCookies();
       await _controller.clearCache();
-      _log.info("user-agent=${widget.userAgent}");
+      _log.fine("user-agent=${widget.userAgent}");
       if(widget.userAgent != null){
         await _controller.setUserAgent(widget.userAgent ?? "");
       }
