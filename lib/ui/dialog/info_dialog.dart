@@ -158,15 +158,18 @@ List<Widget> _buildTags(BuildContext context, List<TagEntity> tagList,
 
 List<Widget> _buildUrlWidget(BuildContext context, String url) {
   List<Widget> result = [];
-  result.add(FittedBox(
-      child: Chip(
+  result.add(Chip(
     avatar: ClipOval(
       child: Icon(
         Icons.label,
         color: Theme.of(context).iconTheme.color,
       ),
     ),
-    label: Text(url),
+    label: Text(
+      url,
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+    ),
     deleteButtonTooltipMessage: "复制",
     deleteIcon: ClipOval(
       clipBehavior: Clip.antiAlias,
@@ -178,6 +181,6 @@ List<Widget> _buildUrlWidget(BuildContext context, String url) {
     onDeleted: () {
       FlutterClipboard.copy(url).then((value) => showToast("链接已复制"));
     },
-  )));
+  ));
   return result;
 }
