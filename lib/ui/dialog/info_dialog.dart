@@ -1,10 +1,12 @@
 import 'package:MoeLoaderFlutter/model/tag_entity.dart';
 import 'package:MoeLoaderFlutter/util/common_function.dart';
 import 'package:clipboard/clipboard.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 void showInfoSheet(
     BuildContext context,
+    String url,
     String id,
     String author,
     String authorId,
@@ -22,6 +24,20 @@ void showInfoSheet(
   _fillInfoChip(context, "File Size：", fileSize, infoChildren);
   _fillInfoChip(context, "Dimensions：", dimensions, infoChildren);
   _fillInfoChip(context, "Source：", source, infoChildren);
+  if (url.isNotEmpty) {
+    children.add(const Padding(
+      padding: EdgeInsets.only(top: 10, bottom: 10),
+      child: Text(
+        "图片地址：",
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
+    ));
+    children.add(Wrap(
+      spacing: 8.0, // 主轴(水平)方向间距
+      runSpacing: 4.0, // 纵轴（垂直）方向间距
+      children: _buildUrlWidget(context, url),
+    ));
+  }
   if (infoChildren.isNotEmpty) {
     children.add(const Padding(
       padding: EdgeInsets.only(top: 10, bottom: 10),
@@ -137,5 +153,31 @@ List<Widget> _buildTags(BuildContext context, List<TagEntity> tagList,
       },
     ));
   }
+  return result;
+}
+
+List<Widget> _buildUrlWidget(BuildContext context, String url) {
+  List<Widget> result = [];
+  result.add(FittedBox(
+      child: Chip(
+    avatar: ClipOval(
+      child: Icon(
+        Icons.label,
+        color: Theme.of(context).iconTheme.color,
+      ),
+    ),
+    label: Text(url),
+    deleteButtonTooltipMessage: "复制",
+    deleteIcon: ClipOval(
+      clipBehavior: Clip.antiAlias,
+      child: Icon(
+        Icons.copy,
+        color: Theme.of(context).iconTheme.color,
+      ),
+    ),
+    onDeleted: () {
+      FlutterClipboard.copy(url).then((value) => showToast("链接已复制"));
+    },
+  )));
   return result;
 }

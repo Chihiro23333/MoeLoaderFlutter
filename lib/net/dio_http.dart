@@ -56,8 +56,8 @@ class DioHttp {
     _log.fine("nowHeaders=${nowHeaders}");
   }
 
-  Future<void> saveCookiesString(String cookiesString) async {
-    await _transformCookies(cookiesString);
+  Future<void> saveCookiesString(String origin, String cookiesString) async {
+    await _transformCookies(origin, cookiesString);
   }
 
   Future<Response> download(String url, String name,
@@ -73,30 +73,10 @@ class DioHttp {
         onReceiveProgress: onReceiveProgress, cancelToken: cancelToken);
   }
 
-  Future<void> _transformCookies(String cookiesString) async{
+  Future<void> _transformCookies(String origin, String cookiesString) async{
     if (cookiesString.isNotEmpty) {
-      Map<String, List<String>> cookieMap = {};
-      List<String> cookieList = cookiesString.split(";");
-      for (var cookie in cookieList) {
-        List<String> keyValue = cookie.split(":");
-        if (keyValue.length == 3) {
-          String domain = keyValue[0];
-          String key = keyValue[1];
-          String value = keyValue[2];
-          _log.fine("domain=$domain;key=$key;value=$value");
-          var cookieList = cookieMap[domain];
-          String cookieStr = "$key:$value";
-          if(cookieList != null){
-            cookieList.add(cookieStr);
-          }else{
-            cookieMap[domain] = [cookieStr];
-          }
-        }
-      }
-      cookieMap.forEach((key, value) async{
-        await saveCookieString(key, value.join(";"));
-        await _updateCookies(Uri.parse(key), cookiesString);
-      });
+      await saveCookieString(origin, cookiesString);
+      await _updateCookies(Uri.parse(origin), cookiesString);
     }
   }
 
@@ -106,10 +86,10 @@ class DioHttp {
       List<String> cookieList = cookiesString.split(";");
       for (var cookie in cookieList) {
         List<String> keyValue = cookie.split(":");
-        if (keyValue.length == 2) {
-          String key = keyValue[0];
-          String value = keyValue[1];
-          _log.fine("key=$key;value=$value");
+        if (keyValue.length == 3) {
+          String key = keyValue[1];
+          String value = keyValue[2];
+          _log.fine("_updateCookies:key=$key;value=$value");
           cookies.add(Cookie(key, value));
         }
       }

@@ -12,7 +12,7 @@ class YamlJsonParser extends Parser {
   @override
   Future<String> parseUseYaml(
       String content, YamlMap doc, String pageName) async {
-    _log.fine("jsonStr=$content");
+    _log.info("jsonStr=$content");
     YamlMap? page = doc[pageName];
     if (page == null) {
       throw "pageName不存在";

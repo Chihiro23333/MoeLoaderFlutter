@@ -408,6 +408,7 @@ class _DetailState extends State<DetailPage> {
           if (loading) return;
           showInfoSheet(
               context,
+              detailPageEntity.url,
               detailPageEntity.id,
               detailPageEntity.author,
               detailPageEntity.authorId,

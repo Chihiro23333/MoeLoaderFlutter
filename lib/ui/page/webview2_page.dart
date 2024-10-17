@@ -277,8 +277,9 @@ class _WebView2State extends State<WebView2Page> {
         String? cookieStr = match.group(1);
         _log.fine("cookieStr=$cookieStr");
         if (cookieStr != null && cookieStr.isNotEmpty) {
+          String origin = Uri.parse(_url).origin;
           await RequestManager()
-              .saveCookiesString(cookieStr);
+              .saveCookiesString(origin, cookieStr);
         }
       }
     }
