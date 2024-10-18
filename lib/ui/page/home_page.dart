@@ -104,10 +104,9 @@ class _HomeState extends State<HomePage> {
                 _buildCopyAction(context),
                 _buildDownloadAction(context),
                 _buildOptionsAction(context),
-                _buildSearchAction(context, snapshot),
-                _buildSettingsAction(context),
+                // _buildSearchAction(context, snapshot),
+                // _buildSettingsAction(context),
               ]),
-          drawer: _buildDrawer(context),
           body: _buildListBody(context, snapshot),
           floatingActionButton: _buildFloatActionButton(context, snapshot),
         );
@@ -143,7 +142,8 @@ class _HomeState extends State<HomePage> {
         actionOnPressed: actionOnPressed,
         builder: (homeState) {
           int columnCount = Global.customRuleParser.columnCount(Const.homePage);
-          double aspectRatio = Global.customRuleParser.aspectRatio(Const.homePage);
+          double aspectRatio =
+              Global.customRuleParser.aspectRatio(Const.homePage);
           if (homeState.pageType.isNotEmpty) {
             return PoolGrid(
               columnCount: columnCount,
@@ -288,17 +288,7 @@ class _HomeState extends State<HomePage> {
   Widget _buildCopyAction(BuildContext context) {
     return IconButton(
         onPressed: () async {
-          clearDiskCachedImages();
-          // FlutterClipboard.copy(_url).then((value) => showToast("链接已复制"));
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(builder: (context) {
-          //     return WebView2Page(
-          //       url: _url,
-          //       code: 1,
-          //     );
-          //   }),
-          // );
+          FlutterClipboard.copy(_url).then((value) => showToast("链接已复制"));
         },
         icon: const Icon(Icons.copy));
   }

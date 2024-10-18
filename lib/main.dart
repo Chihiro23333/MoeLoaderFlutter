@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:MoeLoaderFlutter/ui/page/main_page.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:MoeLoaderFlutter/init.dart';
@@ -25,7 +26,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         fontFamily: Platform.isWindows ? "微软雅黑" : null,
       ),
-      home: const HomePage()
+      home: const MainPage()
     );
   }
 }
