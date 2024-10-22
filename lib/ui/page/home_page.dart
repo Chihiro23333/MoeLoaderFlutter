@@ -104,7 +104,7 @@ class _HomeState extends State<HomePage> {
                 _buildCopyAction(context),
                 _buildDownloadAction(context),
                 _buildOptionsAction(context),
-                // _buildSearchAction(context, snapshot),
+                _buildSearchAction(context, snapshot),
                 // _buildSettingsAction(context),
               ]),
           body: _buildListBody(context, snapshot),

@@ -133,7 +133,8 @@ class HomeViewModel {
   }
 
   List<Rule> webPageList() {
-    return repository.webPageList();
+    var webPageList = repository.webPageList();
+    return webPageList;
   }
 
   Future<List<OptionEntity>> optionList(

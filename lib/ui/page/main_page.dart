@@ -24,6 +24,12 @@ class _MainState extends State<MainPage> {
         iconTheme: Theme.of(context).iconTheme,
         //导航栏
         title: _buildAppBatTitle(context),
+        leading: IconButton(
+          icon: Image.asset(
+            'assets/images/icon_round.png',
+          ),
+          onPressed: null,
+        ),
         actions: <Widget>[
           _buildSettingsAction(context),
         ],
@@ -54,9 +60,11 @@ class _MainState extends State<MainPage> {
   }
 
   _buildAppBatTitle(BuildContext context) {
-    return const Text(
-      "站点",
-      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
+    return const Center(
+      child: Text(
+        "站点",
+        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+      ),
     );
   }
 }

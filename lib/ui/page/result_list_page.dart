@@ -102,7 +102,7 @@ class _ResultListState extends State<ResultListPage> {
                 _buildCopyAction(context),
                 _buildDownloadAction(context),
                 _buildOptionsAction(context),
-                _buildSettingsAction(context),
+                // _buildSettingsAction(context),
               ]),
           body: _buildListBody(snapshot),
           floatingActionButton: _buildFloatActionButton(context, snapshot),
