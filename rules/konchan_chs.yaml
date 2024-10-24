@@ -12,7 +12,7 @@ options: &OPTIONS
 custom:
   url:
     homePage:
-      link: "https://gelbooru.wjcodes.com/structure.php?type=konachan&s=index.php?tag=${rating}p=${page}"
+      link: "https://gelbooru.wjcodes.com/structure.php?type=konachan&s=&tag=${rating}p=${page}"
       options:
         *OPTIONS
     searchPage:
