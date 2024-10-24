@@ -6,6 +6,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:logging/logging.dart';
 import 'package:to_json/models.dart';
 import '../init.dart';
+import '../ui/page/search_page.dart';
 
 class MainMasonryGrid extends StatefulWidget {
   const MainMasonryGrid({
@@ -71,6 +72,21 @@ class _MainMasonryGridState extends State<MainMasonryGrid> {
   Widget _buildItem(BuildContext context, Rule rule, int index,
       int crossAxisCount, double width, double height) {
     List<Widget> actions = [];
+    if (rule.canSearch) {
+      actions.add(IconButton(
+          onPressed: () async {
+            await _updateCurWebPage(rule);
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) {
+                return const SearchPage(
+                  keyword: "",
+                );
+              }),
+            );
+          },
+          icon: const Icon(Icons.image_search)));
+    }
     actions.add(IconButton(
         onPressed: () async {
           await _updateCurWebPage(rule);
@@ -90,44 +106,45 @@ class _MainMasonryGridState extends State<MainMasonryGrid> {
         Align(
           alignment: Alignment.center,
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  SizedBox(
-                    height: 35,
-                    width: 65,
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 0, 10, 0),
-                      child: Image.file(
-                        File(rule.faviconPath),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
+              SizedBox(
+                height: 35,
+                width: 65,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+                  child: Image.file(
+                    File(rule.faviconPath),
+                    fit: BoxFit.cover,
                   ),
-                  Text(
-                    rule.fileName,
-                    style: const TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.bold),
-                  )
-                ],
-              ),
-              Padding(padding: const EdgeInsets.fromLTRB(0, 0, 5, 0),
-              child: IconButton(
-                onPressed: () async {
-                  await _updateCurWebPage(rule);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) {
-                      return const HomePage();
-                    }),
-                  );
-                },
-                icon: const Icon(
-                  Icons.arrow_circle_right,
                 ),
-              ),)
+              ),
+              Text(
+                rule.fileName,
+                style:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              )
             ],
+          ),
+        ),
+        Positioned(
+          right: 20,
+          bottom: 10,
+          child: Container(
+            decoration: const BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(20)),
+                color: Colors.white70,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black12,
+                    spreadRadius: 5,
+                    blurRadius: 20,
+                    offset: Offset(0, 3), // 阴影的偏移量
+                  )
+                ]),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: actions,
+            ),
           ),
         ),
       ],

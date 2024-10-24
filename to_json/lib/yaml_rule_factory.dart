@@ -18,9 +18,13 @@ class YamlRuleFactory {
   static final List<Rule> _ruleList = [];
   static final Map<Rule, YamlMap> _ruleMap = {};
   static bool _init = false;
+  static late YamlMap _configYamlDoc;
 
   Future<void> init(Directory rulesDirectory, Directory imagesDirectory) async {
     if (!_init) {
+      String configStr =
+          await File("${rulesDirectory.path}/_config.yaml").readAsString();
+      _configYamlDoc = loadYaml(configStr);
       await addCustomRules(rulesDirectory, imagesDirectory);
       _init = true;
     }
@@ -52,24 +56,18 @@ class YamlRuleFactory {
     return targetWebPage!;
   }
 
-  Future<void> addCustomRules(Directory rulesDirectory, Directory imagesDirectory) async {
+  Future<void> addCustomRules(
+      Directory rulesDirectory, Directory imagesDirectory) async {
     var exist = await rulesDirectory.exists();
     if (exist) {
-      rulesDirectory.listSync().forEach((element) {
-        var basenameWithoutExtension =
-            path.basenameWithoutExtension(element.path);
-        _ruleList.add(Rule("custom", element.path, basenameWithoutExtension, ""));
-      });
-      imagesDirectory.listSync().forEach((element) {
-        var basenameWithoutExtension =
-        path.basenameWithoutExtension(element.path);
-        for (var rule in _ruleList) {
-          if(basenameWithoutExtension == "favicon_${rule.fileName}"){
-            rule.faviconPath = element.path;
-            _log.fine("rule.faviconPath=${rule.faviconPath}");
-            break;
-          }
-        }
+      _configYamlDoc["rules"].forEach((element) {
+        String name = element["name"];
+        String fileName = element["fileName"];
+        String favicon = element["favicon"];
+        bool canSearch = element["canSearch"];
+        _log.fine("addCustomRules:name=$name;favicon=$favicon;canSearch=$canSearch");
+        _ruleList.add(Rule("custom", "${rulesDirectory.path}/$fileName", name,
+            "${imagesDirectory.path}/$favicon", canSearch));
       });
     }
   }
