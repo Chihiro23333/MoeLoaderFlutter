@@ -36,7 +36,7 @@ class Global{
         await WebviewController.initializeEnvironment(userDataPath: browserCacheDirectory.path);
       }catch(e){}
     }
-    Logger.root.level = Level.FINE; // defaults to Level.INFO
+    Logger.root.level = Level.INFO; // defaults to Level.INFO
     Logger.root.onRecord.listen((record) {
       print('${record.loggerName}:${record.level.name}: ${record.time}: ${record.message}');
     });

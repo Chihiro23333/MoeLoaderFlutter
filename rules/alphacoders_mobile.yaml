@@ -31,7 +31,7 @@ homePage:
     - exception: { code: "403",  action: "challenge" }
   onParseResult:
     list:
-      getElements: { cssSelector: "div[class=container-masonry] div[class=thumb-container-masonry]" }
+      getElements: { cssSelector: "#thumbs-gallery div[class=item]" }
       foreach:
         coverUrl:
           get: { cssSelector: "img[class=thumb]", attr: "src" }
@@ -48,4 +48,4 @@ detailPage:
   onParseResult:
     object:
       url:
-        get: { cssSelector: "img[class=img-full-size]", attr: "src" }
+        get: { cssSelector: "#main-content", attr: "src" }

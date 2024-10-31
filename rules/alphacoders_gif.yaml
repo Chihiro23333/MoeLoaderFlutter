@@ -2,40 +2,17 @@ meta:
   name: "alphacoders.gif"
 
 options: &OPTIONS
-  - id: "category"
-    desc: "类型"
+  - id: "order"
+    desc: "排序"
     items:
-      - { desc: "Anime", param: "3" }
-      - { desc: "Animal", param: "2" }
-      - { desc: "Abstract", param: "1" }
-      - { desc: "Artistic", param: "4" }
-      - { desc: "Celebrity", param: "7" }
-      - { desc: "Comic", param: "8" }
-      - { desc: "Dark", param: "9" }
-      - { desc: "Fantasy", param: "11" }
-      - { desc: "Food", param: "12" }
-      - { desc: "Funny", param: "13" }
-      - { desc: "Holiday", param: "15" }
-      - { desc: "Man Made", param: "16" }
-      - { desc: "Men", param: "17" }
-      - { desc: "Military ", param: "18" }
-      - { desc: "Movie", param: "20" }
-      - { desc: "Music", param: "22" }
-      - { desc: "Nature", param: "10" }
-      - { desc: "Photography", param: "24" }
-      - { desc: "Religious", param: "26" }
-      - { desc: "Sci Fi", param: "27" }
-      - { desc: "Sports", param: "28" }
-      - { desc: "Technology", param: "30" }
-      - { desc: "TV Show", param: "29" }
-      - { desc: "Vehicles", param: "31" }
-      - { desc: "Video Game", param: "32" }
-      - { desc: "Woman", param: "33" }
+      - { desc: "Newest", param: "newest" }
+      - { desc: "The Best", param: "the-best" }
+      - { desc: "Popular", param: "popular" }
 
 custom:
   url:
     homePage:
-      link: "https://gifs.alphacoders.com/by_category/${category}?page=${page}"
+      link: "https://alphacoders.com/${order}-gifs?page=${page}"
       options:
         *OPTIONS
     searchPage:
@@ -60,10 +37,10 @@ homePage:
     - exception: { code: "403",  action: "challenge" }
   onParseResult:
     list:
-      getElements: { cssSelector: "div[class=content-wrapper] div[class=thumb-container]" }
+      getElements: { cssSelector: "#css-grid-test-container div[class=item] > div[id]" }
       foreach:
         coverUrl:
-          get: { cssSelector: "img[class=gif-thumb]", attr: "src" }
+          get: { cssSelector: "meta[itemprop=contentUrl]", attr: "content" }
         href:
           get: { cssSelector: "a", attr: "href", index: 0}
           format:
@@ -117,4 +94,4 @@ detailPage:
   onParseResult:
     object:
       url:
-        get: { cssSelector: "img[class=img-responsive]", attr: "src" }
+        get: { cssSelector: ".fit-to-container", attr: "src" }

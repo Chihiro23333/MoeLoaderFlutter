@@ -4,12 +4,7 @@ rules:
     favicon: favicon_alphacoders.png
     canSearch: true
     
-  - name: alphacoders_art
-    fileName: alphacoders_art.yaml
-    favicon: favicon_alphacoders_art.png
-    canSearch: false
-    
-  - name: alphacoders_avatars.yaml 
+  - name: alphacoders_avatars
     fileName: alphacoders_avatars.yaml 
     favicon: favicon_alphacoders_avatars.png 
     canSearch: false
@@ -24,12 +19,7 @@ rules:
     favicon: favicon_alphacoders_mobile.png 
     canSearch: false
     
-  - name: alphacoders_pics 
-    fileName: alphacoders_pics.yaml 
-    favicon: favicon_alphacoders_pics.png 
-    canSearch: false
-
-  - name: anime_pictures 
+  - name: anime_pictures
     fileName: anime_pictures.yaml 
     favicon: favicon_anime_pictures.png 
     canSearch: true
