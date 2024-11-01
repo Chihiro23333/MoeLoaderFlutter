@@ -32,7 +32,7 @@ custom:
     Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7"
     Accept-Language: "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7"
 
-homePage:
+homePage: &HOMEPAGE
   onValidateResult:
     - exception: { code: "403",  action: "challenge" }
   onParseResult:
@@ -59,34 +59,7 @@ homePage:
           get: { cssSelector: "img[class=gif-thumb]",  attr: "height" }
 
 searchPage:
-  onValidateResult:
-    - exception: { code: "403",  action: "challenge" }
-  onParseResult:
-    list:
-      getElements: { cssSelector: "div[id^=content_]" }
-      filter:
-        - contains: { cssSelector: "a img[class=thumb]" }
-      foreach:
-        coverUrl:
-          get: { cssSelector: "img[class=thumb]", attr: "src" }
-        href:
-          get: { cssSelector: "meta[itemprop='url']", attr: "content" }
-        tagStr:
-          get: { cssSelector: ".thumb-tags a", text: "" }
-        tagSplit:
-          get: { default: "," }
-        id:
-          get: { cssSelector: "div[class=thumb-container-masonry]", attr: "id" }
-          format:
-            - replaceAll: { from: "content_", to: "" }
-        width:
-          get: { cssSelector: "div[class=thumb-info-masonry]", index: 0,  text: "" }
-          filter:
-            - regex: { regex: '(\d+)x(\d+)', index: 1 }
-        height:
-          get: { cssSelector: "div[class=thumb-info-masonry]",  index: 0, text: "" }
-          filter:
-            - regex: { regex: '(\d+)x(\d+)', index: 2 }
+  *HOMEPAGE
 
 detailPage:
   onValidateResult:

@@ -57,6 +57,8 @@ homePage: &HOMEPAGE
   onParseResult:
     list:
       getElements: { cssSelector: "div[id^=content_]" }
+      filter:
+        - contains: { cssSelector: "picture" }
       foreach:
         coverUrl:
           get: { cssSelector: "img[class=thumb]", attr: "src" }
