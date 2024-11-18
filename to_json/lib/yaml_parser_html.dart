@@ -173,9 +173,9 @@ class YamlHtmlParser extends Parser {
     if (filterRule != null) {
       for (YamlMap? yamlMap in filterRule) {
         if (yamlMap != null) {
-          YamlMap? containsRule = yamlMap["contains"];
-          if (containsRule != null) {
-            String? cssSelectorRule = containsRule["cssSelector"];
+          YamlMap? hasRule = yamlMap["has"];
+          if (hasRule != null) {
+            String? cssSelectorRule = hasRule["cssSelector"];
             if (cssSelectorRule != null) {
               list.removeWhere((element) {
                 Element? findElement = element.querySelector(cssSelectorRule);

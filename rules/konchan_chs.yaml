@@ -34,7 +34,7 @@ homePage: &HOMEPAGE
           get: { cssSelector: "a img", attr: "data-original" }
         href:
           get: { cssSelector: "a", attr: "onclick" }
-          filter:
+          find:
             - regex: { regex: "(https?)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]", index: 0 }
         tagStr:
           get: { cssSelector: "a img", attr: "alt" }
@@ -42,11 +42,11 @@ homePage: &HOMEPAGE
           get: { default: " " }
         width:
           get: { cssSelector: "span[class^=am-badge]", text: "" }
-          filter:
+          find:
             - regex: { regex: '^\d+', index: 0 }
         height:
           get: { cssSelector: "span[class^=am-badge]", text: "" }
-          filter:
+          find:
             - regex: { regex: '^\d+x(\d+)', index: 1 }
 
 searchPage:

@@ -57,8 +57,8 @@ homePage: &HOMEPAGE
   onParseResult:
     list:
       getElements: { cssSelector: "div[id^=content_]" }
-      filter:
-        - contains: { cssSelector: "picture" }
+      find:
+        - has: { cssSelector: "picture" }
       foreach:
         coverUrl:
           get: { cssSelector: "img[class=thumb]", attr: "src" }
@@ -74,11 +74,11 @@ homePage: &HOMEPAGE
             - replaceAll: { from: "content_", to: "" }
         width:
           get: { cssSelector: "div[class=thumb-info-masonry]", index: 0,  text: "" }
-          filter:
+          find:
             - regex: { regex: '(\d+)x(\d+)', index: 1 }
         height:
           get: { cssSelector: "div[class=thumb-info-masonry]",  index: 0, text: "" }
-          filter:
+          find:
             - regex: { regex: '(\d+)x(\d+)', index: 2 }
 
 searchPage:

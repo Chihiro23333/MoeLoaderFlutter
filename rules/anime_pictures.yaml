@@ -69,11 +69,11 @@ homePage: &HOMEPAGE
             - replaceAll: { from: "./", to: "/" }
         width:
           get: { cssSelector: "a[class]", text: "" }
-          filter:
+          find:
             - regex: { regex: '^\d+', index: 0 }
         height:
           get: { cssSelector: "a[class]", text: "" }
-          filter:
+          find:
             - regex: { regex: '^\d+x(\d+)', index: 1 }
         dimensions:
           get: { cssSelector: "a[rel]", attr: "title" }

@@ -45,7 +45,7 @@ homePage: &HOMEPAGE
           get: { cssSelector: "a", attr: "href" }
         tagStr:
           get: { cssSelector: "img", attr: "alt" }
-          filter:
+          find:
             - regex: { regex: 'Rule 34 \| ([^|]+)', index: 1 }
         tagSplit:
           get: { default: "," }

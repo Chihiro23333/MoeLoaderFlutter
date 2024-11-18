@@ -27,10 +27,10 @@ abstract class Parser {
 
   @protected
   String handleResult(String result, YamlMap yamlMap) {
-    //第二步，筛选值
-    var filterRule = yamlMap["filter"];
-    if (filterRule != null) {
-      result = _find(result, filterRule);
+    //第二步，查找值
+    var findRule = yamlMap["find"];
+    if (findRule != null) {
+      result = _find(result, findRule);
       _log.fine("find=$result");
     }
     //第三步，规整值

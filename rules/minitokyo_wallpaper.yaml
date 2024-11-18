@@ -31,11 +31,11 @@ homePage: &HOMEPAGE
             - replaceAll: { from: "http://gallery.minitokyo.net/view/", to: "" }
         width:
           get: { cssSelector: "p", text: "" }
-          filter:
+          find:
             - regex: { regex: '\d+(?=x)', index: 0 }
         height:
           get: { cssSelector: "p", text: "" }
-          filter:
+          find:
             - regex: { regex: 'x(\d+)', index: 1 }
 
 searchPage:
@@ -60,9 +60,9 @@ detailPage:
           foreach:
             desc:
               get: { cssSelector: "", text: "" }
-              filter:
+              find:
                 - regex: { regex: "(?<=Browse).*?(?=Gallery:)", index: 0 }
             tag:
               get: { cssSelector: "a", attr: "href" }
-              filter:
+              find:
                 - regex: { regex: "(?<=tid=).*?(?=&)", index: 0 }

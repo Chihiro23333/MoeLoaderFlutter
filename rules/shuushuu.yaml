@@ -32,11 +32,11 @@ homePage: &HOMEPAGE
             - concat: { start: "https://e-shuushuu.net", end: "" }
         width:
           get: { cssSelector: ".meta dl", text: "" }
-          filter:
+          find:
             - regex: { regex: 'Dimensions:\s*(\d+)x(\d+)\s*\(', index: 1 }
         height:
           get: { cssSelector: ".meta dl", text: "" }
-          filter:
+          find:
             - regex: { regex: 'Dimensions:\s*(\d+)x(\d+)\s*\(', index: 2 }
         tagList:
           list:
@@ -52,19 +52,19 @@ homePage: &HOMEPAGE
           get: { cssSelector: "", attr: "id" }
         author:
           get: { cssSelector: ".meta dl", text: "" }
-          filter:
+          find:
             - regex: { regex: 'Artist:\s*"(.*?)"', index: 1 }
         characters:
           get: { cssSelector: ".meta dl", text: "" }
-          filter:
+          find:
             - regex: { regex: "(?<=Characters:).*?(?=Artist:)", index: 0 }
         fileSize:
           get: { cssSelector: ".meta dl", text: "" }
-          filter:
+          find:
             - regex: { regex: "(?<=File size:).*?(?=Dimensions:)", index: 0 }
         dimensions:
           get: { cssSelector: ".meta dl", text: "" }
-          filter:
+          find:
             - regex: { regex: "(?<=Dimensions:).*?(?=Tags:)", index: 0 }
 
 searchPage:

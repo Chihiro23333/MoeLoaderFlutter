@@ -45,17 +45,17 @@ homePage: &HOMEPAGE
             - concat: { start: "https://konachan.com", end: "" }
         tagStr:
           get: { cssSelector: "a[class=thumb] img", attr: "alt" }
-          filter:
+          find:
             - regex: { regex: "(?<=Tags:).*?(?=User:)", index: 0 }
         tagSplit:
           get: { default: " " }
         width:
           get: { cssSelector: "span[class=directlink-info]", text: "" }
-          filter:
+          find:
             - regex: { regex: '^\d+', index: 0 }
         height:
           get: { cssSelector: "span[class=directlink-info]", text: "" }
-          filter:
+          find:
             - regex: { regex: '^\d+ x (\d+)', index: 1 }
         id:
           get: { cssSelector: "", attr: "id" }
@@ -84,15 +84,15 @@ detailPage:
         get: { cssSelector: "a[class=thumb] img", attr: "height" }
       id:
         get: { cssSelector: "#stats", text: "" }
-        filter:
+        find:
           - regex: { regex: "(?<=Id:).*?(?=Posted:)", index: 0 }
       author:
         get: { cssSelector: "#stats", text: "" }
-        filter:
+        find:
           - regex: { regex: "(?<=by ).*?(?=Size:)", index: 0 }
       dimensions:
         get: { cssSelector: "#stats", text: "" }
-        filter:
+        find:
           - regex: { regex: "(?<=Size: ).*?(?= )", index: 0 }
       source:
         get: { cssSelector: "[rel^='canonical']", attr: "href" }
