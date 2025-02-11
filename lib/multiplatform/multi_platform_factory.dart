@@ -22,7 +22,7 @@ class MultiPlatformFactory {
     if(Platform.isAndroid){
       return PlatformAndroid();
     }
-    return PlatformNothing();
+    throw Exception("暂不支持的平台");
   }
 
 }

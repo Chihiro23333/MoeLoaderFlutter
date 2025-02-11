@@ -1,3 +1,5 @@
+import 'package:moeloaderflutter/init.dart';
+import 'package:moeloaderflutter/multiplatform/bean.dart';
 import 'package:moeloaderflutter/ui/page/settings_page.dart';
 import 'package:moeloaderflutter/widget/main_masonry_grid.dart';
 import 'package:flutter/material.dart';
@@ -41,7 +43,8 @@ class _MainState extends State<MainPage> {
 
   Widget _buildBody(BuildContext context) {
     List<jsonModels.Rule> list = _homeViewModel.webPageList();
-    return MainMasonryGrid(list: list, columnCount: 3, aspectRatio: 5);
+    Grid mainGrid = Global.multiPlatform.mainGrid();
+    return MainMasonryGrid(list: list, columnCount: mainGrid.columnCount, aspectRatio: mainGrid.aspectRatio);
   }
 
   Widget _buildSettingsAction(BuildContext context) {
