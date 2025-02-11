@@ -1,6 +1,6 @@
 import 'dart:io';
-import 'package:MoeLoaderFlutter/ui/page/home_page.dart';
-import 'package:MoeLoaderFlutter/util/common_function.dart';
+import 'package:moeloaderflutter/ui/page/home_page.dart';
+import 'package:moeloaderflutter/util/common_function.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:logging/logging.dart';

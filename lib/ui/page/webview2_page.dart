@@ -1,7 +1,7 @@
-import 'package:MoeLoaderFlutter/util/utils.dart';
+import 'package:moeloaderflutter/util/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:MoeLoaderFlutter/net/request_manager.dart';
+import 'package:moeloaderflutter/net/request_manager.dart';
 import 'package:logging/logging.dart';
 import 'dart:async';
 import 'package:webview_windows/webview_windows.dart';

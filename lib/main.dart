@@ -1,8 +1,9 @@
 import 'dart:io';
-import 'package:MoeLoaderFlutter/ui/page/main_page.dart';
+import 'package:moeloaderflutter/ui/page/main_page.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
-import 'package:MoeLoaderFlutter/init.dart';
+import 'package:moeloaderflutter/init.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 void main(List<String> args) {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,17 +15,27 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    return MaterialApp(
-      title: 'MoeLoaderFlutter',
-      builder: BotToastInit(),
-        navigatorObservers: [BotToastNavigatorObserver()],
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Global.defaultColor),
-        useMaterial3: true,
-        fontFamily: Platform.isWindows ? "微软雅黑" : null,
-      ),
-      home: const MainPage()
+    //填入设计稿中设备的屏幕尺寸,单位dp
+    return ScreenUtilInit(
+      designSize: const Size(1280, 720),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (context , child) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'MoeLoaderFlutter',
+          builder: BotToastInit(),
+          navigatorObservers: [BotToastNavigatorObserver()],
+          // You can use the library anywhere in the app even in theme
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(seedColor: Global.defaultColor),
+            useMaterial3: true,
+            fontFamily: Platform.isWindows ? "微软雅黑" : null,
+          ),
+          home: child,
+        );
+      },
+      child: const MainPage(),
     );
   }
 }

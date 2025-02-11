@@ -1,5 +1,5 @@
-import 'package:MoeLoaderFlutter/model/tag_entity.dart';
-import 'package:MoeLoaderFlutter/util/common_function.dart';
+import 'package:moeloaderflutter/model/tag_entity.dart';
+import 'package:moeloaderflutter/util/common_function.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

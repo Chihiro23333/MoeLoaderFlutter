@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:MoeLoaderFlutter/util/sharedpreferences_utils.dart';
+import 'package:moeloaderflutter/util/sharedpreferences_utils.dart';
 import 'package:logging/logging.dart';
 
 class SettingViewModel{

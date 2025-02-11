@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:dio/dio.dart';
-import 'package:MoeLoaderFlutter/net/dio_http.dart';
+import 'package:moeloaderflutter/net/dio_http.dart';
 import 'package:to_json/validator.dart';
 
 class RequestManager{

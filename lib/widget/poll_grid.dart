@@ -1,4 +1,4 @@
-import 'package:MoeLoaderFlutter/model/home_page_item_entity.dart';
+import 'package:moeloaderflutter/model/home_page_item_entity.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

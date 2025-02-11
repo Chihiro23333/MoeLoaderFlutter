@@ -1,9 +1,9 @@
-import 'package:MoeLoaderFlutter/generated/json/base/json_field.dart';
-import 'package:MoeLoaderFlutter/generated/json/detail_page_entity.g.dart';
+import 'package:moeloaderflutter/generated/json/base/json_field.dart';
+import 'package:moeloaderflutter/generated/json/detail_page_entity.g.dart';
 import 'dart:convert';
 
-import 'package:MoeLoaderFlutter/model/tag_entity.dart';
-export 'package:MoeLoaderFlutter/generated/json/detail_page_entity.g.dart';
+import 'package:moeloaderflutter/model/tag_entity.dart';
+export 'package:moeloaderflutter/generated/json/detail_page_entity.g.dart';
 
 @JsonSerializable()
 class DetailPageEntity {

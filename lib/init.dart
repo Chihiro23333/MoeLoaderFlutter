@@ -1,9 +1,10 @@
 import 'dart:io';
 import 'dart:ui';
-import 'package:MoeLoaderFlutter/custom_rule/custom_rule_parser.dart';
-import 'package:MoeLoaderFlutter/util/const.dart';
-import 'package:MoeLoaderFlutter/util/sharedpreferences_utils.dart';
-import 'package:MoeLoaderFlutter/net/request_manager.dart';
+import 'package:moeloaderflutter/custom_rule/custom_rule_parser.dart';
+import 'package:moeloaderflutter/multiplatform/multi_platform.dart';
+import 'package:moeloaderflutter/util/const.dart';
+import 'package:moeloaderflutter/util/sharedpreferences_utils.dart';
+import 'package:moeloaderflutter/net/request_manager.dart';
 import 'package:flutter_socks_proxy/socks_proxy.dart';
 import 'package:hive/hive.dart';
 import 'package:logging/logging.dart';
@@ -27,8 +28,12 @@ class Global{
   static late bool _supportWebView2 = false;
   bool _proxyInited = false;
   static late CustomRuleParser _customRuleParser;
+  static late MultiPlatform _multiPlatform;
 
   Future<void> init() async{
+    if(Platform.isWindows){
+      _multiPlatform = PlatformWindows();
+    }
     String? webViewVersion = await WebviewController.getWebViewVersion();
     _supportWebView2 = webViewVersion != null;
     if(_supportWebView2){
@@ -93,6 +98,7 @@ class Global{
   static get supportWebView2 => _supportWebView2;
   static get defaultColor => const Color.fromARGB(255, 46, 176, 242);
   static get defaultColor30 => const Color.fromARGB(30, 46, 176, 242);
+  static MultiPlatform get multiPlatform => _multiPlatform;
 
 }
 

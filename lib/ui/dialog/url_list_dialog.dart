@@ -1,9 +1,9 @@
-import 'package:MoeLoaderFlutter/model/detail_page_entity.dart';
-import 'package:MoeLoaderFlutter/model/home_page_item_entity.dart';
-import 'package:MoeLoaderFlutter/ui/viewmodel/view_model_detail.dart';
-import 'package:MoeLoaderFlutter/ui/page/webview2_page.dart';
-import 'package:MoeLoaderFlutter/util/common_function.dart';
-import 'package:MoeLoaderFlutter/util/utils.dart';
+import 'package:moeloaderflutter/model/detail_page_entity.dart';
+import 'package:moeloaderflutter/model/home_page_item_entity.dart';
+import 'package:moeloaderflutter/ui/viewmodel/view_model_detail.dart';
+import 'package:moeloaderflutter/ui/page/webview2_page.dart';
+import 'package:moeloaderflutter/util/common_function.dart';
+import 'package:moeloaderflutter/util/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:to_json/validator.dart';

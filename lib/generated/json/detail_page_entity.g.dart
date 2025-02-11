@@ -1,6 +1,6 @@
-import 'package:MoeLoaderFlutter/generated/json/base/json_convert_content.dart';
-import 'package:MoeLoaderFlutter/model/detail_page_entity.dart';
-import 'package:MoeLoaderFlutter/model/tag_entity.dart';
+import 'package:moeloaderflutter/generated/json/base/json_convert_content.dart';
+import 'package:moeloaderflutter/model/detail_page_entity.dart';
+import 'package:moeloaderflutter/model/tag_entity.dart';
 
 
 DetailPageEntity $DetailPageEntityFromJson(Map<String, dynamic> json) {

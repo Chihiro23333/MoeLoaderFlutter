@@ -1,4 +1,4 @@
-import 'package:MoeLoaderFlutter/net/request_manager.dart';
+import 'package:moeloaderflutter/net/request_manager.dart';
 import 'package:logging/logging.dart';
 import 'package:to_json/models.dart';
 import 'package:to_json/validator.dart';

@@ -1,5 +1,5 @@
-import 'package:MoeLoaderFlutter/model/tag_entity.dart';
-import 'package:MoeLoaderFlutter/net/download.dart';
+import 'package:moeloaderflutter/model/tag_entity.dart';
+import 'package:moeloaderflutter/net/download.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';

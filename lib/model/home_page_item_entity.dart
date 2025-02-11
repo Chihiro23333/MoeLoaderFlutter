@@ -1,10 +1,10 @@
-import 'package:MoeLoaderFlutter/generated/json/base/json_field.dart';
-import 'package:MoeLoaderFlutter/generated/json/home_page_item_entity.g.dart';
-import 'package:MoeLoaderFlutter/model/tag_entity.dart';
+import 'package:moeloaderflutter/generated/json/base/json_field.dart';
+import 'package:moeloaderflutter/generated/json/home_page_item_entity.g.dart';
+import 'package:moeloaderflutter/model/tag_entity.dart';
 import 'dart:convert';
 
-import 'package:MoeLoaderFlutter/net/download.dart';
-export 'package:MoeLoaderFlutter/generated/json/home_page_item_entity.g.dart';
+import 'package:moeloaderflutter/net/download.dart';
+export 'package:moeloaderflutter/generated/json/home_page_item_entity.g.dart';
 
 @JsonSerializable()
 class HomePageItemEntity {

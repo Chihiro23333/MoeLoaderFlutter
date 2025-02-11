@@ -1,4 +1,4 @@
-import 'package:MoeLoaderFlutter/util/utils.dart';
+import 'package:moeloaderflutter/util/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';

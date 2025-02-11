@@ -1,5 +1,5 @@
-import 'package:MoeLoaderFlutter/generated/json/base/json_convert_content.dart';
-import 'package:MoeLoaderFlutter/model/option_entity.dart';
+import 'package:moeloaderflutter/generated/json/base/json_convert_content.dart';
+import 'package:moeloaderflutter/model/option_entity.dart';
 
 OptionEntity $OptionEntityFromJson(Map<String, dynamic> json) {
   final OptionEntity optionEntity = OptionEntity();

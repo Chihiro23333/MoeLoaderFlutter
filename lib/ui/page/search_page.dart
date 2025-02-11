@@ -1,6 +1,6 @@
 import 'dart:io';
-import 'package:MoeLoaderFlutter/init.dart';
-import 'package:MoeLoaderFlutter/ui/page/result_list_page.dart';
+import 'package:moeloaderflutter/init.dart';
+import 'package:moeloaderflutter/ui/page/result_list_page.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:to_json/models.dart';

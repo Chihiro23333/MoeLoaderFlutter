@@ -1,5 +1,5 @@
-import 'package:MoeLoaderFlutter/ui/page/settings_page.dart';
-import 'package:MoeLoaderFlutter/widget/main_masonry_grid.dart';
+import 'package:moeloaderflutter/ui/page/settings_page.dart';
+import 'package:moeloaderflutter/widget/main_masonry_grid.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:logging/logging.dart';

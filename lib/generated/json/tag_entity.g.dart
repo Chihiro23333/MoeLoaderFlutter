@@ -1,5 +1,5 @@
-import 'package:MoeLoaderFlutter/generated/json/base/json_convert_content.dart';
-import 'package:MoeLoaderFlutter/model/tag_entity.dart';
+import 'package:moeloaderflutter/generated/json/base/json_convert_content.dart';
+import 'package:moeloaderflutter/model/tag_entity.dart';
 
 TagEntity $TagEntityFromJson(Map<String, dynamic> json) {
   final TagEntity tagEntity = TagEntity();

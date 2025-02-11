@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:MoeLoaderFlutter/custom_rule/custom_rule_parser.dart';
-import 'package:MoeLoaderFlutter/generated/json/base/json_convert_content.dart';
-import 'package:MoeLoaderFlutter/init.dart';
-import 'package:MoeLoaderFlutter/model/tag_entity.dart';
-import 'package:MoeLoaderFlutter/net/download.dart';
-import 'package:MoeLoaderFlutter/repo/yaml_reposotory.dart';
+import 'package:moeloaderflutter/custom_rule/custom_rule_parser.dart';
+import 'package:moeloaderflutter/generated/json/base/json_convert_content.dart';
+import 'package:moeloaderflutter/init.dart';
+import 'package:moeloaderflutter/model/tag_entity.dart';
+import 'package:moeloaderflutter/net/download.dart';
+import 'package:moeloaderflutter/repo/yaml_reposotory.dart';
 import 'package:logging/logging.dart';
 import 'package:to_json/models.dart';
 import 'package:to_json/parser_factory.dart';
@@ -13,8 +13,8 @@ import 'package:to_json/validator.dart';
 import 'package:to_json/yaml_parser_base.dart';
 import 'package:yaml/yaml.dart';
 import 'package:to_json/yaml_rule_factory.dart';
-import 'package:MoeLoaderFlutter/model/home_page_item_entity.dart';
-import 'package:MoeLoaderFlutter/model/option_entity.dart';
+import 'package:moeloaderflutter/model/home_page_item_entity.dart';
+import 'package:moeloaderflutter/model/option_entity.dart';
 
 class HomeViewModel {
   final _log = Logger('HomeViewModel');

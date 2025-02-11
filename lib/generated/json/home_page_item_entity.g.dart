@@ -1,8 +1,8 @@
-import 'package:MoeLoaderFlutter/generated/json/base/json_convert_content.dart';
-import 'package:MoeLoaderFlutter/model/home_page_item_entity.dart';
-import 'package:MoeLoaderFlutter/model/tag_entity.dart';
+import 'package:moeloaderflutter/generated/json/base/json_convert_content.dart';
+import 'package:moeloaderflutter/model/home_page_item_entity.dart';
+import 'package:moeloaderflutter/model/tag_entity.dart';
 
-import 'package:MoeLoaderFlutter/net/download.dart';
+import 'package:moeloaderflutter/net/download.dart';
 
 
 HomePageItemEntity $HomePageItemEntityFromJson(Map<String, dynamic> json) {

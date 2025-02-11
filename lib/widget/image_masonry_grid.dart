@@ -1,10 +1,10 @@
-import 'package:MoeLoaderFlutter/model/home_page_item_entity.dart';
-import 'package:MoeLoaderFlutter/ui/dialog/info_dialog.dart';
-import 'package:MoeLoaderFlutter/ui/dialog/url_list_dialog.dart';
-import 'package:MoeLoaderFlutter/util/common_function.dart';
-import 'package:MoeLoaderFlutter/util/const.dart';
-import 'package:MoeLoaderFlutter/util/sharedpreferences_utils.dart';
-import 'package:MoeLoaderFlutter/util/utils.dart';
+import 'package:moeloaderflutter/model/home_page_item_entity.dart';
+import 'package:moeloaderflutter/ui/dialog/info_dialog.dart';
+import 'package:moeloaderflutter/ui/dialog/url_list_dialog.dart';
+import 'package:moeloaderflutter/util/common_function.dart';
+import 'package:moeloaderflutter/util/const.dart';
+import 'package:moeloaderflutter/util/sharedpreferences_utils.dart';
+import 'package:moeloaderflutter/util/utils.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
