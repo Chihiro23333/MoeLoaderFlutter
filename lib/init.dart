@@ -11,11 +11,11 @@ import 'package:logging/logging.dart';
 import 'package:to_json/models.dart';
 import 'package:to_json/parser_factory.dart';
 import 'package:to_json/yaml_parser_base.dart';
-import 'package:webview_windows/webview_windows.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:yaml/yaml.dart';
 import 'package:path/path.dart' as path;
 import 'package:to_json/yaml_rule_factory.dart';
+import 'package:moeloaderflutter/multiplatform/multi_platform_factory.dart';
 
 class Global{
   static Global? _cache;
@@ -25,22 +25,18 @@ class Global{
   }
 
   static late WebPage _curWebPage;
-  static late bool _supportWebView2 = false;
   bool _proxyInited = false;
   static late CustomRuleParser _customRuleParser;
   static late MultiPlatform _multiPlatform;
 
+  static late Directory _hiveDirectory;
+  static late Directory _rulesDirectory;
+  static late Directory _imagesDirectory;
+
   Future<void> init() async{
-    if(Platform.isWindows){
-      _multiPlatform = PlatformWindows();
-    }
-    String? webViewVersion = await WebviewController.getWebViewVersion();
-    _supportWebView2 = webViewVersion != null;
-    if(_supportWebView2){
-      try{
-        await WebviewController.initializeEnvironment(userDataPath: browserCacheDirectory.path);
-      }catch(e){}
-    }
+    initPlatform();
+    await initPath();
+    _multiPlatform.webViewInit(browserCacheDirectory.path);
     Logger.root.level = Level.INFO; // defaults to Level.INFO
     Logger.root.onRecord.listen((record) {
       print('${record.loggerName}:${record.level.name}: ${record.time}: ${record.message}');
@@ -50,7 +46,16 @@ class Global{
     await updateProxy();
     await YamlRuleFactory().init(rulesDirectory, imagesDirectory);
     await updateCurWebPage(YamlRuleFactory().webPageList()[0]);
-    await windowManager.ensureInitialized();
+  }
+
+  void initPlatform() {
+    _multiPlatform = MultiPlatformFactory().create();
+  }
+
+  Future<void> initPath() async{
+    _hiveDirectory = await _multiPlatform.hiveDirectory();
+    _rulesDirectory = await _multiPlatform.rulesDirectory();
+    _imagesDirectory = await _multiPlatform.imagesDirectory();
   }
 
   Future<void> updateCurWebPage(Rule rule) async{
@@ -82,20 +87,19 @@ class Global{
     }
   }
 
-  void _initHive() {
-    Hive.init(Global.hiveDirectory.path);
+  void _initHive() async {
+    Hive.init(hiveDirectory.path);
   }
 
   static CustomRuleParser get customRuleParser => _customRuleParser;
   static get curWebPage => _curWebPage;
   static get curWebPageName => _curWebPage.rule.fileName;
-  static get rulesDirectory => Directory(path.join(path.current ,"rules"));
+  static get rulesDirectory => _rulesDirectory;
   // static get rulesDirectory => Directory(path.join(path.current ,"testRules"));
-  static get imagesDirectory => Directory(path.join(path.current ,"images"));
+  static get imagesDirectory => _imagesDirectory;
   static get browserCacheDirectory => Directory(path.join(path.current ,"browserCache"));
   static get downloadsDirectory => Directory(path.join(path.current ,"downloads"));
-  static get hiveDirectory => Directory(path.join(path.current ,"hive"));
-  static get supportWebView2 => _supportWebView2;
+  static get hiveDirectory => _hiveDirectory;
   static get defaultColor => const Color.fromARGB(255, 46, 176, 242);
   static get defaultColor30 => const Color.fromARGB(30, 46, 176, 242);
   static MultiPlatform get multiPlatform => _multiPlatform;
