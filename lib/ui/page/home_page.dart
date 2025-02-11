@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:moeloaderflutter/model/option_entity.dart';
 import 'package:moeloaderflutter/model/tag_entity.dart';
+import 'package:moeloaderflutter/multiplatform/bean.dart';
 import 'package:moeloaderflutter/ui/page/download_page.dart';
 import 'package:moeloaderflutter/ui/page/pool_list_page.dart';
 import 'package:moeloaderflutter/ui/page/result_list_page.dart';
@@ -141,9 +142,9 @@ class _HomeState extends State<HomePage> {
         retryOnPressed: retryOnPressed,
         actionOnPressed: actionOnPressed,
         builder: (homeState) {
-          int columnCount = Global.customRuleParser.columnCount(Const.homePage);
-          double aspectRatio =
-              Global.customRuleParser.aspectRatio(Const.homePage);
+          Grid homeGrid = Global.multiPlatform.homeGrid();
+          int columnCount = homeGrid.columnCount;
+          double aspectRatio = homeGrid.aspectRatio;
           if (homeState.pageType.isNotEmpty) {
             return PoolGrid(
               columnCount: columnCount,

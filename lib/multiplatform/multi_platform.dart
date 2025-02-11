@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:moeloaderflutter/init.dart';
+import 'package:moeloaderflutter/util/const.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:webview_windows/webview_windows.dart';
 import 'package:path/path.dart' as path;
@@ -15,6 +17,8 @@ class MultiPlatform {
   Future<Directory> imagesDirectory() async{return Future.value(Directory(""));}
 
   Grid mainGrid(){return Grid(1,5);}
+
+  Grid homeGrid(){return Grid(2,1.65);}
 }
 
 class PlatformWindows implements MultiPlatform{
@@ -51,6 +55,14 @@ class PlatformWindows implements MultiPlatform{
     return Grid(3,5);
   }
 
+  @override
+  Grid homeGrid() {
+    int columnCount = Global.customRuleParser.columnCount(Const.homePage);
+    double aspectRatio =
+    Global.customRuleParser.aspectRatio(Const.homePage);
+    return Grid(columnCount,aspectRatio);
+  }
+
 }
 
 class PlatformAndroid implements MultiPlatform{
@@ -80,5 +92,12 @@ class PlatformAndroid implements MultiPlatform{
   @override
   Grid mainGrid() {
     return Grid(1,5);
+  }
+
+  @override
+  Grid homeGrid() {
+    double aspectRatio =
+    Global.customRuleParser.aspectRatio(Const.homePage);
+    return Grid(2,aspectRatio);
   }
 }

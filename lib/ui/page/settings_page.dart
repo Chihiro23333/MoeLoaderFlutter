@@ -183,71 +183,10 @@ class _SettingState extends State<SettingPage> {
       _textEditingControl.value = TextEditingValue(
         text: settingState.proxy ?? "",
       );
-      return Row(
+      return Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 350,
-            color: Global.defaultColor30,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-              child: Column(
-                children: [
-                  ListTile(
-                    title: const Text(
-                      "MoeLoaderFlutter",
-                      style: TextStyle(fontSize: 15),
-                    ),
-                    leading: Icon(
-                      Icons.title,
-                      color: Theme.of(context).iconTheme.color,
-                    ),
-                  ),
-                  ListTile(
-                    title: const Text(
-                      "V1.0.4",
-                      style: TextStyle(fontSize: 15),
-                    ),
-                    leading: Icon(
-                      Icons.code,
-                      color: Theme.of(context).iconTheme.color,
-                    ),
-                  ),
-                  ListTile(
-                    title: const Text(
-                      "@2024 by Chihiro23333",
-                      style: TextStyle(fontSize: 15),
-                    ),
-                    leading: Icon(
-                      Icons.timelapse,
-                      color: Theme.of(context).iconTheme.color,
-                    ),
-                  ),
-                  ListTile(
-                    title: const Text(
-                      "https://github.com/Chihiro23333",
-                      style: TextStyle(fontSize: 15),
-                    ),
-                    leading: Icon(
-                      Icons.home,
-                      color: Theme.of(context).iconTheme.color,
-                    ),
-                  ),
-                  ListTile(
-                    title: const Text(
-                      "zhu.20081121@gmail.com",
-                      style: TextStyle(fontSize: 15),
-                    ),
-                    leading: Icon(
-                      Icons.mail,
-                      color: Theme.of(context).iconTheme.color,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
           Expanded(
               child: SingleChildScrollView(
                   child: Column(
@@ -271,6 +210,71 @@ class _SettingState extends State<SettingPage> {
                 height: 10,
               ),
               _buildFolderItem(context, "数据库缓存路径", Global.hiveDirectory.path),
+              const Divider(
+                height: 10,
+              ),
+              ListTile(
+                title: const Text(
+                  "MoeLoaderFlutter",
+                  style: TextStyle(fontSize: 15),
+                ),
+                leading: Icon(
+                  Icons.title,
+                  color: Theme.of(context).iconTheme.color,
+                ),
+              ),
+              const Divider(
+                height: 10,
+              ),
+              ListTile(
+                title: const Text(
+                  "V1.0.4",
+                  style: TextStyle(fontSize: 15),
+                ),
+                leading: Icon(
+                  Icons.code,
+                  color: Theme.of(context).iconTheme.color,
+                ),
+              ),
+              const Divider(
+                height: 10,
+              ),
+              ListTile(
+                title: const Text(
+                  "@2024 by Chihiro23333",
+                  style: TextStyle(fontSize: 15),
+                ),
+                leading: Icon(
+                  Icons.timelapse,
+                  color: Theme.of(context).iconTheme.color,
+                ),
+              ),
+              const Divider(
+                height: 10,
+              ),
+              ListTile(
+                title: const Text(
+                  "https://github.com/Chihiro23333",
+                  style: TextStyle(fontSize: 15),
+                ),
+                leading: Icon(
+                  Icons.home,
+                  color: Theme.of(context).iconTheme.color,
+                ),
+              ),
+              const Divider(
+                height: 10,
+              ),
+              ListTile(
+                title: const Text(
+                  "zhu.20081121@gmail.com",
+                  style: TextStyle(fontSize: 15),
+                ),
+                leading: Icon(
+                  Icons.mail,
+                  color: Theme.of(context).iconTheme.color,
+                ),
+              ),
               const Divider(
                 height: 10,
               ),
