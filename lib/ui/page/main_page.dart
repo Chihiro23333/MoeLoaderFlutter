@@ -44,7 +44,10 @@ class _MainState extends State<MainPage> {
   Widget _buildBody(BuildContext context) {
     List<jsonModels.Rule> list = _homeViewModel.webPageList();
     Grid mainGrid = Global.multiPlatform.mainGrid();
-    return MainMasonryGrid(list: list, columnCount: mainGrid.columnCount, aspectRatio: mainGrid.aspectRatio);
+    return MainMasonryGrid(
+        list: list,
+        columnCount: mainGrid.columnCount,
+        aspectRatio: mainGrid.aspectRatio);
   }
 
   Widget _buildSettingsAction(BuildContext context) {

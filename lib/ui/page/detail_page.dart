@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:moeloaderflutter/model/detail_page_entity.dart';
 import 'package:moeloaderflutter/model/home_page_item_entity.dart';
 import 'package:moeloaderflutter/ui/dialog/info_dialog.dart';
@@ -272,15 +274,22 @@ class _DetailState extends State<DetailPage> {
           if (asyncSnapshot.connectionState == ConnectionState.active) {
             DetailUriState uriState = asyncSnapshot.data;
             List<Widget> children = [];
-            children.add(Chip(
-              avatar: ClipOval(
-                child: Icon(
-                  Icons.title,
-                  color: Theme.of(context).iconTheme.color,
+            if(Platform.isWindows) {
+              children.add(Chip(
+                avatar: ClipOval(
+                  child: Icon(
+                    Icons.title,
+                    color: Theme
+                        .of(context)
+                        .iconTheme
+                        .color,
+                  ),
                 ),
-              ),
-              label: Text(uriState.baseHref),
-            ));
+                label: Text(uriState.baseHref),
+              ));
+            }else{
+              children.add(const Text("详情"));
+            }
             return FittedBox(
               child: Row(
                 children: children,

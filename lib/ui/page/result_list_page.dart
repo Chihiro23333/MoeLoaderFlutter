@@ -99,12 +99,7 @@ class _ResultListState extends State<ResultListPage> {
               iconTheme: Theme.of(context).iconTheme,
               //导航栏
               title: _buildAppBatTitle(context),
-              actions: <Widget>[
-                _buildCopyAction(context),
-                _buildDownloadAction(context),
-                _buildOptionsAction(context),
-                // _buildSettingsAction(context),
-              ]),
+              actions: _buildActions(context, snapshot)),
           body: _buildListBody(snapshot),
           floatingActionButton: _buildFloatActionButton(context, snapshot),
         );
@@ -206,13 +201,7 @@ class _ResultListState extends State<ResultListPage> {
   Widget _buildOptionsAction(BuildContext context) {
     return IconButton(
         onPressed: () async {
-          List<OptionEntity> list =
-              await _homeViewModel.optionList(pageName(), _keyword);
-          if (list.isEmpty) {
-            showToast("当前站点无筛选条件");
-            return;
-          }
-          _showOptionsSheet(context, list);
+          _filter();
         },
         icon: const Icon(Icons.filter_alt));
   }
@@ -268,20 +257,103 @@ class _ResultListState extends State<ResultListPage> {
   Widget _buildDownloadAction(BuildContext context) {
     return IconButton(
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) {
-              return const DownloadPage();
-            }),
-          );
+         _download();
         },
         icon: const Icon(Icons.download));
+  }
+
+  Future<void> _filter() async{
+    List<OptionEntity> list =
+    await _homeViewModel.optionList(pageName(), _keyword);
+    if (list.isEmpty) {
+      showToast("当前站点无筛选条件");
+      return;
+    }
+    _showOptionsSheet(context, list);
+  }
+
+  void _download(){
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) {
+        return const DownloadPage();
+      }),
+    );
+  }
+
+  void _copy(){
+    FlutterClipboard.copy(_url).then((value) => showToast("链接已复制"));
+  }
+
+
+  List<Widget> _buildActions(BuildContext context, AsyncSnapshot snapshot) {
+    List<Widget> list = [];
+    if (Platform.isAndroid) {
+      list.add(_buildMoreAction(context, snapshot));
+    } else {
+      list.add(_buildCopyAction(context));
+      list.add(_buildDownloadAction(context));
+      list.add(_buildOptionsAction(context));
+    }
+    return list;
+  }
+
+  Widget _buildMoreAction(BuildContext context, AsyncSnapshot snapshot) {
+    MenuController? _controller = null;
+    return Padding(
+        padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+        child: MenuAnchor(
+          alignmentOffset: const Offset(-40, 0),
+          menuChildren: [
+            MenuItemButton(
+              child: const Text("复制链接"),
+              onPressed: () {
+                _copy();
+                _controller?.close();
+              },
+            ),
+            const Divider(
+              height: 10,
+            ),
+            MenuItemButton(
+              child: const Text("下载列表"),
+              onPressed: () {
+                _download();
+                _controller?.close();
+              },
+            ),
+            const Divider(
+              height: 10,
+            ),
+            MenuItemButton(
+              child: const Text("条件筛选"),
+              onPressed: () {
+                _filter();
+                _controller?.close();
+              },
+            ),
+          ],
+          builder: (BuildContext context, MenuController controller,
+              Widget? child) {
+            _controller = controller;
+            return IconButton(
+                onPressed: () {
+                  if (controller.isOpen) {
+                    controller.close();
+                  } else {
+                    controller.open();
+                  }
+                },
+                icon: const Icon(Icons.more_vert));
+          },
+        )
+    );
   }
 
   Widget _buildCopyAction(BuildContext context) {
     return IconButton(
         onPressed: () async {
-          FlutterClipboard.copy(_url).then((value) => showToast("链接已复制"));
+          _copy();
         },
         icon: const Icon(Icons.copy));
   }
@@ -329,20 +401,22 @@ class _ResultListState extends State<ResultListPage> {
             UriState uriState = asyncSnapshot.data;
             _url = uriState.url;
             List<Widget> children = [];
-            children.add(Chip(
-              avatar: ClipOval(
-                child: Icon(
-                  Icons.title,
-                  color: Theme.of(context).iconTheme.color,
+            if(Platform.isWindows){
+              children.add(Chip(
+                avatar: ClipOval(
+                  child: Icon(
+                    Icons.title,
+                    color: Theme.of(context).iconTheme.color,
+                  ),
                 ),
-              ),
-              label: Text(uriState.siteName),
-            ));
-            children.add(
-              const SizedBox(
-                width: 5,
-              ),
-            );
+                label: Text(uriState.siteName),
+              ));
+              children.add(
+                const SizedBox(
+                  width: 5,
+                ),
+              );
+            }
             children.add(Chip(
               avatar: ClipOval(
                 child: Icon(
