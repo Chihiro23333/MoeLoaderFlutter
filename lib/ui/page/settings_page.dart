@@ -75,9 +75,15 @@ class _SettingState extends State<SettingPage> {
       _dropdownValue = Const.proxyHttp;
     }
     return Padding(
-      padding: const EdgeInsets.fromLTRB(15, 20, 15, 5),
+      padding: const EdgeInsets.fromLTRB(15, 15, 15, 5),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          const Text(
+            "代理设置：",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 10,),
           Row(
             children: [
               Expanded(
@@ -86,7 +92,7 @@ class _SettingState extends State<SettingPage> {
                   decoration: InputDecoration(
                       fillColor: Colors.white,
                       suffixIcon: Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
+                        padding: const EdgeInsets.fromLTRB(0, 2, 8, 2),
                         child: FilledButton(
                           onPressed: () {
                             String text = _textEditingControl.text;
@@ -100,7 +106,7 @@ class _SettingState extends State<SettingPage> {
                         ),
                       ),
                       prefixIcon: Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                        padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
                         child: DropdownButton<String>(
                           value: _dropdownValue,
                           icon: const Icon(Icons.arrow_drop_down),
@@ -111,7 +117,7 @@ class _SettingState extends State<SettingPage> {
                               updateDropDownValue(value);
                             }
                           },
-                          iconSize: 18,
+                          iconSize: 20,
                           items: list
                               .map<DropdownMenuItem<String>>((String value) {
                             return DropdownMenuItem<String>(
@@ -157,14 +163,15 @@ class _SettingState extends State<SettingPage> {
       }
     }
     return Padding(
-      padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
+      padding: const EdgeInsets.fromLTRB(0, 10, 15, 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
             "下载选项：",
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
+          const SizedBox(height: 10,),
           RadioChoiceChip(
               list: list,
               index: selectedIndex,

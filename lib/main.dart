@@ -17,13 +17,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     //填入设计稿中设备的屏幕尺寸,单位dp
     return ScreenUtilInit(
-      designSize: const Size(1280, 720),
+      designSize: Global.multiPlatform.designSize(),
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context , child) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
-          title: 'MoeLoaderFlutter',
+          title: 'moeloaderflutter',
           builder: BotToastInit(),
           navigatorObservers: [BotToastNavigatorObserver()],
           // You can use the library anywhere in the app even in theme

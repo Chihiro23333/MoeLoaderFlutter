@@ -62,64 +62,67 @@ class _SearchState extends State<SearchPage> {
         fit: BoxFit.cover,
       );
     }
-    return Center(
-      heightFactor: 4.5,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox(
-                height: 35,
-                width: 35,
-                child: leading,
-              ),
-              const SizedBox(
-                width: 12,
-              ),
-              Text(
-                rule.fileName,
-                style:
-                    const TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-              )
-            ],
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          SizedBox(
-            width: 450,
-            child: TextField(
-              controller: _textEditingControl,
-              decoration: InputDecoration(
-                  suffixIcon: Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
-                    child: FilledButton(
-                      onPressed: () {
-                        _submit(context);
-                      },
-                      child: const Text(
-                        "搜索",
-                        style: TextStyle(fontSize: 15),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+      child: Center(
+        heightFactor: 3,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(
+                  height: 35,
+                  width: 35,
+                  child: leading,
+                ),
+                const SizedBox(
+                  width: 12,
+                ),
+                Text(
+                  rule.fileName,
+                  style: const TextStyle(
+                      fontSize: 25, fontWeight: FontWeight.bold),
+                )
+              ],
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            SizedBox(
+              width: 450,
+              child: TextField(
+                controller: _textEditingControl,
+                decoration: InputDecoration(
+                    suffixIcon: Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 2, 8, 2),
+                      child: FilledButton(
+                        onPressed: () {
+                          _submit(context);
+                        },
+                        child: const Text(
+                          "搜索",
+                          style: TextStyle(fontSize: 15),
+                        ),
                       ),
                     ),
-                  ),
-                  border: const OutlineInputBorder(),
-                  labelText: "请输入关键词",
-                  helperText: "输入后按ENTER/或者点击搜索按钮",
-                  labelStyle: const TextStyle(
-                    fontSize: 14,
-                  ),
-                  filled: true),
-              onSubmitted: (String value) {
-                _submit(context);
-              },
+                    border: const OutlineInputBorder(),
+                    labelText: "请输入关键词",
+                    helperText: "输入后按ENTER/或者点击搜索按钮",
+                    labelStyle: const TextStyle(
+                      fontSize: 14,
+                    ),
+                    filled: true),
+                onSubmitted: (String value) {
+                  _submit(context);
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

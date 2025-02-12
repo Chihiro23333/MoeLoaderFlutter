@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 import 'package:moeloaderflutter/init.dart';
 import 'package:moeloaderflutter/util/const.dart';
 import 'package:path_provider/path_provider.dart';
@@ -19,6 +20,8 @@ class MultiPlatform {
   Grid mainGrid(){return Grid(1,5);}
 
   Grid homeGrid(){return Grid(2,1.65);}
+
+  Size designSize(){return const Size(1280, 720);}
 }
 
 class PlatformWindows implements MultiPlatform{
@@ -63,6 +66,11 @@ class PlatformWindows implements MultiPlatform{
     return Grid(columnCount,aspectRatio);
   }
 
+  @override
+  Size designSize() {
+    return const Size(1280, 720);
+  }
+
 }
 
 class PlatformAndroid implements MultiPlatform{
@@ -99,5 +107,10 @@ class PlatformAndroid implements MultiPlatform{
     double aspectRatio =
     Global.customRuleParser.aspectRatio(Const.homePage);
     return Grid(2,aspectRatio);
+  }
+
+  @override
+  Size designSize() {
+    return const Size(360, 690);
   }
 }
