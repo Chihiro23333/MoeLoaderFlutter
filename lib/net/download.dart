@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:gal/gal.dart';
 import 'package:moeloaderflutter/custom_rule/custom_rule_parser.dart';
 import 'package:moeloaderflutter/generated/json/base/json_convert_content.dart';
 import 'package:moeloaderflutter/model/detail_page_entity.dart';
@@ -121,18 +120,18 @@ class DownloadManager {
                   downloadUrl = previewUrl;
                 }
                 if (downloadUrl.isEmpty) {
-                  downloadUrl = bigUrl ?? "";
+                  downloadUrl = bigUrl;
                 }
                 if (downloadUrl.isEmpty) {
-                  downloadUrl = rawUrl ?? "";
+                  downloadUrl = rawUrl;
                 }
                 break;
               case Const.big:
                 if (downloadUrl.isEmpty) {
-                  downloadUrl = bigUrl ?? "";
+                  downloadUrl = bigUrl;
                 }
                 if (downloadUrl.isEmpty) {
-                  downloadUrl = rawUrl ?? "";
+                  downloadUrl = rawUrl;
                 }
                 if (downloadUrl.isEmpty) {
                   downloadUrl = previewUrl;
@@ -141,10 +140,10 @@ class DownloadManager {
               case Const.raw:
               default:
                 if (downloadUrl.isEmpty) {
-                  downloadUrl = rawUrl ?? "";
+                  downloadUrl = rawUrl;
                 }
                 if (downloadUrl.isEmpty) {
-                  downloadUrl = bigUrl ?? "";
+                  downloadUrl = bigUrl;
                 }
                 if (downloadUrl.isEmpty) {
                   downloadUrl = previewUrl;

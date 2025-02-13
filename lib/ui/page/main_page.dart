@@ -1,6 +1,5 @@
 import 'package:moeloaderflutter/init.dart';
 import 'package:moeloaderflutter/multiplatform/bean.dart';
-import 'package:moeloaderflutter/ui/page/settings_page.dart';
 import 'package:moeloaderflutter/ui/page/webview_android_page.dart';
 import 'package:moeloaderflutter/widget/main_masonry_grid.dart';
 import 'package:flutter/material.dart';

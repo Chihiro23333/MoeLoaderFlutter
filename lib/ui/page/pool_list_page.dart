@@ -2,9 +2,7 @@ import 'package:moeloaderflutter/init.dart';
 import 'package:moeloaderflutter/multiplatform/bean.dart';
 import 'package:moeloaderflutter/ui/common/common.dart';
 import 'package:moeloaderflutter/ui/viewmodel/view_model_pool_list.dart';
-import 'package:moeloaderflutter/ui/page/webview2_page.dart';
 import 'package:moeloaderflutter/util/common_function.dart';
-import 'package:moeloaderflutter/util/const.dart';
 import 'package:moeloaderflutter/widget/image_masonry_grid.dart';
 import 'package:moeloaderflutter/widget/pool_list_loading_status.dart';
 import 'package:clipboard/clipboard.dart';
@@ -189,8 +187,8 @@ class _PoolListState extends State<PoolListPage> {
           int columnCount = homeGrid.columnCount;
           double aspectRatio = homeGrid.aspectRatio;
           return ImageMasonryGrid(
-            columnCount: homeGrid.columnCount,
-            aspectRatio: homeGrid.aspectRatio,
+            columnCount:columnCount,
+            aspectRatio: aspectRatio,
             list: poolListState.list,
             headers: poolListState.headers,
             itemOnPressed: (homePageItem) async {

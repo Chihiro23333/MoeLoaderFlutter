@@ -1,12 +1,10 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:dio/io.dart';
+import 'package:moeloaderflutter/init.dart';
 import 'package:moeloaderflutter/util/db_util.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
-import 'package:moeloaderflutter/init.dart';
-import 'package:dio_http2_adapter/dio_http2_adapter.dart';
 import 'package:logging/logging.dart';
 
 class DioHttp {

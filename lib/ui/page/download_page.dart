@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:moeloaderflutter/net/download.dart';
 import 'package:moeloaderflutter/ui/common/common.dart';
 import 'package:moeloaderflutter/util/common_function.dart';

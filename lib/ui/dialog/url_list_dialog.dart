@@ -2,7 +2,6 @@ import 'package:moeloaderflutter/init.dart';
 import 'package:moeloaderflutter/model/detail_page_entity.dart';
 import 'package:moeloaderflutter/model/home_page_item_entity.dart';
 import 'package:moeloaderflutter/ui/viewmodel/view_model_detail.dart';
-import 'package:moeloaderflutter/ui/page/webview2_page.dart';
 import 'package:moeloaderflutter/util/common_function.dart';
 import 'package:moeloaderflutter/util/utils.dart';
 import 'package:flutter/material.dart';
@@ -79,7 +78,7 @@ void showUrlList(BuildContext context, HomePageItemEntity homePageItem) {
                         Navigator.of(context).pop();
                       }));
                     }
-                    if (bigUrl != null && bigUrl.isNotEmpty) {
+                    if (bigUrl.isNotEmpty) {
                       children.add(const Divider(
                         height: 10,
                       ));
@@ -91,7 +90,7 @@ void showUrlList(BuildContext context, HomePageItemEntity homePageItem) {
                         Navigator.of(context).pop();
                       }));
                     }
-                    if (rawUrl != null && rawUrl.isNotEmpty) {
+                    if (rawUrl.isNotEmpty) {
                       children.add(const Divider(
                         height: 10,
                       ));

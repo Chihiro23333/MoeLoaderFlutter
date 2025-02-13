@@ -17,7 +17,6 @@ import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:moeloaderflutter/init.dart';
-import 'package:moeloaderflutter/ui/page/webview2_page.dart';
 import 'package:moeloaderflutter/ui/viewmodel/view_model_home.dart';
 import 'package:logging/logging.dart';
 import 'detail_page.dart';
