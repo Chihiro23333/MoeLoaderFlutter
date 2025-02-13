@@ -34,7 +34,10 @@ class _DownloadState extends State<DownloadPage> {
 
   AppBar _buildAppBar(BuildContext context) {
     List<Widget> children = [];
-    children.add(const Text("下载列表"));
+    children.add(const Text(
+      "下载列表",
+      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+    ));
     return AppBar(
       title: FittedBox(
         child: Row(
@@ -56,8 +59,8 @@ class _DownloadState extends State<DownloadPage> {
               builder: (context) {
                 return SingleChildScrollView(
                   child: Padding(
-                    padding:
-                    const EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
+                    padding: const EdgeInsets.only(
+                        left: 10, right: 10, top: 10, bottom: 10),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -81,7 +84,8 @@ class _DownloadState extends State<DownloadPage> {
   Widget _buildCopyAction(BuildContext context) {
     return IconButton(
         onPressed: () async {
-          FlutterClipboard.copy(Global.downloadsDirectory.path).then((value) => showToast("存储路径已复制"));
+          FlutterClipboard.copy(Global.downloadsDirectory.path)
+              .then((value) => showToast("存储路径已复制"));
         },
         icon: const Icon(Icons.copy));
   }

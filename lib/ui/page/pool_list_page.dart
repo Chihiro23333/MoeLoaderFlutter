@@ -109,48 +109,45 @@ class _PoolListState extends State<PoolListPage> {
     _showOptionsSheet(context, poolListState);
   }
 
-  void _showOptionsSheet(
-      BuildContext context, PoolListState? poolListState) {
+  void _showOptionsSheet(BuildContext context, PoolListState? poolListState) {
     showModalBottomSheet(
         context: context,
         builder: (context) => StatefulBuilder(builder: (context, setState) {
-          List<Widget> widgets = [];
+              List<Widget> widgets = [];
 
-          if (poolListState != null) {
-            var url = poolListState.url;
-            if (url.isNotEmpty) {
-              widgets.add(const Padding(
-                padding: EdgeInsets.only(top: 10, bottom: 10),
-                child: Text(
-                  "网页地址：",
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ));
-              widgets.add(Wrap(
-                spacing: 8.0, // 主轴(水平)方向间距
-                runSpacing: 4.0, // 纵轴（垂直）方向间距
-                children: [
-                  buildUrlWidget(context, url)
-                ],
-              ));
-            }
-            int page = poolListState.page;
-            widgets.add(Padding(
-              padding: const EdgeInsets.only(top: 10, bottom: 10),
-              child: Text(
-                "当前加载页码：$page",
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ));
-          }
-          return SingleChildScrollView(
-              padding: const EdgeInsets.only(
-                  left: 10, top: 10, right: 10, bottom: 10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: widgets,
-              ));
-        }));
+              if (poolListState != null) {
+                var url = poolListState.url;
+                if (url.isNotEmpty) {
+                  widgets.add(const Padding(
+                    padding: EdgeInsets.only(top: 10, bottom: 10),
+                    child: Text(
+                      "网页地址：",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ));
+                  widgets.add(Wrap(
+                    spacing: 8.0, // 主轴(水平)方向间距
+                    runSpacing: 4.0, // 纵轴（垂直）方向间距
+                    children: [buildUrlWidget(context, url)],
+                  ));
+                }
+                int page = poolListState.page;
+                widgets.add(Padding(
+                  padding: const EdgeInsets.only(top: 10, bottom: 10),
+                  child: Text(
+                    "当前加载页码：$page",
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ));
+              }
+              return SingleChildScrollView(
+                  padding: const EdgeInsets.only(
+                      left: 10, top: 10, right: 10, bottom: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: widgets,
+                  ));
+            }));
   }
 
   Widget _buildCopyAction(BuildContext context) {
@@ -209,7 +206,10 @@ class _PoolListState extends State<PoolListPage> {
   }
 
   Widget _buildNewAppBartTitle(BuildContext context) {
-    return const Text("列表");
+    return const Text(
+      "列表",
+      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+    );
   }
 
   Widget _buildAppBatTitle(BuildContext context) {

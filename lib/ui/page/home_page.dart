@@ -82,7 +82,8 @@ class _HomeState extends State<HomePage> {
 
   String pageName() {
     bool home = (_keyword == null || _keyword!.isEmpty) && _tagEntity == null;
-    String pageName = widget.pageName ?? (home ? _homePageName : _searchPageName);
+    String pageName =
+        widget.pageName ?? (home ? _homePageName : _searchPageName);
     return pageName;
   }
 
@@ -92,7 +93,6 @@ class _HomeState extends State<HomePage> {
     _keyword = widget.keyword;
     _tagEntity = widget.tagEntity;
     _requestData(clearAll: true);
-
   }
 
   @override
@@ -184,8 +184,7 @@ class _HomeState extends State<HomePage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) {
-                  return HomePage(
-                      pageName: _searchPageName, tagEntity: tag);
+                  return HomePage(pageName: _searchPageName, tagEntity: tag);
                 }),
               );
             },
@@ -309,9 +308,7 @@ class _HomeState extends State<HomePage> {
                   widgets.add(Wrap(
                     spacing: 8.0, // 主轴(水平)方向间距
                     runSpacing: 4.0, // 纵轴（垂直）方向间距
-                    children: [
-                      buildUrlWidget(context, url)
-                    ],
+                    children: [buildUrlWidget(context, url)],
                   ));
                 }
 
@@ -416,7 +413,8 @@ class _HomeState extends State<HomePage> {
   }
 
   Future<void> _filter(BuildContext context, AsyncSnapshot snapshot) async {
-    List<OptionEntity> list = await _homeViewModel.optionList(pageName(), _keyword);
+    List<OptionEntity> list =
+        await _homeViewModel.optionList(pageName(), _keyword);
     HomeState? homeState = snapshot.data;
     _showOptionsSheet(context, list, homeState);
   }
@@ -569,7 +567,10 @@ class _HomeState extends State<HomePage> {
               return Text(keyword);
             }
           }
-          return const Text("首页");
+          return const Text(
+            "首页",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+          );
         });
   }
 

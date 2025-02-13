@@ -40,7 +40,7 @@ class _SearchState extends State<SearchPage> {
     return AppBar(
       title: const Text(
         "搜索",
-        style: TextStyle(fontSize: 18),
+        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
       ),
       iconTheme: Theme.of(context).iconTheme,
       elevation: 10,

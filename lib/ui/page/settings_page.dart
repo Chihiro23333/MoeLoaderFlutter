@@ -57,7 +57,10 @@ class _SettingState extends State<SettingPage> {
 
   AppBar _buildAppBar(BuildContext context) {
     return AppBar(
-      title: const Text("设置"),
+      title: const Text(
+        "设置",
+        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+      ),
       iconTheme: Theme.of(context).iconTheme,
       elevation: 10,
     );
@@ -83,7 +86,9 @@ class _SettingState extends State<SettingPage> {
             "代理设置：",
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 10,),
+          const SizedBox(
+            height: 10,
+          ),
           Row(
             children: [
               Expanded(
@@ -172,7 +177,9 @@ class _SettingState extends State<SettingPage> {
             "下载选项：",
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
-          const SizedBox(height: 10,),
+          const SizedBox(
+            height: 10,
+          ),
           RadioChoiceChip(
               list: list,
               index: selectedIndex,
