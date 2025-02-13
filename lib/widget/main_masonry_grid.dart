@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:moeloaderflutter/ui/page/home_page.dart';
 import 'package:moeloaderflutter/util/common_function.dart';
 import 'package:flutter/material.dart';

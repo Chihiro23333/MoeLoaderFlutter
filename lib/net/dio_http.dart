@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:dio/io.dart';
 import 'package:moeloaderflutter/util/db_util.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';

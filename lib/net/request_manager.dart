@@ -1,9 +1,12 @@
 import 'dart:async';
 import 'package:dio/dio.dart';
+import 'package:logging/logging.dart';
 import 'package:moeloaderflutter/net/dio_http.dart';
 import 'package:to_json/validator.dart';
 
 class RequestManager{
+
+  final _log = Logger('RequestManager');
 
   static RequestManager? _cache;
   RequestManager._create();
@@ -36,8 +39,14 @@ class RequestManager{
     await _dioHttp.saveCookiesString(origin, cookiesString);
   }
 
-  Future<Response> download(String url, String savePath, {ProgressCallback? onReceiveProgress, CancelToken? cancelToken, Map<String, String>? headers}) async {
-   return await _dioHttp.download(url, savePath, onReceiveProgress: onReceiveProgress, cancelToken: cancelToken, headers: headers);
+  Future<bool> download(String url, String savePath, {ProgressCallback? onReceiveProgress, CancelToken? cancelToken, Map<String, String>? headers}) async{
+    try{
+      await _dioHttp.download(url, savePath, onReceiveProgress: onReceiveProgress, cancelToken: cancelToken, headers: headers);
+      return Future.value(true);
+    }catch(e){
+      _log.fine(e);
+      return Future.value(false);
+    }
   }
 
 }

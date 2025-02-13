@@ -156,12 +156,16 @@ class DownloadManager {
           }
         }
         if (!success) {
-          downloadTask.downloadState = DownloadTask.error;
-          _update();
-          _downloadNext();
+          downloadError(downloadTask);
         }
       }
     }
+  }
+
+  void downloadError(DownloadTask downloadTask){
+    downloadTask.downloadState = DownloadTask.error;
+    _update();
+    _downloadNext();
   }
 
   Parser _parser() {
@@ -172,7 +176,7 @@ class DownloadManager {
     return Global.customRuleParser;
   }
 
-  void _download(DownloadTask downloadTask) {
+  void _download(DownloadTask downloadTask) async{
     if (downloadTask.downloadUrl.isEmpty) {
       _downloadNext();
     } else {
@@ -183,7 +187,7 @@ class DownloadManager {
       Directory directory = Global.downloadsDirectory;
       _log.fine("suffix=$suffix;path=${directory.path}");
       String savePath = "${directory.path}/${downloadTask.name}$suffix";
-      RequestManager().download(downloadUrl, savePath,
+      bool success = await RequestManager().download(downloadUrl, savePath,
           onReceiveProgress: (int count, int total) {
         downloadTask.count = count;
         downloadTask.total = total;
@@ -196,6 +200,9 @@ class DownloadManager {
           _downloadNext();
         }
       }, cancelToken: _curCancelToken, headers: downloadTask.headers);
+      if(!success){
+        downloadError(downloadTask);
+      }
     }
   }
 
