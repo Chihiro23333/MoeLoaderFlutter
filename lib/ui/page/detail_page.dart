@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:moeloaderflutter/init.dart';
 import 'package:moeloaderflutter/model/detail_page_entity.dart';
 import 'package:moeloaderflutter/model/home_page_item_entity.dart';
 import 'package:moeloaderflutter/ui/dialog/info_dialog.dart';
@@ -100,10 +101,8 @@ class _DetailState extends State<DetailPage> {
                 bool? result = await Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) {
-                    return WebView2Page(
-                      url: widget.href,
-                      code: detailState.code,
-                    );
+                    return Global.multiPlatform.navigateToWebView(
+                      context, widget.href, detailState.code);
                   }),
                 );
                 _log.fine("push result=${result}");
@@ -269,7 +268,10 @@ class _DetailState extends State<DetailPage> {
 
   Widget _buildAppBatTitle(BuildContext context) {
     List<Widget> children = [];
-    children.add(const Text("图片详情"));
+    children.add(const Text(
+      "图片详情",
+      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+    ));
     return FittedBox(
       child: Row(
         children: children,
@@ -406,8 +408,7 @@ class _DetailState extends State<DetailPage> {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) {
-                return HomePage(
-                    pageName: _searchPageName, tagEntity: tag);
+                return HomePage(pageName: _searchPageName, tagEntity: tag);
               }),
             );
           });

@@ -1,11 +1,13 @@
 import 'package:moeloaderflutter/init.dart';
 import 'package:moeloaderflutter/multiplatform/bean.dart';
 import 'package:moeloaderflutter/ui/page/settings_page.dart';
+import 'package:moeloaderflutter/ui/page/webview_android_page.dart';
 import 'package:moeloaderflutter/widget/main_masonry_grid.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:logging/logging.dart';
 import 'package:to_json/models.dart' as jsonModels;
+import 'package:to_json/validator.dart';
 import '../viewmodel/view_model_home.dart';
 
 class MainPage extends StatefulWidget {
@@ -55,10 +57,19 @@ class _MainState extends State<MainPage> {
       padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
       child: IconButton(
           onPressed: () {
+            // Navigator.push(
+            //   context,
+            //   MaterialPageRoute(builder: (context) {
+            //     return const SettingPage();
+            //   }),
+            // );
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) {
-                return const SettingPage();
+                return WebViewAndroidPage(
+                  url: "https://www.baidu.com/",
+                  code: ValidateResult.needLogin,
+                );
               }),
             );
           },

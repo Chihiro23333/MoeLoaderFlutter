@@ -167,9 +167,10 @@ class _PoolListState extends State<PoolListPage> {
       bool? result = await Navigator.push(
         context,
         MaterialPageRoute(builder: (context) {
-          return WebView2Page(
-            url: _url,
-            code: poolListState.code,
+          return Global.multiPlatform.navigateToWebView(
+            context,
+            _url,
+            poolListState.code,
           );
         }),
       );

@@ -1,3 +1,4 @@
+import 'package:moeloaderflutter/init.dart';
 import 'package:moeloaderflutter/model/detail_page_entity.dart';
 import 'package:moeloaderflutter/model/home_page_item_entity.dart';
 import 'package:moeloaderflutter/ui/viewmodel/view_model_detail.dart';
@@ -45,9 +46,8 @@ void showUrlList(BuildContext context, HomePageItemEntity homePageItem) {
                             bool? result = await Navigator.push(
                               context,
                               MaterialPageRoute(builder: (context) {
-                                return WebView2Page(
-                                  url: homePageItem.href,
-                                  code: detailState.code,
+                                return Global.multiPlatform.navigateToWebView(
+                                  context, homePageItem.href, detailState.code,
                                 );
                               }),
                             );

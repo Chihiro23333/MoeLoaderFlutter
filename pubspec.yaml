@@ -62,6 +62,7 @@ dependencies:
     path: ./to_json
   flutter_screenutil: ^5.9.3
   gal: ^2.3.1
+  webview_flutter: ^4.10.0
 
 dev_dependencies:
   flutter_test:

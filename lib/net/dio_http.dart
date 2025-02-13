@@ -82,13 +82,14 @@ class DioHttp {
     if (cookiesString.isNotEmpty) {
       List<String> cookieList = cookiesString.split(";");
       for (var cookie in cookieList) {
-        List<String> keyValue = cookie.split(":");
-        if (keyValue.length == 3) {
-          String key = keyValue[1];
-          String value = keyValue[2];
-          _log.fine("_updateCookies:key=$key;value=$value");
-          cookies.add(Cookie(key, value));
-        }
+        List<String> keyValue = Global.multiPlatform.cookieSeparator(cookie);
+        String key = keyValue[0];
+        String value = keyValue[1];
+        // 去除键和值中的双引号和两端的空格（如果有）
+        final String cleanedKey = key.replaceAll('"', '').trim();
+        final String cleanedValue = value.replaceAll('"', '');
+        _log.fine("_updateCookies:key=$key;value=$value");
+        cookies.add(Cookie(cleanedKey, cleanedValue));
       }
     }
     if (cookies.isNotEmpty) {

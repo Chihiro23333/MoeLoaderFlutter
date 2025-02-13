@@ -3,6 +3,8 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:gal/gal.dart';
 import 'package:moeloaderflutter/init.dart';
+import 'package:moeloaderflutter/ui/page/webview2_page.dart';
+import 'package:moeloaderflutter/ui/page/webview_android_page.dart';
 import 'package:moeloaderflutter/util/const.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:to_json/models.dart';
@@ -35,6 +37,10 @@ class MultiPlatform {
   Future<bool> requestAccess() async{return Future.value(false);}
 
   Future<bool> saveToGallery(String imagePath) async{return Future.value(false);}
+
+  Widget navigateToWebView(BuildContext context, String url, int code, {String? userAgent}){return const SizedBox();}
+
+  List<String> cookieSeparator(String cookie){return [];}
 }
 
 class PlatformWindows implements MultiPlatform{
@@ -113,6 +119,29 @@ class PlatformWindows implements MultiPlatform{
   Future<bool> saveToGallery(String imagePath) {
     return Future.value(true);
   }
+
+  @override
+  Widget navigateToWebView(BuildContext context, String url, int code, {String? userAgent}) {
+    return WebView2Page(
+      url: url,
+      code: code,
+    );
+  }
+
+  @override
+  List<String> cookieSeparator(String cookie) {
+    List<String> list = [];
+    List<String> keyValue = cookie.split(":");
+    if (keyValue.length == 3) {
+      String key = keyValue[1];
+      String value = keyValue[2];
+      list.add(key);
+      list.add(value);
+    }
+   return list;
+  }
+
+
 }
 
 class PlatformAndroid implements MultiPlatform{
@@ -199,6 +228,20 @@ class PlatformAndroid implements MultiPlatform{
     await Gal.putImage(imagePath);
     File(imagePath).delete();
     return Future.value(true);
+  }
+
+  @override
+  Widget navigateToWebView(BuildContext context, String url, int code, {String? userAgent}) {
+    return WebViewAndroidPage(
+      url: url,
+      code: code,
+    );
+  }
+
+  @override
+  List<String> cookieSeparator(String cookie) {
+    List<String> keyValue = cookie.split("=");
+    return keyValue;
   }
 
 }

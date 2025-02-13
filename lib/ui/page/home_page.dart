@@ -133,9 +133,10 @@ class _HomeState extends State<HomePage> {
       bool? result = await Navigator.push(
         context,
         MaterialPageRoute(builder: (context) {
-          return WebView2Page(
-            url: _url,
-            code: homeState.code,
+          return Global.multiPlatform.navigateToWebView(
+            context,
+            _url,
+            homeState.code,
             userAgent: homeState.headers?["user-agent"],
           );
         }),
