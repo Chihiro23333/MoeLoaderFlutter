@@ -57,10 +57,7 @@ class _SearchState extends State<SearchPage> {
         color: Theme.of(context).iconTheme.color,
       );
     } else {
-      leading = Image.file(
-        File(rule.faviconPath),
-        fit: BoxFit.cover,
-      );
+      leading = Global.multiPlatform.favicon(rule);
     }
     return Padding(
       padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),

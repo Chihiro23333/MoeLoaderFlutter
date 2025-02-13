@@ -257,14 +257,14 @@ class _ResultListState extends State<ResultListPage> {
   Widget _buildDownloadAction(BuildContext context) {
     return IconButton(
         onPressed: () {
-         _download();
+          _download();
         },
         icon: const Icon(Icons.download));
   }
 
-  Future<void> _filter() async{
+  Future<void> _filter() async {
     List<OptionEntity> list =
-    await _homeViewModel.optionList(pageName(), _keyword);
+        await _homeViewModel.optionList(pageName(), _keyword);
     if (list.isEmpty) {
       showToast("当前站点无筛选条件");
       return;
@@ -272,7 +272,7 @@ class _ResultListState extends State<ResultListPage> {
     _showOptionsSheet(context, list);
   }
 
-  void _download(){
+  void _download() {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) {
@@ -281,10 +281,9 @@ class _ResultListState extends State<ResultListPage> {
     );
   }
 
-  void _copy(){
+  void _copy() {
     FlutterClipboard.copy(_url).then((value) => showToast("链接已复制"));
   }
-
 
   List<Widget> _buildActions(BuildContext context, AsyncSnapshot snapshot) {
     List<Widget> list = [];
@@ -333,8 +332,8 @@ class _ResultListState extends State<ResultListPage> {
               },
             ),
           ],
-          builder: (BuildContext context, MenuController controller,
-              Widget? child) {
+          builder:
+              (BuildContext context, MenuController controller, Widget? child) {
             _controller = controller;
             return IconButton(
                 onPressed: () {
@@ -346,8 +345,7 @@ class _ResultListState extends State<ResultListPage> {
                 },
                 icon: const Icon(Icons.more_vert));
           },
-        )
-    );
+        ));
   }
 
   Widget _buildCopyAction(BuildContext context) {
@@ -401,7 +399,7 @@ class _ResultListState extends State<ResultListPage> {
             UriState uriState = asyncSnapshot.data;
             _url = uriState.url;
             List<Widget> children = [];
-            if(Platform.isWindows){
+            if (Platform.isWindows) {
               children.add(Chip(
                 avatar: ClipOval(
                   child: Icon(
@@ -493,7 +491,14 @@ class _ResultListState extends State<ResultListPage> {
                     color: Theme.of(context).iconTheme.color,
                   ),
                 ),
-                label: Text(keyword),
+                label: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 100),
+                  child: Text(
+                    keyword,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
                 deleteIcon: ClipOval(
                   child: Icon(
                     Icons.delete,

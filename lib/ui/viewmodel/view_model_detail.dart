@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:gal/gal.dart';
 import 'package:moeloaderflutter/custom_rule/custom_rule_parser.dart';
 import 'package:moeloaderflutter/generated/json/base/json_convert_content.dart';
 import 'package:moeloaderflutter/model/detail_page_entity.dart';
@@ -89,9 +90,12 @@ class DetailViewModel {
     streamDetailController.add(_detailState);
   }
 
-  void download(String href, String url, String id, {Map<String, String>? headers}) {
+  void download(String href, String url, String id, {Map<String, String>? headers}) async {
     _log.fine("headers=$headers");
-    DownloadManager().addTask(DownloadTask(href, url, getDownloadName(url, id), headers: headers));
+    bool hasAccess = await Global.multiPlatform.requestAccess();
+    if(hasAccess){
+      DownloadManager().addTask(DownloadTask(href, url, getDownloadName(url, id), headers: headers));
+    }
   }
 
   void close() {

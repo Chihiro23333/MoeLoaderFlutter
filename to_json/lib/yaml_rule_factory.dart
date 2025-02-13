@@ -1,7 +1,10 @@
 import 'dart:io';
+import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
 import 'package:to_json/models.dart';
 import 'package:yaml/yaml.dart';
+import 'package:moeloaderflutter/init.dart';
+import 'package:moeloaderflutter/util/const.dart';
 import 'package:path/path.dart' as path;
 
 class YamlRuleFactory {
@@ -20,12 +23,12 @@ class YamlRuleFactory {
   static bool _init = false;
   static late YamlMap _configYamlDoc;
 
-  Future<void> init(Directory rulesDirectory, Directory imagesDirectory) async {
+  Future<void> init() async {
     if (!_init) {
       String configStr =
-          await File("${rulesDirectory.path}/_config.yaml").readAsString();
+          await rootBundle.loadString("assets/rules/_config.yaml");
       _configYamlDoc = loadYaml(configStr);
-      await addCustomRules(rulesDirectory, imagesDirectory);
+      await addRules(Const.typeDefault);
       _init = true;
     }
   }
@@ -56,24 +59,26 @@ class YamlRuleFactory {
     return targetWebPage!;
   }
 
-  Future<void> addCustomRules(
-      Directory rulesDirectory, Directory imagesDirectory) async {
-    var exist = await rulesDirectory.exists();
-    if (exist) {
-      _configYamlDoc["rules"].forEach((element) {
-        String name = element["name"];
-        String fileName = element["fileName"];
-        String favicon = element["favicon"];
-        bool canSearch = element["canSearch"];
-        _log.fine("addCustomRules:name=$name;favicon=$favicon;canSearch=$canSearch");
-        _ruleList.add(Rule("custom", "${rulesDirectory.path}/$fileName", name,
-            "${imagesDirectory.path}/$favicon", canSearch));
-      });
-    }
+  Future<void> addRules(String type) async {
+    _configYamlDoc["rules"].forEach((element) {
+      String name = element["name"];
+      String fileName = element["fileName"];
+      String favicon = element["favicon"];
+      bool canSearch = element["canSearch"];
+      _log.fine(
+          "addCustomRules:name=$name;favicon=$favicon;canSearch=$canSearch");
+      _ruleList.add(Rule(type, fileName, name, favicon, canSearch));
+    });
   }
 
   Future<void> _loadRule(Rule rule) async {
-    String ruleStr = await File(rule.path).readAsString();
+    String ruleStr;
+    if (rule.type == Const.typeDefault) {
+      ruleStr = await rootBundle.loadString("assets/rules/${rule.path}");
+    } else {
+      Directory rulesDirectory = Global.rulesDirectory;
+      ruleStr = await File("${rulesDirectory.path}/${rule.path}").readAsString();
+    }
     var doc = loadYaml(ruleStr);
     _ruleMap[rule] = doc;
   }

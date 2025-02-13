@@ -60,16 +60,12 @@ class DioHttp {
     await _transformCookies(origin, cookiesString);
   }
 
-  Future<Response> download(String url, String name,
+  Future<Response> download(String url, String savePath,
       {ProgressCallback? onReceiveProgress,
       CancelToken? cancelToken,
       Map<String, String>? headers}) async {
     _updateHeaders(headers);
-    int index = url.lastIndexOf(".");
-    String suffix = url.substring(index, url.length);
-    Directory directory = Global.downloadsDirectory;
-    _log.fine("suffix=$suffix;path=${directory.path}");
-    return await _dio.download(url, "${directory.path}\\$name$suffix",
+    return await _dio.download(url, savePath,
         onReceiveProgress: onReceiveProgress, cancelToken: cancelToken);
   }
 

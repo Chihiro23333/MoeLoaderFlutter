@@ -11,7 +11,6 @@ import 'package:logging/logging.dart';
 import 'package:to_json/models.dart';
 import 'package:to_json/parser_factory.dart';
 import 'package:to_json/yaml_parser_base.dart';
-import 'package:window_manager/window_manager.dart';
 import 'package:yaml/yaml.dart';
 import 'package:path/path.dart' as path;
 import 'package:to_json/yaml_rule_factory.dart';
@@ -32,6 +31,8 @@ class Global{
   static late Directory _hiveDirectory;
   static late Directory _rulesDirectory;
   static late Directory _imagesDirectory;
+  static late Directory _downloadsDirectory;
+  static late Directory _browserCacheDirectory;
 
   Future<void> init() async{
     initPlatform();
@@ -44,7 +45,7 @@ class Global{
     _initHive();
     await RequestManager().init();
     await updateProxy();
-    await YamlRuleFactory().init(rulesDirectory, imagesDirectory);
+    await YamlRuleFactory().init();
     await updateCurWebPage(YamlRuleFactory().webPageList()[0]);
   }
 
@@ -56,6 +57,8 @@ class Global{
     _hiveDirectory = await _multiPlatform.hiveDirectory();
     _rulesDirectory = await _multiPlatform.rulesDirectory();
     _imagesDirectory = await _multiPlatform.imagesDirectory();
+    _downloadsDirectory = await _multiPlatform.downloadsDirectory();
+    _browserCacheDirectory = await _multiPlatform.browserCacheDirectory();
   }
 
   Future<void> updateCurWebPage(Rule rule) async{
@@ -97,8 +100,8 @@ class Global{
   static get rulesDirectory => _rulesDirectory;
   // static get rulesDirectory => Directory(path.join(path.current ,"testRules"));
   static get imagesDirectory => _imagesDirectory;
-  static get browserCacheDirectory => Directory(path.join(path.current ,"browserCache"));
-  static get downloadsDirectory => Directory(path.join(path.current ,"downloads"));
+  static get browserCacheDirectory => _browserCacheDirectory;
+  static get downloadsDirectory => _downloadsDirectory;
   static get hiveDirectory => _hiveDirectory;
   static get defaultColor => const Color.fromARGB(255, 46, 176, 242);
   static get defaultColor30 => const Color.fromARGB(30, 46, 176, 242);

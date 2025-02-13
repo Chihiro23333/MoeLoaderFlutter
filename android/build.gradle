@@ -17,6 +17,31 @@ allprojects {
     }
 }
 
+// 修复由于高版本导致namespace检测为空的问题，没遇到可不添加
+//subprojects {
+//    afterEvaluate { project ->
+//        if (project.plugins.hasPlugin('com.android.library') || project.plugins.hasPlugin('com.android.application')) {
+//            println "project: ${project.name} Namespace get: ${project.android.namespace}"
+//            def packageName = project.android.namespace ?: project.android.defaultConfig.applicationId ?: project.android.sourceSets.main.manifest.srcFile.text.find(/package="([^"]*)"/) ?: project.group
+//            project.android.namespace = packageName
+//            println "Namespace set to: ${packageName} for project: ${project.name}"
+//            def manifestFile = project.android.sourceSets.main.manifest.srcFile
+//            if (manifestFile.exists()) {
+//                def manifestText = manifestFile.text
+//                if (manifestText.contains('package=')) {
+//                    manifestText = manifestText.replaceAll(/package="[^"]*"/, "")
+//                    manifestFile.text = manifestText
+//                    println "Package attribute removed in AndroidManifest.xml for project: ${project.name}"
+//                } else {
+//                    println "No package attribute found in AndroidManifest.xml for project: ${project.name}"
+//                }
+//            } else {
+//                println "AndroidManifest.xml not found for project: ${project.name}"
+//            }
+//        }
+//    }
+//}
+
 rootProject.buildDir = "../build"
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"

@@ -12,4 +12,13 @@ class Const{
   static const String searchPage = "searchPage";
   static const String detailPage = "detailPage";
   static const String poolListPage = "poolListPage";
+
+  static const String typeDefault = "default";
+  static const String typeCustom = "custom";
+
+  static const String dirHive = "hive";
+  static const String dirIcons = "icons";
+  static const String dirRules = "rules";
+  static const String dirDownloads = "downloads";
+  static const String dirBrowserCache = "browserCache";
 }

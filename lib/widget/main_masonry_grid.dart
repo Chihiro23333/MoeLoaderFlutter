@@ -112,11 +112,8 @@ class _MainMasonryGridState extends State<MainMasonryGrid> {
                 height: 35,
                 width: 65,
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
-                  child: Image.file(
-                    File(rule.faviconPath),
-                    fit: BoxFit.cover,
-                  ),
+                  padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                  child: Global.multiPlatform.favicon(rule),
                 ),
               ),
               Text(

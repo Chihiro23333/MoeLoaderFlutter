@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:moeloaderflutter/net/download.dart';
 import 'package:moeloaderflutter/util/common_function.dart';
 import 'package:clipboard/clipboard.dart';
@@ -32,15 +34,19 @@ class _DownloadState extends State<DownloadPage> {
 
   AppBar _buildAppBar(BuildContext context) {
     List<Widget> children = [];
-    children.add(Chip(
-      avatar: ClipOval(
-        child: Icon(
-          Icons.title,
-          color: Theme.of(context).iconTheme.color,
+    if(Platform.isWindows){
+      children.add(Chip(
+        avatar: ClipOval(
+          child: Icon(
+            Icons.title,
+            color: Theme.of(context).iconTheme.color,
+          ),
         ),
-      ),
-      label: Text("文件存储路径：${Global.downloadsDirectory.path}"),
-    ));
+        label: Text("文件存储路径：${Global.downloadsDirectory.path}"),
+      ));
+    }else{
+      children.add(const Text("下载列表"));
+    }
     return AppBar(
       title: FittedBox(
         child: Row(

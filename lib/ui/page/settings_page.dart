@@ -166,6 +166,7 @@ class _SettingState extends State<SettingPage> {
       padding: const EdgeInsets.fromLTRB(0, 10, 15, 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           const Text(
             "下载选项：",

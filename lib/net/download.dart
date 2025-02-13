@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
+import 'package:gal/gal.dart';
 import 'package:moeloaderflutter/custom_rule/custom_rule_parser.dart';
 import 'package:moeloaderflutter/generated/json/base/json_convert_content.dart';
 import 'package:moeloaderflutter/model/detail_page_entity.dart';
@@ -175,7 +177,13 @@ class DownloadManager {
       _downloadNext();
     } else {
       _curCancelToken = CancelToken();
-      RequestManager().download(downloadTask.downloadUrl, downloadTask.name,
+      var downloadUrl = downloadTask.downloadUrl;
+      int index = downloadUrl.lastIndexOf(".");
+      String suffix = downloadUrl.substring(index, downloadUrl.length);
+      Directory directory = Global.downloadsDirectory;
+      _log.fine("suffix=$suffix;path=${directory.path}");
+      String savePath = "${directory.path}/${downloadTask.name}$suffix";
+      RequestManager().download(downloadUrl, savePath,
           onReceiveProgress: (int count, int total) {
         downloadTask.count = count;
         downloadTask.total = total;
@@ -184,11 +192,14 @@ class DownloadManager {
             complete ? DownloadTask.complete : DownloadTask.downloading;
         _update();
         if (complete) {
+          Global.multiPlatform.saveToGallery(savePath);
           _downloadNext();
         }
       }, cancelToken: _curCancelToken, headers: downloadTask.headers);
     }
   }
+
+
 
   DownloadTask? _findFirstUnDownload() {
     DownloadTask? task;
