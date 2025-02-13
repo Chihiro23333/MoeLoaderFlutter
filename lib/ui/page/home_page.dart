@@ -2,20 +2,18 @@ import 'dart:io';
 import 'package:moeloaderflutter/model/option_entity.dart';
 import 'package:moeloaderflutter/model/tag_entity.dart';
 import 'package:moeloaderflutter/multiplatform/bean.dart';
+import 'package:moeloaderflutter/ui/common/common.dart';
 import 'package:moeloaderflutter/ui/page/download_page.dart';
 import 'package:moeloaderflutter/ui/page/pool_list_page.dart';
-import 'package:moeloaderflutter/ui/page/result_list_page.dart';
 import 'package:moeloaderflutter/ui/page/search_page.dart';
 import 'package:moeloaderflutter/ui/page/settings_page.dart';
 import 'package:moeloaderflutter/util/common_function.dart';
-import 'package:moeloaderflutter/util/const.dart';
 import 'package:moeloaderflutter/util/entity.dart';
 import 'package:moeloaderflutter/widget/home_loading_status.dart';
 import 'package:moeloaderflutter/widget/image_masonry_grid.dart';
 import 'package:moeloaderflutter/widget/poll_grid.dart';
 import 'package:moeloaderflutter/widget/radio_choice_chip.dart';
 import 'package:clipboard/clipboard.dart';
-import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:moeloaderflutter/init.dart';
@@ -28,7 +26,11 @@ import 'package:to_json/models.dart' as jsonModels;
 enum MoreItem { copy, download, option, search, setting, about }
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  const HomePage({super.key, this.pageName, this.keyword, this.tagEntity});
+
+  final String? pageName;
+  final String? keyword;
+  final TagEntity? tagEntity;
 
   @override
   State<StatefulWidget> createState() => _HomeState();
@@ -80,14 +82,17 @@ class _HomeState extends State<HomePage> {
 
   String pageName() {
     bool home = (_keyword == null || _keyword!.isEmpty) && _tagEntity == null;
-    String pageName = home ? _homePageName : _searchPageName;
+    String pageName = widget.pageName ?? (home ? _homePageName : _searchPageName);
     return pageName;
   }
 
   @override
   void initState() {
     super.initState();
+    _keyword = widget.keyword;
+    _tagEntity = widget.tagEntity;
     _requestData(clearAll: true);
+
   }
 
   @override
@@ -100,7 +105,7 @@ class _HomeState extends State<HomePage> {
           appBar: AppBar(
               iconTheme: Theme.of(context).iconTheme,
               //导航栏
-              title: _buildAppBatTitle(context),
+              title: _buildNewAppBartTitle(context),
               actions: _buildActions(context, snapshot)),
           body: _buildListBody(context, snapshot),
           floatingActionButton: _buildFloatActionButton(context, snapshot),
@@ -111,15 +116,11 @@ class _HomeState extends State<HomePage> {
 
   List<Widget> _buildActions(BuildContext context, AsyncSnapshot snapshot) {
     List<Widget> list = [];
-    if (Platform.isAndroid) {
-      list.add(_buildMoreAction(context, snapshot));
-    } else {
-      list.add(_buildCopyAction(context));
-      list.add(_buildDownloadAction(context));
-      list.add(_buildOptionsAction(context));
-      list.add(_buildSearchAction(context, snapshot));
-      // list.add(_buildSettingsAction(context));
-    }
+    // list.add(_buildCopyAction(context));
+    list.add(_buildOptionsAction(context, snapshot));
+    list.add(_buildDownloadAction(context));
+    list.add(_buildSearchAction(context, snapshot));
+    // list.add(_buildSettingsAction(context));
     return list;
   }
 
@@ -183,7 +184,7 @@ class _HomeState extends State<HomePage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) {
-                  return ResultListPage(
+                  return HomePage(
                       pageName: _searchPageName, tagEntity: tag);
                 }),
               );
@@ -211,61 +212,60 @@ class _HomeState extends State<HomePage> {
     return Padding(
         padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
         child: MenuAnchor(
-              alignmentOffset: const Offset(-40, 0),
-              menuChildren: [
-                MenuItemButton(
-                  child: const Text("复制链接"),
-                  onPressed: () {
-                    _copy();
-                    _controller?.close();
-                  },
-                ),
-                const Divider(
-                  height: 10,
-                ),
-                MenuItemButton(
-                  child: const Text("下载列表"),
-                  onPressed: () {
-                    _download();
-                    _controller?.close();
-                  },
-                ),
-                const Divider(
-                  height: 10,
-                ),
-                MenuItemButton(
-                  child: const Text("条件筛选"),
-                  onPressed: () {
-                    _filter();
-                    _controller?.close();
-                  },
-                ),
-                const Divider(
-                  height: 10,
-                ),
-                MenuItemButton(
-                  child: const Text("搜索"),
-                  onPressed: () {
-                    _search(snapshot);
-                    _controller?.close();
-                  },
-                ),
-              ],
-              builder: (BuildContext context, MenuController controller,
-                  Widget? child) {
-                _controller = controller;
-                return IconButton(
-                    onPressed: () {
-                      if (controller.isOpen) {
-                        controller.close();
-                      } else {
-                        controller.open();
-                      }
-                    },
-                    icon: const Icon(Icons.more_vert));
+          alignmentOffset: const Offset(-40, 0),
+          menuChildren: [
+            MenuItemButton(
+              child: const Text("复制链接"),
+              onPressed: () {
+                _copy();
+                _controller?.close();
               },
-            )
-        );
+            ),
+            const Divider(
+              height: 10,
+            ),
+            MenuItemButton(
+              child: const Text("下载列表"),
+              onPressed: () {
+                _download();
+                _controller?.close();
+              },
+            ),
+            const Divider(
+              height: 10,
+            ),
+            MenuItemButton(
+              child: const Text("条件筛选"),
+              onPressed: () {
+                // _filter();
+                _controller?.close();
+              },
+            ),
+            const Divider(
+              height: 10,
+            ),
+            MenuItemButton(
+              child: const Text("搜索"),
+              onPressed: () {
+                _search(snapshot);
+                _controller?.close();
+              },
+            ),
+          ],
+          builder:
+              (BuildContext context, MenuController controller, Widget? child) {
+            _controller = controller;
+            return IconButton(
+                onPressed: () {
+                  if (controller.isOpen) {
+                    controller.close();
+                  } else {
+                    controller.open();
+                  }
+                },
+                icon: const Icon(Icons.more_vert));
+          },
+        ));
   }
 
   Widget _buildSettingsAction(BuildContext context) {
@@ -281,19 +281,81 @@ class _HomeState extends State<HomePage> {
         icon: const Icon(Icons.settings));
   }
 
-  Widget _buildOptionsAction(BuildContext context) {
+  Widget _buildOptionsAction(BuildContext context, AsyncSnapshot snapshot) {
     return IconButton(
         onPressed: () async {
-          await _filter();
+          await _filter(context, snapshot);
         },
         icon: const Icon(Icons.filter_alt));
   }
 
-  void _showOptionsSheet(BuildContext context, List<OptionEntity> list) {
+  void _showOptionsSheet(
+      BuildContext context, List<OptionEntity> list, HomeState? homeState) {
     showModalBottomSheet(
         context: context,
         builder: (context) => StatefulBuilder(builder: (context, setState) {
               List<Widget> widgets = [];
+
+              if (homeState != null) {
+                var url = homeState.url;
+                if (url.isNotEmpty) {
+                  widgets.add(const Padding(
+                    padding: EdgeInsets.only(top: 10, bottom: 10),
+                    child: Text(
+                      "网页地址：",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ));
+                  widgets.add(Wrap(
+                    spacing: 8.0, // 主轴(水平)方向间距
+                    runSpacing: 4.0, // 纵轴（垂直）方向间距
+                    children: [
+                      buildUrlWidget(context, url)
+                    ],
+                  ));
+                }
+
+                int page = homeState.page;
+                widgets.add(Padding(
+                  padding: const EdgeInsets.only(top: 10, bottom: 10),
+                  child: Text(
+                    "当前加载页码：$page",
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ));
+
+                // String keyword = homeState.keyword;
+                // if (keyword.isNotEmpty) {
+                //   widgets.add(const Padding(
+                //     padding: EdgeInsets.only(top: 10, bottom: 10),
+                //     child: Text(
+                //       "当前搜索关键字：",
+                //       style: TextStyle(fontWeight: FontWeight.bold),
+                //     ),
+                //   ));
+                //   widgets.add(Chip(
+                //     avatar: ClipOval(
+                //       child: Icon(
+                //         Icons.filter_alt,
+                //         color: Theme.of(context).iconTheme.color,
+                //       ),
+                //     ),
+                //     label: Text(keyword),
+                //     deleteIcon: ClipOval(
+                //       child: Icon(
+                //         Icons.delete,
+                //         color: Theme.of(context).iconTheme.color,
+                //       ),
+                //     ),
+                //     deleteButtonTooltipMessage: "",
+                //     onDeleted: () {
+                //       _updateKeyword("");
+                //       _requestData(clearAll: true);
+                //     },
+                //   ));
+                // }
+              }
+
               for (OptionEntity optionEntity in list) {
                 widgets.add(Padding(
                   padding: const EdgeInsets.only(top: 10, bottom: 10),
@@ -353,17 +415,13 @@ class _HomeState extends State<HomePage> {
         icon: const Icon(Icons.copy));
   }
 
-  Future<void> _filter() async{
-    List<OptionEntity> list =
-        await _homeViewModel.optionList(pageName(), _keyword);
-    if (list.isEmpty) {
-      showToast("当前站点无筛选条件");
-      return;
-    }
-    _showOptionsSheet(context, list);
+  Future<void> _filter(BuildContext context, AsyncSnapshot snapshot) async {
+    List<OptionEntity> list = await _homeViewModel.optionList(pageName(), _keyword);
+    HomeState? homeState = snapshot.data;
+    _showOptionsSheet(context, list, homeState);
   }
 
-  void _download(){
+  void _download() {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) {
@@ -372,11 +430,11 @@ class _HomeState extends State<HomePage> {
     );
   }
 
-  void _copy(){
+  void _copy() {
     FlutterClipboard.copy(_url).then((value) => showToast("链接已复制"));
   }
 
-  void _search(AsyncSnapshot snapshot){
+  void _search(AsyncSnapshot snapshot) {
     if (snapshot.hasData) {
       HomeState? homeState = snapshot.data;
       if (homeState != null) {
@@ -397,7 +455,7 @@ class _HomeState extends State<HomePage> {
   Widget _buildSearchAction(BuildContext context, AsyncSnapshot snapshot) {
     return IconButton(
         onPressed: () {
-            _search(snapshot);
+          _search(snapshot);
         },
         icon: const Icon(Icons.image_search));
   }
@@ -500,6 +558,21 @@ class _HomeState extends State<HomePage> {
     }
   }
 
+  Widget _buildNewAppBartTitle(BuildContext context) {
+    return StreamBuilder<UriState>(
+        stream: _homeViewModel.streamUriController.stream,
+        builder: (BuildContext context, AsyncSnapshot asyncSnapshot) {
+          if (asyncSnapshot.connectionState == ConnectionState.active) {
+            UriState uriState = asyncSnapshot.data;
+            String keyword = uriState.searchDesc;
+            if (keyword.isNotEmpty) {
+              return Text(keyword);
+            }
+          }
+          return const Text("首页");
+        });
+  }
+
   Widget _buildAppBatTitle(BuildContext context) {
     return StreamBuilder<UriState>(
         stream: _homeViewModel.streamUriController.stream,
@@ -508,7 +581,7 @@ class _HomeState extends State<HomePage> {
             UriState uriState = asyncSnapshot.data;
             _url = uriState.url;
             List<Widget> children = [];
-            if(Platform.isWindows){
+            if (Platform.isWindows) {
               children.add(Chip(
                 avatar: ClipOval(
                   child: Icon(

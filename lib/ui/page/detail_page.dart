@@ -4,7 +4,7 @@ import 'package:moeloaderflutter/model/detail_page_entity.dart';
 import 'package:moeloaderflutter/model/home_page_item_entity.dart';
 import 'package:moeloaderflutter/ui/dialog/info_dialog.dart';
 import 'package:moeloaderflutter/ui/page/download_page.dart';
-import 'package:moeloaderflutter/ui/page/result_list_page.dart';
+import 'package:moeloaderflutter/ui/page/home_page.dart';
 import 'package:moeloaderflutter/util/common_function.dart';
 import 'package:moeloaderflutter/util/utils.dart';
 import 'package:clipboard/clipboard.dart';
@@ -430,7 +430,7 @@ class _DetailState extends State<DetailPage> {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) {
-                return ResultListPage(
+                return HomePage(
                     pageName: _searchPageName, tagEntity: tag);
               }),
             );

@@ -1,6 +1,5 @@
-import 'dart:io';
 import 'package:moeloaderflutter/init.dart';
-import 'package:moeloaderflutter/ui/page/result_list_page.dart';
+import 'package:moeloaderflutter/ui/page/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:to_json/models.dart';
@@ -129,7 +128,7 @@ class _SearchState extends State<SearchPage> {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) {
-        return ResultListPage(
+        return HomePage(
           pageName: _searchPageName,
           keyword: _textEditingControl.text,
         );

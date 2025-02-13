@@ -1,4 +1,5 @@
 import 'package:moeloaderflutter/model/tag_entity.dart';
+import 'package:moeloaderflutter/ui/common/common.dart';
 import 'package:moeloaderflutter/util/common_function.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/cupertino.dart';
@@ -35,7 +36,9 @@ void showInfoSheet(
     children.add(Wrap(
       spacing: 8.0, // 主轴(水平)方向间距
       runSpacing: 4.0, // 纵轴（垂直）方向间距
-      children: _buildUrlWidget(context, url),
+      children: [
+        buildUrlWidget(context, url)
+      ],
     ));
   }
   if (infoChildren.isNotEmpty) {
@@ -153,34 +156,5 @@ List<Widget> _buildTags(BuildContext context, List<TagEntity> tagList,
       },
     ));
   }
-  return result;
-}
-
-List<Widget> _buildUrlWidget(BuildContext context, String url) {
-  List<Widget> result = [];
-  result.add(Chip(
-    avatar: ClipOval(
-      child: Icon(
-        Icons.label,
-        color: Theme.of(context).iconTheme.color,
-      ),
-    ),
-    label: Text(
-      url,
-      maxLines: 1,
-      overflow: TextOverflow.ellipsis,
-    ),
-    deleteButtonTooltipMessage: "复制",
-    deleteIcon: ClipOval(
-      clipBehavior: Clip.antiAlias,
-      child: Icon(
-        Icons.copy,
-        color: Theme.of(context).iconTheme.color,
-      ),
-    ),
-    onDeleted: () {
-      FlutterClipboard.copy(url).then((value) => showToast("链接已复制"));
-    },
-  ));
   return result;
 }

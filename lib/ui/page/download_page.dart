@@ -1,6 +1,6 @@
 import 'dart:io';
-
 import 'package:moeloaderflutter/net/download.dart';
+import 'package:moeloaderflutter/ui/common/common.dart';
 import 'package:moeloaderflutter/util/common_function.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
@@ -34,19 +34,7 @@ class _DownloadState extends State<DownloadPage> {
 
   AppBar _buildAppBar(BuildContext context) {
     List<Widget> children = [];
-    if(Platform.isWindows){
-      children.add(Chip(
-        avatar: ClipOval(
-          child: Icon(
-            Icons.title,
-            color: Theme.of(context).iconTheme.color,
-          ),
-        ),
-        label: Text("文件存储路径：${Global.downloadsDirectory.path}"),
-      ));
-    }else{
-      children.add(const Text("下载列表"));
-    }
+    children.add(const Text("下载列表"));
     return AppBar(
       title: FittedBox(
         child: Row(
@@ -56,8 +44,38 @@ class _DownloadState extends State<DownloadPage> {
       ),
       iconTheme: Theme.of(context).iconTheme,
       elevation: 10,
-      actions: [_buildCopyAction(context)],
+      actions: [_buildInfoAction(context)],
     );
+  }
+
+  Widget _buildInfoAction(BuildContext context) {
+    return IconButton(
+        onPressed: () {
+          showModalBottomSheet(
+              context: context,
+              builder: (context) {
+                return SingleChildScrollView(
+                  child: Padding(
+                    padding:
+                    const EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.only(top: 10, bottom: 10),
+                          child: Text(
+                            "下载存储路径：",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        buildUrlWidget(context, Global.downloadsDirectory.path)
+                      ],
+                    ),
+                  ),
+                );
+              });
+        },
+        icon: const Icon(Icons.info));
   }
 
   Widget _buildCopyAction(BuildContext context) {

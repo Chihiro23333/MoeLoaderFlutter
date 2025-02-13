@@ -74,6 +74,8 @@ class HomeViewModel {
     await _updateUri(pageName, siteName, url, realPage,
         keyword ?? tagEntity?.desc ?? "", options);
 
+    _homeState.url = url;
+
     Map<String, String> headers = customRuleParser.headers();
     _homeState.headers = headers;
 
@@ -193,6 +195,7 @@ class HomeViewModel {
 
 class HomeState {
   List<HomePageItemEntity> list = [];
+  String url = "";
   int page = 0;
   String keyword = "";
   bool loading = false;
@@ -205,6 +208,7 @@ class HomeState {
 
   void reset() {
     list.clear();
+    url = "";
     page = 0;
     keyword = "";
     loading = false;
