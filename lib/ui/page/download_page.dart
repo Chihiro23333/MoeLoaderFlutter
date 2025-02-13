@@ -96,7 +96,10 @@ class _DownloadState extends State<DownloadPage> {
       List<DownloadTask> list = downloadState.tasks;
       if (list.isEmpty) {
         return const Center(
-          child: Text("下载列表为空"),
+          child: Text(
+            "下载列表为空",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          ),
         );
       }
       return ListView.separated(
@@ -117,8 +120,8 @@ class _DownloadState extends State<DownloadPage> {
           return ListTile(
             leading: GestureDetector(
               child: downloadStateIcon(context, downloadState),
-              onTap: (){
-                switch(downloadState){
+              onTap: () {
+                switch (downloadState) {
                   case DownloadTask.error:
                     DownloadManager().retryTask(downloadTask);
                     break;
@@ -129,10 +132,7 @@ class _DownloadState extends State<DownloadPage> {
               downloadTask.name,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 12,
-                height: 1.2
-              ),
+              style: const TextStyle(fontSize: 12, height: 1.2),
             ),
             subtitle: downloadProgress(progress),
           );
