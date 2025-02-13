@@ -1,5 +1,6 @@
 import 'package:moeloaderflutter/init.dart';
 import 'package:moeloaderflutter/multiplatform/bean.dart';
+import 'package:moeloaderflutter/ui/page/settings_page.dart';
 import 'package:moeloaderflutter/ui/page/webview_android_page.dart';
 import 'package:moeloaderflutter/widget/main_masonry_grid.dart';
 import 'package:flutter/material.dart';
@@ -56,19 +57,10 @@ class _MainState extends State<MainPage> {
       padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
       child: IconButton(
           onPressed: () {
-            // Navigator.push(
-            //   context,
-            //   MaterialPageRoute(builder: (context) {
-            //     return const SettingPage();
-            //   }),
-            // );
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) {
-                return WebViewAndroidPage(
-                  url: "https://www.baidu.com/",
-                  code: ValidateResult.needLogin,
-                );
+                return const SettingPage();
               }),
             );
           },

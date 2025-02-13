@@ -107,8 +107,8 @@ class _MainMasonryGridState extends State<MainMasonryGrid> {
           child: Row(
             children: [
               SizedBox(
-                height: 35,
-                width: 65,
+                height: 30,
+                width: 50,
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                   child: Global.multiPlatform.favicon(rule),

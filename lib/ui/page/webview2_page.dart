@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:moeloaderflutter/net/request_manager.dart';
 import 'package:logging/logging.dart';
+import 'package:to_json/validator.dart';
 import 'dart:async';
 import 'package:webview_windows/webview_windows.dart';
 import 'package:window_manager/window_manager.dart';
@@ -248,6 +249,9 @@ class _WebView2State extends State<WebView2Page> {
   }
 
   Widget _buildFloatActionButton(BuildContext context) {
+    if(widget.code == ValidateResult.success){
+      return const SizedBox();
+    }
     return FloatingActionButton.extended(
         onPressed: () async {
           await _saveCookies(context);

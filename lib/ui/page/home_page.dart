@@ -564,7 +564,10 @@ class _HomeState extends State<HomePage> {
             UriState uriState = asyncSnapshot.data;
             String keyword = uriState.searchDesc;
             if (keyword.isNotEmpty) {
-              return Text(keyword);
+              return Text(
+                keyword,
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              );
             }
           }
           return const Text(

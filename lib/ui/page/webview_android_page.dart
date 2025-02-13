@@ -38,7 +38,7 @@ class _WebViewAndroidState extends State<WebViewAndroidPage> {
       ..setNavigationDelegate(
         NavigationDelegate(
           onPageFinished: (String url) async {
-            _log.info("onPageFinished");
+            _log.fine("onPageFinished");
           },
         ),
       );
@@ -140,7 +140,7 @@ class _WebViewAndroidState extends State<WebViewAndroidPage> {
     // 页面加载完成后获取 Cookies
     final String? cookiesResult = await _controller
         .runJavaScriptReturningResult('document.cookie') as String?;
-    _log.info("cookiesResult=$cookiesResult");
+    _log.fine("cookiesResult=$cookiesResult");
     if (cookiesResult != null && cookiesResult.isNotEmpty) {
       String origin = Uri.parse(_url).origin;
       await RequestManager().saveCookiesString(origin, cookiesResult);
