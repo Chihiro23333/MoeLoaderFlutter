@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:moeloaderflutter/ui/viewmodel/view_model_setting.dart';
 import 'package:moeloaderflutter/util/common_function.dart';
 import 'package:moeloaderflutter/util/const.dart';
@@ -168,10 +169,9 @@ class _SettingState extends State<SettingPage> {
       }
     }
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 10, 15, 10),
+      padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const Text(
             "下载选项：",
@@ -198,103 +198,119 @@ class _SettingState extends State<SettingPage> {
       _textEditingControl.value = TextEditingValue(
         text: settingState.proxy ?? "",
       );
+      List<Widget> children = [];
+      if(Platform.isWindows){
+        children.add(_buildProxyInput(context, settingState));
+        children.add(const Divider(
+          height: 10,
+        ));
+      }
+      children.add(_buildDefaultDownloadSize(context, settingState));
+      children.add(const Divider(
+        height: 10,
+      ));
+      children.add(
+          _buildFolderItem(context, "自定义规则存储路径", Global.rulesDirectory.path));
+      children.add(const Divider(
+        height: 10,
+      ));
+      children.add(_buildFolderItem(
+          context, "下载文件保存路径", Global.downloadsDirectory.path));
+      children.add(const Divider(
+        height: 10,
+      ));
+      children
+          .add(_buildFolderItem(context, "数据库缓存路径", Global.hiveDirectory.path));
       return Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
               child: SingleChildScrollView(
-                  child: Column(
-            children: [
-              _buildProxyInput(context, settingState),
-              const Divider(
-                height: 10,
-              ),
-              _buildDefaultDownloadSize(context, settingState),
-              const Divider(
-                height: 10,
-              ),
-              _buildFolderItem(
-                  context, "自定义规则存储路径", Global.rulesDirectory.path),
-              const Divider(
-                height: 10,
-              ),
-              _buildFolderItem(
-                  context, "下载文件保存路径", Global.downloadsDirectory.path),
-              const Divider(
-                height: 10,
-              ),
-              _buildFolderItem(context, "数据库缓存路径", Global.hiveDirectory.path),
-              const Divider(
-                height: 10,
-              ),
-              ListTile(
-                title: const Text(
-                  "MoeLoaderFlutter",
-                  style: TextStyle(fontSize: 15),
-                ),
-                leading: Icon(
-                  Icons.title,
-                  color: Theme.of(context).iconTheme.color,
-                ),
-              ),
-              const Divider(
-                height: 10,
-              ),
-              ListTile(
-                title: const Text(
-                  "V1.0.4",
-                  style: TextStyle(fontSize: 15),
-                ),
-                leading: Icon(
-                  Icons.code,
-                  color: Theme.of(context).iconTheme.color,
-                ),
-              ),
-              const Divider(
-                height: 10,
-              ),
-              ListTile(
-                title: const Text(
-                  "@2024 by Chihiro23333",
-                  style: TextStyle(fontSize: 15),
-                ),
-                leading: Icon(
-                  Icons.timelapse,
-                  color: Theme.of(context).iconTheme.color,
-                ),
-              ),
-              const Divider(
-                height: 10,
-              ),
-              ListTile(
-                title: const Text(
-                  "https://github.com/Chihiro23333",
-                  style: TextStyle(fontSize: 15),
-                ),
-                leading: Icon(
-                  Icons.home,
-                  color: Theme.of(context).iconTheme.color,
-                ),
-              ),
-              const Divider(
-                height: 10,
-              ),
-              ListTile(
-                title: const Text(
-                  "zhu.20081121@gmail.com",
-                  style: TextStyle(fontSize: 15),
-                ),
-                leading: Icon(
-                  Icons.mail,
-                  color: Theme.of(context).iconTheme.color,
-                ),
-              ),
-              const Divider(
-                height: 10,
-              ),
-            ],
-          )))
+                  child: Column(children: children
+                      // [
+                      // ListTile(
+                      //   title: const Text(
+                      //     "MoeLoaderFlutter",
+                      //     style: TextStyle(fontSize: 15),
+                      //   ),
+                      //   leading: Icon(
+                      //     Icons.title,
+                      //     color: Theme
+                      //         .of(context)
+                      //         .iconTheme
+                      //         .color,
+                      //   ),
+                      // ),
+                      // const Divider(
+                      //   height: 10,
+                      // ),
+                      // ListTile(
+                      //   title: const Text(
+                      //     "V1.0.4",
+                      //     style: TextStyle(fontSize: 15),
+                      //   ),
+                      //   leading: Icon(
+                      //     Icons.code,
+                      //     color: Theme
+                      //         .of(context)
+                      //         .iconTheme
+                      //         .color,
+                      //   ),
+                      // ),
+                      // const Divider(
+                      //   height: 10,
+                      // ),
+                      // ListTile(
+                      //   title: const Text(
+                      //     "@2024 by Chihiro23333",
+                      //     style: TextStyle(fontSize: 15),
+                      //   ),
+                      //   leading: Icon(
+                      //     Icons.timelapse,
+                      //     color: Theme
+                      //         .of(context)
+                      //         .iconTheme
+                      //         .color,
+                      //   ),
+                      // ),
+                      // const Divider(
+                      //   height: 10,
+                      // ),
+                      // ListTile(
+                      //   title: const Text(
+                      //     "https://github.com/Chihiro23333",
+                      //     style: TextStyle(fontSize: 15),
+                      //   ),
+                      //   leading: Icon(
+                      //     Icons.home,
+                      //     color: Theme
+                      //         .of(context)
+                      //         .iconTheme
+                      //         .color,
+                      //   ),
+                      // ),
+                      // const Divider(
+                      //   height: 10,
+                      // ),
+                      // ListTile(
+                      //   title: const Text(
+                      //     "zhu.20081121@gmail.com",
+                      //     style: TextStyle(fontSize: 15),
+                      //   ),
+                      //   leading: Icon(
+                      //     Icons.mail,
+                      //     color: Theme
+                      //         .of(context)
+                      //         .iconTheme
+                      //         .color,
+                      //   ),
+                      // ),
+                      // const Divider(
+                      //   height: 10,
+                      // ),
+                      // ],
+                      )))
         ],
       );
     }

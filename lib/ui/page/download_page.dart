@@ -116,28 +116,26 @@ class _DownloadState extends State<DownloadPage> {
             progress = 100;
           } else if (downloadState == DownloadTask.error) {}
           return ListTile(
-            leading: downloadStateIcon(context, downloadState),
+            leading: GestureDetector(
+              child: downloadStateIcon(context, downloadState),
+              onTap: (){
+                switch(downloadState){
+                  case DownloadTask.error:
+                    DownloadManager().retryTask(downloadTask);
+                    break;
+                }
+              },
+            ),
             title: Text(
               downloadTask.name,
-              maxLines: 2,
+              maxLines: 1,
               overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                fontSize: 12,
+                height: 1.2
+              ),
             ),
             subtitle: downloadProgress(progress),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                    onPressed: () async {
-                      DownloadManager().retryTask(downloadTask);
-                    },
-                    icon: const Icon(Icons.replay_circle_filled)),
-                IconButton(
-                    onPressed: () async {
-                      DownloadManager().cancelTask(downloadTask);
-                    },
-                    icon: const Icon(Icons.cancel))
-              ],
-            ),
           );
         },
         separatorBuilder: (BuildContext context, int index) {
@@ -155,7 +153,7 @@ class _DownloadState extends State<DownloadPage> {
     return LinearProgressIndicator(
       value: progress,
       color: Global.defaultColor,
-      minHeight: 5,
+      minHeight: 3,
       borderRadius: BorderRadius.circular(20),
     );
   }

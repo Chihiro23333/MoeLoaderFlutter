@@ -27,7 +27,7 @@ class _MainState extends State<MainPage> {
         //导航栏
         title: _buildAppBatTitle(context),
         leading: IconButton(
-          padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+          padding: const EdgeInsets.fromLTRB(15, 12, 0, 12),
           icon: Image.asset(
             'assets/images/icon_round.png',
           ),

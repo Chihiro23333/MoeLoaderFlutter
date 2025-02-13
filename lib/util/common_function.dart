@@ -35,13 +35,13 @@ Widget downloadStateIcon(BuildContext context, int downloadState) {
       break;
     case DownloadTask.error:
       icon = const Icon(
-        Icons.close,
+        Icons.restart_alt,
         color: Colors.red,
       );
       break;
     case DownloadTask.waiting:
       icon = Icon(
-        Icons.more_time_outlined,
+        Icons.watch_later_outlined,
         color: Global.defaultColor,
       );
       break;
