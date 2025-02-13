@@ -75,8 +75,8 @@ class _DetailState extends State<DetailPage> {
       iconTheme: Theme.of(context).iconTheme,
       elevation: 10,
       actions: <Widget>[
-        _buildCopyAction(context),
-        _buildDownloadAction(context),
+        // _buildCopyAction(context),
+        // _buildDownloadAction(context),
         _buildInfoAction(context, snapshot.data)
       ],
     );
@@ -268,37 +268,13 @@ class _DetailState extends State<DetailPage> {
   }
 
   Widget _buildAppBatTitle(BuildContext context) {
-    return StreamBuilder<DetailUriState>(
-        stream: _detailViewModel.streamDetailUriController.stream,
-        builder: (BuildContext context, AsyncSnapshot asyncSnapshot) {
-          if (asyncSnapshot.connectionState == ConnectionState.active) {
-            DetailUriState uriState = asyncSnapshot.data;
-            List<Widget> children = [];
-            if(Platform.isWindows) {
-              children.add(Chip(
-                avatar: ClipOval(
-                  child: Icon(
-                    Icons.title,
-                    color: Theme
-                        .of(context)
-                        .iconTheme
-                        .color,
-                  ),
-                ),
-                label: Text(uriState.baseHref),
-              ));
-            }else{
-              children.add(const Text("详情"));
-            }
-            return FittedBox(
-              child: Row(
-                children: children,
-              ),
-            );
-          } else {
-            return const SizedBox();
-          }
-        });
+    List<Widget> children = [];
+    children.add(const Text("图片详情"));
+    return FittedBox(
+      child: Row(
+        children: children,
+      ),
+    );
   }
 
   //处理部分网页没有详情页的情况

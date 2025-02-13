@@ -1,4 +1,6 @@
 import 'package:moeloaderflutter/init.dart';
+import 'package:moeloaderflutter/multiplatform/bean.dart';
+import 'package:moeloaderflutter/ui/common/common.dart';
 import 'package:moeloaderflutter/ui/viewmodel/view_model_pool_list.dart';
 import 'package:moeloaderflutter/ui/page/webview2_page.dart';
 import 'package:moeloaderflutter/util/common_function.dart';
@@ -44,15 +46,27 @@ class _PoolListState extends State<PoolListPage> {
           appBar: AppBar(
               iconTheme: Theme.of(context).iconTheme,
               //导航栏
-              title: _buildAppBatTitle(context),
-              actions: <Widget>[
-                _buildCopyAction(context),
-              ]),
+              title: _buildNewAppBartTitle(context),
+              actions: _buildActions(context, snapshot)),
           body: _buildListBody(snapshot),
           floatingActionButton: _buildFloatActionButton(context, snapshot),
         );
       },
     );
+  }
+
+  List<Widget> _buildActions(BuildContext context, AsyncSnapshot snapshot) {
+    List<Widget> list = [];
+    list.add(_buildOptionsAction(context, snapshot));
+    return list;
+  }
+
+  Widget _buildOptionsAction(BuildContext context, AsyncSnapshot snapshot) {
+    return IconButton(
+        onPressed: () async {
+          await _filter(context, snapshot);
+        },
+        icon: const Icon(Icons.filter_alt));
   }
 
   Widget _buildFloatActionButton(BuildContext context, AsyncSnapshot snapshot) {
@@ -90,6 +104,55 @@ class _PoolListState extends State<PoolListPage> {
     }
   }
 
+  Future<void> _filter(BuildContext context, AsyncSnapshot snapshot) async {
+    PoolListState? poolListState = snapshot.data;
+    _showOptionsSheet(context, poolListState);
+  }
+
+  void _showOptionsSheet(
+      BuildContext context, PoolListState? poolListState) {
+    showModalBottomSheet(
+        context: context,
+        builder: (context) => StatefulBuilder(builder: (context, setState) {
+          List<Widget> widgets = [];
+
+          if (poolListState != null) {
+            var url = poolListState.url;
+            if (url.isNotEmpty) {
+              widgets.add(const Padding(
+                padding: EdgeInsets.only(top: 10, bottom: 10),
+                child: Text(
+                  "网页地址：",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ));
+              widgets.add(Wrap(
+                spacing: 8.0, // 主轴(水平)方向间距
+                runSpacing: 4.0, // 纵轴（垂直）方向间距
+                children: [
+                  buildUrlWidget(context, url)
+                ],
+              ));
+            }
+            int page = poolListState.page;
+            widgets.add(Padding(
+              padding: const EdgeInsets.only(top: 10, bottom: 10),
+              child: Text(
+                "当前加载页码：$page",
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ));
+          }
+          return SingleChildScrollView(
+              padding: const EdgeInsets.only(
+                  left: 10, top: 10, right: 10, bottom: 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: widgets,
+              ));
+        }));
+  }
+
   Widget _buildCopyAction(BuildContext context) {
     return IconButton(
         onPressed: () async {
@@ -124,9 +187,12 @@ class _PoolListState extends State<PoolListPage> {
         retryOnPressed: retryOnPressed,
         actionOnPressed: actionOnPressed,
         builder: (poolListState) {
+          Grid homeGrid = Global.multiPlatform.homeGrid();
+          int columnCount = homeGrid.columnCount;
+          double aspectRatio = homeGrid.aspectRatio;
           return ImageMasonryGrid(
-            columnCount: Global.customRuleParser.columnCount(Const.poolListPage),
-            aspectRatio: Global.customRuleParser.aspectRatio(Const.poolListPage),
+            columnCount: homeGrid.columnCount,
+            aspectRatio: homeGrid.aspectRatio,
             list: poolListState.list,
             headers: poolListState.headers,
             itemOnPressed: (homePageItem) async {
@@ -134,13 +200,16 @@ class _PoolListState extends State<PoolListPage> {
                 context,
                 MaterialPageRoute(builder: (context) {
                   return DetailPage(
-                      href: homePageItem.href,
-                      homePageItem: homePageItem);
+                      href: homePageItem.href, homePageItem: homePageItem);
                 }),
               );
             },
           );
         });
+  }
+
+  Widget _buildNewAppBartTitle(BuildContext context) {
+    return const Text("列表");
   }
 
   Widget _buildAppBatTitle(BuildContext context) {

@@ -115,6 +115,8 @@ class _DownloadState extends State<DownloadPage> {
             leading: downloadStateIcon(context, downloadState),
             title: Text(
               downloadTask.name,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
             subtitle: downloadProgress(progress),
             trailing: Row(

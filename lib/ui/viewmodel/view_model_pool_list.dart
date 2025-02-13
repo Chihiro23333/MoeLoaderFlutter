@@ -59,7 +59,7 @@ class PoolListViewModel {
     formatParams["id"] = id;
     _log.fine("formatParams=$formatParams");
     String url = customRuleParser.url(_poolListPageName, formatParams);
-
+    _poolListState.url = url;
     _updateUri(url);
 
     Map<String, String> headers = customRuleParser.headers();
@@ -137,6 +137,7 @@ class PoolListViewModel {
 class PoolListState {
   List<HomePageItemEntity> list = [];
   int page = 0;
+  String url = "";
   bool loading = false;
   bool error = false;
   String errorMessage = "";
@@ -146,6 +147,7 @@ class PoolListState {
   void reset() {
     list.clear();
     int page = 0;
+    String url = "";
     loading = false;
     error = false;
     errorMessage = "";
