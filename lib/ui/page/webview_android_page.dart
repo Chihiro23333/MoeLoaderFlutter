@@ -3,6 +3,7 @@ import 'package:moeloaderflutter/util/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
+import 'package:to_json/validator.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'dart:async';
 import 'package:webview_flutter_android/webview_flutter_android.dart'; // 仅 Android 需要
@@ -112,6 +113,9 @@ class _WebViewAndroidState extends State<WebViewAndroidPage> {
   }
 
   Widget _buildFloatActionButton(BuildContext context) {
+    if(widget.code == ValidateResult.success){
+      return const SizedBox();
+    }
     return FloatingActionButton.extended(
         onPressed: () async {
           await _saveCookies(context);

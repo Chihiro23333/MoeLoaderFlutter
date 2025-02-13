@@ -1,7 +1,9 @@
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:moeloaderflutter/init.dart';
 import 'package:moeloaderflutter/util/common_function.dart';
+import 'package:to_json/validator.dart';
 
 Widget buildUrlWidget(BuildContext context, String url) {
   return Chip(
@@ -11,10 +13,24 @@ Widget buildUrlWidget(BuildContext context, String url) {
         color: Theme.of(context).iconTheme.color,
       ),
     ),
-    label: Text(
-      url,
-      maxLines: 1,
-      overflow: TextOverflow.ellipsis,
+    label: GestureDetector(
+      child: Text(
+        url,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) {
+            return Global.multiPlatform.navigateToWebView(
+              context,
+              url,
+              ValidateResult.success,
+            );
+          }),
+        );
+      },
     ),
     deleteButtonTooltipMessage: "复制",
     deleteIcon: ClipOval(
