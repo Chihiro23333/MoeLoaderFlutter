@@ -40,6 +40,7 @@ class _HomeState extends State<HomePage> {
 
   final HomeViewModel _homeViewModel = HomeViewModel();
   final GlobalKey<ScaffoldState> _scaffoldGlobalKey = GlobalKey();
+  final TextEditingController _controller = TextEditingController(text: "");
 
   final String _homePageName = "homePage";
   final String _searchPageName = "searchPage";
@@ -292,7 +293,8 @@ class _HomeState extends State<HomePage> {
       BuildContext context, List<OptionEntity> list, HomeState? homeState) {
     showModalBottomSheet(
         context: context,
-        builder: (context) => StatefulBuilder(builder: (context, setState) {
+        builder: (sheetContext) =>
+            StatefulBuilder(builder: (sheetContext, setState) {
               List<Widget> widgets = [];
 
               if (homeState != null) {
@@ -308,17 +310,53 @@ class _HomeState extends State<HomePage> {
                   widgets.add(Wrap(
                     spacing: 8.0, // 主轴(水平)方向间距
                     runSpacing: 4.0, // 纵轴（垂直）方向间距
-                    children: [buildUrlWidget(context, url)],
+                    children: [buildUrlWidget(sheetContext, url)],
                   ));
                 }
 
                 int page = homeState.page;
-                widgets.add(Padding(
-                  padding: const EdgeInsets.only(top: 10, bottom: 10),
+                _controller.text = "$page";
+                widgets.add(const Padding(
+                  padding: EdgeInsets.only(top: 10, bottom: 10),
                   child: Text(
-                    "当前加载页码：$page",
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                    "当前加载页码",
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   ),
+                ));
+                widgets.add(Chip(
+                  avatar: ClipOval(
+                    child: Icon(
+                      Icons.format_list_numbered,
+                      color: Theme.of(sheetContext).iconTheme.color,
+                    ),
+                  ),
+                  label: SizedBox(
+                    width: 70,
+                    height: 20,
+                    child: TextField(
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))
+                        //设置只允许输入数字
+                      ],
+                      controller: _controller,
+                      decoration: const InputDecoration(
+                          contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 13),
+                          hintText: '请输入页码',
+                          hintStyle: TextStyle(fontSize: 12),
+                          border: InputBorder.none),
+                    ),
+                  ),
+                  deleteIcon: const Icon(Icons.keyboard_double_arrow_right_rounded),
+                  deleteButtonTooltipMessage: "点击跳转",
+                  onDeleted: () {
+                    String inputText = _controller.text;
+                    if (inputText.isEmpty) {
+                      showToast("请输入正确的页码");
+                      return;
+                    }
+                    _requestData(page: inputText);
+                    Navigator.of(context).pop();
+                  },
                 ));
 
                 // String keyword = homeState.keyword;
@@ -566,7 +604,8 @@ class _HomeState extends State<HomePage> {
             if (keyword.isNotEmpty) {
               return Text(
                 keyword,
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               );
             }
           }

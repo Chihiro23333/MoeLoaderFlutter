@@ -22,7 +22,8 @@ class _SettingState extends State<SettingPage> {
 
   final TextEditingController _textEditingControl = TextEditingController();
   String _dropdownValue = "";
-  SettingViewModel _settingViewModel = SettingViewModel();
+  String _downloadName = "";
+  final SettingViewModel _settingViewModel = SettingViewModel();
 
   Future<void> _setProxy(String text) async {
     await setProxy(text);
@@ -32,6 +33,12 @@ class _SettingState extends State<SettingPage> {
   void updateDropDownValue(String value) {
     setState(() {
       _dropdownValue = value;
+    });
+  }
+
+  void updateDownloadName(String value) {
+    setState(() {
+      _downloadName = value;
     });
   }
 
@@ -158,6 +165,64 @@ class _SettingState extends State<SettingPage> {
     );
   }
 
+  Widget _buildDownloadName(BuildContext context, SettingState settingState) {
+    List<Widget> result = [];
+    List<String> nameRegex = [
+      Const.site,
+      Const.id,
+      Const.tag,
+      Const.desc,
+      Const.author,
+      Const.date
+    ];
+    for (var regex in nameRegex) {
+      result.add(GestureDetector(
+        child: Chip(
+          label: Text(regex),
+        ),
+        onTap: () {
+          updateDownloadName("${_downloadName}_$regex");
+        },
+      ));
+    }
+
+    result.add(GestureDetector(
+      child: Chip(
+        backgroundColor: Global.defaultColor,
+        label: const Text("重置",
+        style: TextStyle(
+          color: Colors.white
+        ),),
+      ),
+      onTap: () {
+        updateDownloadName("");
+      },
+    ));
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const Text(
+            "下载文件名：",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          Text(
+            "文件名：$_downloadName",
+          ),
+          Wrap(
+            spacing: 4,
+            children: result,
+          )
+        ],
+      ),
+    );
+  }
+
   Widget _buildDefaultDownloadSize(
       BuildContext context, SettingState settingState) {
     List<String> list = [Const.choose, Const.preview, Const.big, Const.raw];
@@ -199,7 +264,7 @@ class _SettingState extends State<SettingPage> {
         text: settingState.proxy ?? "",
       );
       List<Widget> children = [];
-      if(Platform.isWindows){
+      if (Platform.isWindows) {
         children.add(_buildProxyInput(context, settingState));
         children.add(const Divider(
           height: 10,
@@ -209,6 +274,10 @@ class _SettingState extends State<SettingPage> {
       children.add(const Divider(
         height: 10,
       ));
+      // children.add(_buildDownloadName(context, settingState));
+      // children.add(const Divider(
+      //   height: 10,
+      // ));
       children.add(
           _buildFolderItem(context, "自定义规则存储路径", Global.rulesDirectory.path));
       children.add(const Divider(

@@ -21,4 +21,11 @@ class Const{
   static const String dirRules = "rules";
   static const String dirDownloads = "downloads";
   static const String dirBrowserCache = "browserCache";
+
+  static const String site = "site";
+  static const String id = "id";
+  static const String tag = "tag";
+  static const String desc = "desc";
+  static const String author = "author";
+  static const String date = "date";
 }
