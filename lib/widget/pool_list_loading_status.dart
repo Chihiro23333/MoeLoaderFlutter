@@ -64,7 +64,8 @@ class _LoadingStatusState extends State<LoadingStatus> {
               child: Text(tipsByCode(poolListState.code))));
         }
         children.add(const SizedBox(height: 20));
-        children.add(Center(
+        children.add(Padding(
+          padding: const EdgeInsets.fromLTRB(25, 0, 0, 0),
           child: Text(
             poolListState.errorMessage,
           ),

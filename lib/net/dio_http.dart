@@ -35,7 +35,7 @@ class DioHttp {
   }
 
   Future<String> get(String url, {Map<String, String>? headers}) async {
-    _log.fine("url=${url}");
+    _log.fine("url=$url");
     _updateHeaders(headers);
     var response = await _dio.get(url);
     var result = response.toString();
