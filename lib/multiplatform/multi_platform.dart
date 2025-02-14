@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:gal/gal.dart';
 import 'package:moeloaderflutter/init.dart';
 import 'package:moeloaderflutter/ui/page/webview2_page.dart';
-import 'package:moeloaderflutter/ui/page/webview_android_page.dart';
+import 'package:moeloaderflutter/ui/page/webview_inappwebview_page.dart';
 import 'package:moeloaderflutter/util/const.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:to_json/models.dart';
@@ -269,7 +269,7 @@ class PlatformAndroid implements MultiPlatform {
   @override
   Widget navigateToWebView(BuildContext context, String url, int code,
       {String? userAgent}) {
-    return WebViewAndroidPage(
+    return InAppWebViewPage(
       url: url,
       code: code,
     );

@@ -1,15 +1,14 @@
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:moeloaderflutter/net/request_manager.dart';
 import 'package:moeloaderflutter/util/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
 import 'package:to_json/validator.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 import 'dart:async';
-import 'package:webview_flutter_android/webview_flutter_android.dart'; // 仅 Android 需要
 
-class WebViewAndroidPage extends StatefulWidget {
-  WebViewAndroidPage(
+class InAppWebViewPage extends StatefulWidget {
+  InAppWebViewPage(
       {super.key, required this.url, required this.code, this.userAgent});
 
   final String? userAgent;
@@ -17,11 +16,11 @@ class WebViewAndroidPage extends StatefulWidget {
   final int code;
 
   @override
-  State<WebViewAndroidPage> createState() => _WebViewAndroidState();
+  State<InAppWebViewPage> createState() => _InAppWebViewState();
 }
 
-class _WebViewAndroidState extends State<WebViewAndroidPage> {
-  late final WebViewController _controller;
+class _InAppWebViewState extends State<InAppWebViewPage> {
+  late InAppWebViewController _webViewController;
   late String _url;
   final _log = Logger('_WebViewAndroidState');
 
@@ -29,26 +28,6 @@ class _WebViewAndroidState extends State<WebViewAndroidPage> {
   void initState() {
     super.initState();
     _url = widget.url;
-    // 初始化 WebViewController
-    final WebViewController controller = WebViewController();
-
-    controller
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..loadRequest(Uri.parse(_url)) // 加载网页
-      ..setNavigationDelegate(
-        NavigationDelegate(
-          onPageFinished: (String url) async {
-            _log.fine("onPageFinished");
-          },
-        ),
-      );
-    // 启用 Android WebView 调试
-    if (controller.platform is AndroidWebViewController) {
-      AndroidWebViewController.enableDebugging(true);
-      (controller.platform as AndroidWebViewController)
-          .setMediaPlaybackRequiresUserGesture(false);
-    }
-    _controller = controller;
   }
 
   @override
@@ -63,7 +42,14 @@ class _WebViewAndroidState extends State<WebViewAndroidPage> {
         actions: _buildAppbarActions(context),
       ),
       body: Center(
-        child: WebViewWidget(controller: _controller),
+        child: InAppWebView(
+          initialUrlRequest: URLRequest(url: WebUri(_url)),
+          onWebViewCreated: (controller) {
+            _webViewController = controller;
+          },
+          onLoadStop: (controller, url) async {
+          },
+        ),
       ),
     );
   }
@@ -79,7 +65,7 @@ class _WebViewAndroidState extends State<WebViewAndroidPage> {
             color: Theme.of(context).iconTheme.color,
           ),
           onTap: () {
-            _controller.loadRequest(Uri.parse(_url));
+            _webViewController.loadUrl(urlRequest: URLRequest(url: WebUri(_url)));
           },
         ),
       ),
@@ -88,7 +74,7 @@ class _WebViewAndroidState extends State<WebViewAndroidPage> {
             const EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
         child: GestureDetector(
           onTap: () {
-            _controller.goBack();
+            _webViewController.goBack();
           },
           child: Icon(
             Icons.arrow_back,
@@ -101,7 +87,7 @@ class _WebViewAndroidState extends State<WebViewAndroidPage> {
             const EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
         child: GestureDetector(
           onTap: () {
-            _controller.goForward();
+            _webViewController.goForward();
           },
           child: Icon(
             Icons.arrow_forward,
@@ -137,11 +123,11 @@ class _WebViewAndroidState extends State<WebViewAndroidPage> {
   }
 
   Future<void> _saveCookies(BuildContext context) async {
-    // 页面加载完成后获取 Cookies
-    final String? cookiesResult = await _controller
-        .runJavaScriptReturningResult('document.cookie') as String?;
+    // 获取指定 URL 的 Cookie
+    var cookies = await CookieManager.instance().getCookies(url: WebUri(_url));
+    String cookiesResult = cookies.map((cookie) => '${cookie.name}=${cookie.value}').join('; ');
     _log.fine("cookiesResult=$cookiesResult");
-    if (cookiesResult != null && cookiesResult.isNotEmpty) {
+    if (cookiesResult.isNotEmpty) {
       String origin = Uri.parse(_url).origin;
       await RequestManager().saveCookiesString(origin, cookiesResult);
     }

@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
       designSize: Global.multiPlatform.designSize(),
       minTextAdapt: true,
       splitScreenMode: true,
-      builder: (context , child) {
+      builder: (context, child) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'moeloaderflutter',
@@ -31,6 +31,7 @@ class MyApp extends StatelessWidget {
             colorScheme: ColorScheme.fromSeed(seedColor: Global.defaultColor),
             useMaterial3: true,
             fontFamily: Platform.isWindows ? "微软雅黑" : null,
+            platform: TargetPlatform.iOS
           ),
           home: child,
         );
@@ -39,4 +40,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-

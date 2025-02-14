@@ -85,7 +85,7 @@ class DioHttp {
         String value = keyValue[1];
         // 去除键和值中的双引号和两端的空格（如果有）
         final String cleanedKey = key.replaceAll('"', '').trim();
-        final String cleanedValue = value.replaceAll('"', '');
+        final String cleanedValue = value.replaceAll('"', '').trim();
         _log.fine("_updateCookies:key=$key;value=$value");
         cookies.add(Cookie(cleanedKey, cleanedValue));
       }
