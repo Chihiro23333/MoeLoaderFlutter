@@ -12,6 +12,7 @@ class Const{
   static const String searchPage = "searchPage";
   static const String detailPage = "detailPage";
   static const String poolListPage = "poolListPage";
+  static const String authorPage = "authorPage";
 
   static const String typeDefault = "default";
   static const String typeCustom = "custom";
@@ -28,4 +29,7 @@ class Const{
   static const String desc = "desc";
   static const String author = "author";
   static const String date = "date";
+
+  static const String tagTypeDefault = "default";
+  static const String tagTypeAuthor = "author";
 }

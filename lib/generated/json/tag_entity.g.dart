@@ -11,6 +11,10 @@ TagEntity $TagEntityFromJson(Map<String, dynamic> json) {
   if (tag != null) {
     tagEntity.tag = tag;
   }
+  final String? type = jsonConvert.convert<String>(json['type']);
+  if (type != null) {
+    tagEntity.type = type;
+  }
   return tagEntity;
 }
 
@@ -18,6 +22,7 @@ Map<String, dynamic> $TagEntityToJson(TagEntity entity) {
   final Map<String, dynamic> data = <String, dynamic>{};
   data['desc'] = entity.desc;
   data['tag'] = entity.tag;
+  data['type'] = entity.type;
   return data;
 }
 
@@ -25,9 +30,11 @@ extension TagEntityExtension on TagEntity {
   TagEntity copyWith({
     String? desc,
     String? tag,
+    String? type,
   }) {
     return TagEntity()
       ..desc = desc ?? this.desc
-      ..tag = tag ?? this.tag;
+      ..tag = tag ?? this.tag
+      ..type = type ?? this.type;
   }
 }

@@ -11,6 +11,7 @@ import 'package:logging/logging.dart';
 import 'package:to_json/models.dart';
 import 'package:to_json/parser_factory.dart';
 import 'package:to_json/yaml_parser_base.dart';
+import 'package:window_manager/window_manager.dart';
 import 'package:yaml/yaml.dart';
 import 'package:to_json/yaml_rule_factory.dart';
 import 'package:moeloaderflutter/multiplatform/multi_platform_factory.dart';
@@ -37,7 +38,7 @@ class Global{
     initPlatform();
     await initPath();
     _multiPlatform.webViewInit(browserCacheDirectory.path);
-    Logger.root.level = Level.OFF; // defaults to Level.INFO
+    Logger.root.level = Level.INFO; // defaults to Level.INFO
     Logger.root.onRecord.listen((record) {
       print('${record.loggerName}:${record.level.name}: ${record.time}: ${record.message}');
     });
@@ -46,6 +47,7 @@ class Global{
     await updateProxy();
     await YamlRuleFactory().init();
     await updateCurWebPage(YamlRuleFactory().webPageList()[0]);
+    await windowManager.ensureInitialized();
   }
 
   void initPlatform() {

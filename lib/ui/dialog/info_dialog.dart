@@ -5,6 +5,8 @@ import 'package:clipboard/clipboard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../../util/const.dart';
+
 void showInfoSheet(
     BuildContext context,
     String url,
@@ -20,7 +22,7 @@ void showInfoSheet(
   List<Widget> children = [];
   List<Widget> infoChildren = [];
   _fillInfoChip(context, "Id：", id, infoChildren);
-  _fillInfoChip(context, "Author：", author, infoChildren);
+  _fillInfoChip(context, "Author：", author, infoChildren, infoId: authorId, tagType: Const.tagTypeAuthor, onTagTap: onTagTap);
   _fillInfoChip(context, "Characters：", characters, infoChildren);
   _fillInfoChip(context, "File Size：", fileSize, infoChildren);
   _fillInfoChip(context, "Dimensions：", dimensions, infoChildren);
@@ -91,7 +93,7 @@ void showInfoSheet(
 
 void _fillInfoChip(
     BuildContext context, String prefix, String info, List<Widget> infoChildren,
-    {TagTapCallback? onTagTap, String? infoId}) {
+    {TagTapCallback? onTagTap, String? infoId, String tagType = Const.tagTypeDefault}) {
   if (info.isNotEmpty) {
     infoChildren.add(GestureDetector(
       child: Chip(
@@ -117,6 +119,7 @@ void _fillInfoChip(
           TagEntity tagEntity = TagEntity();
           tagEntity.tag = infoId ?? "";
           tagEntity.desc = info;
+          tagEntity.type = tagType;
           onTagTap(context, tagEntity);
         }
       },

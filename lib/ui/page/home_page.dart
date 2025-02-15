@@ -19,6 +19,7 @@ import 'package:flutter/services.dart';
 import 'package:moeloaderflutter/init.dart';
 import 'package:moeloaderflutter/ui/viewmodel/view_model_home.dart';
 import 'package:logging/logging.dart';
+import '../../util/const.dart';
 import 'detail_page.dart';
 import 'package:to_json/models.dart' as jsonModels;
 
@@ -41,9 +42,6 @@ class _HomeState extends State<HomePage> {
   final HomeViewModel _homeViewModel = HomeViewModel();
   final GlobalKey<ScaffoldState> _scaffoldGlobalKey = GlobalKey();
   final TextEditingController _controller = TextEditingController(text: "");
-
-  final String _homePageName = "homePage";
-  final String _searchPageName = "searchPage";
 
   final Map<String, String> _yamlOptionMap = {};
   String _url = "";
@@ -83,7 +81,7 @@ class _HomeState extends State<HomePage> {
   String pageName() {
     bool home = (_keyword == null || _keyword!.isEmpty) && _tagEntity == null;
     String pageName =
-        widget.pageName ?? (home ? _homePageName : _searchPageName);
+        widget.pageName ?? (home ? Const.homePage : Const.searchPage);
     return pageName;
   }
 
@@ -185,7 +183,11 @@ class _HomeState extends State<HomePage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) {
-                  return HomePage(pageName: _searchPageName, tagEntity: tag);
+                  if(tag.type == Const.tagTypeAuthor){
+                    return HomePage(pageName: Const.authorPage, keyword: tag.tag,);
+                  }else{
+                    return HomePage(pageName: Const.searchPage, tagEntity: tag);
+                  }
                 }),
               );
             },

@@ -7,6 +7,7 @@ export 'package:moeloaderflutter/generated/json/tag_entity.g.dart';
 class TagEntity {
 	late String desc = '';
 	late String tag = '';
+	late String type = '';
 
 	TagEntity();
 

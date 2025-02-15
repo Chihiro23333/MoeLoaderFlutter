@@ -9,6 +9,14 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.11.0"
+  background_downloader:
+    dependency: "direct main"
+    description:
+      name: background_downloader
+      sha256: ed64a215cd24c83a478f602364a3ca86a6dafd178ad783188cc32c6956d5e529
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "8.9.4"
   boolean_selector:
     dependency: transitive
     description:
@@ -424,6 +432,14 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.15.0"
+  mime:
+    dependency: transitive
+    description:
+      name: mime
+      sha256: "41a20518f0cb1256669420fdba0cd90d21561e560ac240f26ef8322e45bb7ed6"
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "2.0.0"
   path:
     dependency: transitive
     description:
