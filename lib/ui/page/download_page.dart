@@ -51,33 +51,36 @@ class _DownloadState extends State<DownloadPage> {
   }
 
   Widget _buildInfoAction(BuildContext context) {
-    return IconButton(
-        onPressed: () {
-          showModalBottomSheet(
-              context: context,
-              builder: (context) {
-                return SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.only(
-                        left: 10, right: 10, top: 10, bottom: 10),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.only(top: 10, bottom: 10),
-                          child: Text(
-                            "下载存储路径：",
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
+    return Padding(
+        padding: appBarActionPadding(),
+        child: IconButton(
+            onPressed: () {
+              showModalBottomSheet(
+                  context: context,
+                  builder: (context) {
+                    return SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                            left: 10, right: 10, top: 10, bottom: 10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.only(top: 10, bottom: 10),
+                              child: Text(
+                                "下载存储路径：",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            buildUrlWidget(
+                                context, Global.downloadsDirectory.path)
+                          ],
                         ),
-                        buildUrlWidget(context, Global.downloadsDirectory.path)
-                      ],
-                    ),
-                  ),
-                );
-              });
-        },
-        icon: const Icon(Icons.info));
+                      ),
+                    );
+                  });
+            },
+            icon: const Icon(Icons.info)));
   }
 
   Widget _buildCopyAction(BuildContext context) {

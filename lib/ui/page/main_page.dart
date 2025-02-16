@@ -1,6 +1,7 @@
 import 'package:moeloaderflutter/init.dart';
 import 'package:moeloaderflutter/multiplatform/bean.dart';
 import 'package:moeloaderflutter/ui/page/settings_page.dart';
+import 'package:moeloaderflutter/util/common_function.dart';
 import 'package:moeloaderflutter/widget/main_masonry_grid.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -41,6 +42,14 @@ class _MainState extends State<MainPage> {
     );
   }
 
+  // @override
+  // void initState() {
+  //   WidgetsBinding.instance.addPostFrameCallback((_) {
+  //     showDownloadOverlay(context);
+  //   });
+  //   super.initState();
+  // }
+
   Widget _buildBody(BuildContext context) {
     List<jsonModels.Rule> list = _homeViewModel.webPageList();
     Grid mainGrid = Global.multiPlatform.mainGrid();
@@ -52,7 +61,7 @@ class _MainState extends State<MainPage> {
 
   Widget _buildSettingsAction(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+      padding: appBarActionPadding(),
       child: IconButton(
           onPressed: () {
             Navigator.push(
@@ -74,4 +83,5 @@ class _MainState extends State<MainPage> {
       ),
     );
   }
+
 }

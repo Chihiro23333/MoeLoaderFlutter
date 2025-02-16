@@ -4,6 +4,7 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:moeloaderflutter/init.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:moeloaderflutter/util/common_function.dart';
 
 void main(List<String> args) {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,7 +16,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //填入设计稿中设备的屏幕尺寸,单位dp
     return ScreenUtilInit(
       designSize: Global.multiPlatform.designSize(),
       minTextAdapt: true,
@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
       builder: (context, child) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
-          title: 'moeloaderflutter',
+          title: 'MoeLoader',
           builder: BotToastInit(),
           navigatorObservers: [BotToastNavigatorObserver()],
           // You can use the library anywhere in the app even in theme

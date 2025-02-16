@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'dart:ui';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:moeloaderflutter/custom_rule/custom_rule_parser.dart';
 import 'package:moeloaderflutter/multiplatform/multi_platform.dart';
 import 'package:moeloaderflutter/util/const.dart';
@@ -11,15 +13,16 @@ import 'package:logging/logging.dart';
 import 'package:to_json/models.dart';
 import 'package:to_json/parser_factory.dart';
 import 'package:to_json/yaml_parser_base.dart';
-import 'package:window_manager/window_manager.dart';
 import 'package:yaml/yaml.dart';
 import 'package:to_json/yaml_rule_factory.dart';
 import 'package:moeloaderflutter/multiplatform/multi_platform_factory.dart';
 
-class Global{
+class Global {
   static Global? _cache;
+
   Global._create();
-  factory Global(){
+
+  factory Global() {
     return _cache ?? (_cache = Global._create());
   }
 
@@ -34,27 +37,27 @@ class Global{
   static late Directory _downloadsDirectory;
   static late Directory _browserCacheDirectory;
 
-  Future<void> init() async{
+  Future<void> init() async {
     initPlatform();
     await initPath();
     _multiPlatform.webViewInit(browserCacheDirectory.path);
     Logger.root.level = Level.INFO; // defaults to Level.INFO
     Logger.root.onRecord.listen((record) {
-      print('${record.loggerName}:${record.level.name}: ${record.time}: ${record.message}');
+      print(
+          '${record.loggerName}:${record.level.name}: ${record.time}: ${record.message}');
     });
     _initHive();
     await RequestManager().init();
     await updateProxy();
     await YamlRuleFactory().init();
     await updateCurWebPage(YamlRuleFactory().webPageList()[0]);
-    await windowManager.ensureInitialized();
   }
 
   void initPlatform() {
     _multiPlatform = MultiPlatformFactory().create();
   }
 
-  Future<void> initPath() async{
+  Future<void> initPath() async {
     _hiveDirectory = await _multiPlatform.hiveDirectory();
     _rulesDirectory = await _multiPlatform.rulesDirectory();
     _imagesDirectory = await _multiPlatform.imagesDirectory();
@@ -62,7 +65,7 @@ class Global{
     _browserCacheDirectory = await _multiPlatform.browserCacheDirectory();
   }
 
-  Future<void> updateCurWebPage(Rule rule) async{
+  Future<void> updateCurWebPage(Rule rule) async {
     YamlMap webPage = await YamlRuleFactory().create(rule.fileName);
     _curWebPage = WebPage(webPage, rule);
 
@@ -71,22 +74,24 @@ class Global{
     _customRuleParser = CustomRuleParser(customRuleDoc);
   }
 
-  Future<void> updateProxy() async{
+  Future<void> updateProxy() async {
     String? proxy = await getProxy();
-    if(proxy == null || proxy.isEmpty){
+    if (proxy == null || proxy.isEmpty) {
       proxy = "DIRECT";
-    }else{
+    } else {
       String? proxyType = await getProxyType();
       proxyType = proxyType ?? Const.proxyHttp;
       proxy = "$proxyType $proxy";
     }
     print("proxy=$proxy");
-    if(!_proxyInited){
-      SocksProxy.initProxy(proxy: proxy, onCreate: (client){
-        client.userAgent = null;
-      });
+    if (!_proxyInited) {
+      SocksProxy.initProxy(
+          proxy: proxy,
+          onCreate: (client) {
+            client.userAgent = null;
+          });
       _proxyInited = true;
-    }else{
+    } else {
       SocksProxy.setProxy(proxy);
     }
   }
@@ -96,24 +101,32 @@ class Global{
   }
 
   static CustomRuleParser get customRuleParser => _customRuleParser;
+
   static get curWebPage => _curWebPage;
+
   static get curWebPageName => _curWebPage.rule.fileName;
+
   static get rulesDirectory => _rulesDirectory;
+
   // static get rulesDirectory => Directory(path.join(path.current ,"testRules"));
   static get imagesDirectory => _imagesDirectory;
-  static get browserCacheDirectory => _browserCacheDirectory;
-  static get downloadsDirectory => _downloadsDirectory;
-  static get hiveDirectory => _hiveDirectory;
-  static get defaultColor => const Color.fromARGB(255, 46, 176, 242);
-  static get defaultColor30 => const Color.fromARGB(30, 46, 176, 242);
-  static MultiPlatform get multiPlatform => _multiPlatform;
 
+  static get browserCacheDirectory => _browserCacheDirectory;
+
+  static get downloadsDirectory => _downloadsDirectory;
+
+  static get hiveDirectory => _hiveDirectory;
+
+  static get defaultColor => const Color.fromARGB(255, 46, 176, 242);
+
+  static get defaultColor30 => const Color.fromARGB(30, 46, 176, 242);
+
+  static MultiPlatform get multiPlatform => _multiPlatform;
 }
 
-class WebPage{
+class WebPage {
   YamlMap webPage;
   Rule rule;
-
 
   WebPage(this.webPage, this.rule);
 }

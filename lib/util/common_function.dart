@@ -4,6 +4,8 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import '../init.dart';
+import '../ui/page/download_page.dart';
+import 'package:badges/badges.dart' as badges;
 
 CancelFunc? cancel;
 
@@ -83,4 +85,52 @@ Widget buildDownloadItem(
   );
 }
 
-typedef TagTapCallback = void Function(BuildContext context, TagEntity tagEntity);
+typedef TagTapCallback = void Function(
+    BuildContext context, TagEntity tagEntity);
+
+EdgeInsets appBarActionPadding(){
+  return const EdgeInsets.fromLTRB(0, 0, 0, 0);
+}
+
+void showDownloadOverlay(BuildContext context) {
+  // 创建OverlayEntry
+  OverlayEntry overlayEntry = OverlayEntry(
+      builder: (context) => StreamBuilder<DownloadState>(
+          initialData: DownloadManager().curState(),
+          stream: DownloadManager().downloadStream(),
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            bool hasData = snapshot.hasData;
+            String text = "";
+            if (hasData) {
+              DownloadState downloadState = snapshot.data;
+              List<DownloadTask> list = downloadState.tasks;
+              int count = 0;
+              for (DownloadTask downloadTask in list) {
+                if (downloadTask.downloadState == DownloadTask.downloading) {
+                  count++;
+                }
+              }
+              text = '$count';
+            }
+            return Positioned(
+                right: 10,
+                top: 5,
+                child: badges.Badge(
+                  badgeContent: Text(text,
+                      style:
+                          const TextStyle(color: Colors.white, fontSize: 12)),
+                  position: badges.BadgePosition.topEnd(top: 0, end: 0),
+                  child: IconButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) {
+                            return const DownloadPage();
+                          }),
+                        );
+                      },
+                      icon: const Icon(Icons.download)),
+                ));
+          }));
+  Overlay.of(context).insert(overlayEntry);
+}

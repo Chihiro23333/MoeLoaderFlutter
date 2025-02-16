@@ -99,7 +99,7 @@ class _DetailState extends State<DetailPage> {
                   context,
                   MaterialPageRoute(builder: (context) {
                     return Global.multiPlatform.navigateToWebView(
-                      context, widget.href, detailState.code);
+                        context, widget.href, detailState.code);
                   }),
                 );
                 _log.fine("push result=${result}");
@@ -387,29 +387,32 @@ class _DetailState extends State<DetailPage> {
   Widget _buildInfoAction(BuildContext context, DetailState detailState) {
     bool loading = detailState.loading;
     DetailPageEntity detailPageEntity = detailState.detailPageEntity;
-    return IconButton(
-        onPressed: () {
-          if (loading) return;
-          showInfoSheet(
-              context,
-              detailPageEntity.url,
-              detailPageEntity.id,
-              detailPageEntity.author,
-              detailPageEntity.authorId,
-              "",
-              "",
-              detailPageEntity.dimensions,
-              "",
-              detailPageEntity.tagList, onTagTap: (context, tag) {
-            Navigator.of(context).pop();
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) {
-                return HomePage(pageName: _searchPageName, tagEntity: tag);
-              }),
-            );
-          });
-        },
-        icon: const Icon(Icons.info));
+    return Padding(
+      padding: appBarActionPadding(),
+      child: IconButton(
+          onPressed: () {
+            if (loading) return;
+            showInfoSheet(
+                context,
+                detailPageEntity.url,
+                detailPageEntity.id,
+                detailPageEntity.author,
+                detailPageEntity.authorId,
+                "",
+                "",
+                detailPageEntity.dimensions,
+                "",
+                detailPageEntity.tagList, onTagTap: (context, tag) {
+              Navigator.of(context).pop();
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) {
+                  return HomePage(pageName: _searchPageName, tagEntity: tag);
+                }),
+              );
+            });
+          },
+          icon: const Icon(Icons.info)),
+    );
   }
 }

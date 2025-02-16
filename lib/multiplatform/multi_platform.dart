@@ -11,6 +11,7 @@ import 'package:to_json/models.dart';
 import 'package:webview_windows/webview_windows.dart';
 import 'package:path/path.dart' as path;
 import 'package:moeloaderflutter/multiplatform/bean.dart';
+import 'package:window_manager/window_manager.dart';
 
 class MultiPlatform {
   Future<void> webViewInit(String cachePath) async {}
@@ -79,6 +80,7 @@ class PlatformWindows implements MultiPlatform {
         await WebviewController.initializeEnvironment(userDataPath: cachePath);
       } catch (e) {}
     }
+    await windowManager.ensureInitialized();
   }
 
   @override

@@ -42,7 +42,9 @@ class _PoolListState extends State<PoolListPage> {
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         return Scaffold(
           appBar: AppBar(
-              iconTheme: Theme.of(context).iconTheme,
+              iconTheme: Theme
+                  .of(context)
+                  .iconTheme,
               //导航栏
               title: _buildNewAppBartTitle(context),
               actions: _buildActions(context, snapshot)),
@@ -60,11 +62,12 @@ class _PoolListState extends State<PoolListPage> {
   }
 
   Widget _buildOptionsAction(BuildContext context, AsyncSnapshot snapshot) {
-    return IconButton(
-        onPressed: () async {
-          await _filter(context, snapshot);
-        },
-        icon: const Icon(Icons.filter_alt));
+    return Padding(padding: appBarActionPadding(),
+        child: IconButton(
+            onPressed: () async {
+              await _filter(context, snapshot);
+            },
+            icon: const Icon(Icons.filter_alt)));
   }
 
   Widget _buildFloatActionButton(BuildContext context, AsyncSnapshot snapshot) {
@@ -89,7 +92,10 @@ class _PoolListState extends State<PoolListPage> {
                     poolListState.error
                         ? Icons.refresh
                         : Icons.keyboard_double_arrow_down,
-                    color: Theme.of(context).iconTheme.color,
+                    color: Theme
+                        .of(context)
+                        .iconTheme
+                        .color,
                   ),
                 ))
           ],
@@ -110,7 +116,8 @@ class _PoolListState extends State<PoolListPage> {
   void _showOptionsSheet(BuildContext context, PoolListState? poolListState) {
     showModalBottomSheet(
         context: context,
-        builder: (context) => StatefulBuilder(builder: (context, setState) {
+        builder: (context) =>
+            StatefulBuilder(builder: (context, setState) {
               List<Widget> widgets = [];
 
               if (poolListState != null) {
@@ -187,7 +194,7 @@ class _PoolListState extends State<PoolListPage> {
           int columnCount = homeGrid.columnCount;
           double aspectRatio = homeGrid.aspectRatio;
           return ImageMasonryGrid(
-            columnCount:columnCount,
+            columnCount: columnCount,
             aspectRatio: aspectRatio,
             list: poolListState.list,
             headers: poolListState.headers,
@@ -223,7 +230,10 @@ class _PoolListState extends State<PoolListPage> {
               avatar: ClipOval(
                 child: Icon(
                   Icons.link,
-                  color: Theme.of(context).iconTheme.color,
+                  color: Theme
+                      .of(context)
+                      .iconTheme
+                      .color,
                 ),
               ),
               label: Text(uriState.url),

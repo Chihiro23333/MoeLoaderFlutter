@@ -183,9 +183,12 @@ class _HomeState extends State<HomePage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) {
-                  if(tag.type == Const.tagTypeAuthor){
-                    return HomePage(pageName: Const.authorPage, keyword: tag.tag,);
-                  }else{
+                  if (tag.type == Const.tagTypeAuthor) {
+                    return HomePage(
+                      pageName: Const.authorPage,
+                      keyword: tag.tag,
+                    );
+                  } else {
                     return HomePage(pageName: Const.searchPage, tagEntity: tag);
                   }
                 }),
@@ -316,8 +319,6 @@ class _HomeState extends State<HomePage> {
                   ));
                 }
 
-                int page = homeState.page;
-                _controller.text = "$page";
                 widgets.add(const Padding(
                   padding: EdgeInsets.only(top: 10, bottom: 10),
                   child: Text(
@@ -348,7 +349,8 @@ class _HomeState extends State<HomePage> {
                           border: InputBorder.none),
                     ),
                   ),
-                  deleteIcon: const Icon(Icons.keyboard_double_arrow_right_rounded),
+                  deleteIcon:
+                      const Icon(Icons.keyboard_double_arrow_right_rounded),
                   deleteButtonTooltipMessage: "点击跳转",
                   onDeleted: () {
                     String inputText = _controller.text;
@@ -456,6 +458,9 @@ class _HomeState extends State<HomePage> {
     List<OptionEntity> list =
         await _homeViewModel.optionList(pageName(), _keyword);
     HomeState? homeState = snapshot.data;
+    int page = homeState?.page ?? 0;
+    _controller.text = "$page";
+
     _showOptionsSheet(context, list, homeState);
   }
 
@@ -491,11 +496,14 @@ class _HomeState extends State<HomePage> {
   }
 
   Widget _buildSearchAction(BuildContext context, AsyncSnapshot snapshot) {
-    return IconButton(
-        onPressed: () {
-          _search(snapshot);
-        },
-        icon: const Icon(Icons.image_search));
+    return Padding(
+      padding: appBarActionPadding(),
+      child: IconButton(
+          onPressed: () {
+            _search(snapshot);
+          },
+          icon: const Icon(Icons.image_search)),
+    );
   }
 
   Widget _buildDrawer(BuildContext context) {
