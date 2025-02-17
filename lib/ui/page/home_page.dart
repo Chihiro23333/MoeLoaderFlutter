@@ -338,10 +338,11 @@ class _HomeState extends State<HomePage> {
                     height: 20,
                     child: TextField(
                       inputFormatters: [
-                        FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))
+                        FilteringTextInputFormatter.digitsOnly
                         //设置只允许输入数字
                       ],
                       controller: _controller,
+                      keyboardType: TextInputType.number,
                       decoration: const InputDecoration(
                           contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 13),
                           hintText: '请输入页码',

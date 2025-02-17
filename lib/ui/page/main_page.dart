@@ -42,13 +42,13 @@ class _MainState extends State<MainPage> {
     );
   }
 
-  // @override
-  // void initState() {
-  //   WidgetsBinding.instance.addPostFrameCallback((_) {
-  //     showDownloadOverlay(context);
-  //   });
-  //   super.initState();
-  // }
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      showDownloadOverlay(context);
+    });
+    super.initState();
+  }
 
   Widget _buildBody(BuildContext context) {
     List<jsonModels.Rule> list = _homeViewModel.webPageList();

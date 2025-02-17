@@ -88,8 +88,8 @@ Widget buildDownloadItem(
 typedef TagTapCallback = void Function(
     BuildContext context, TagEntity tagEntity);
 
-EdgeInsets appBarActionPadding(){
-  return const EdgeInsets.fromLTRB(0, 0, 0, 0);
+EdgeInsets appBarActionPadding() {
+  return const EdgeInsets.fromLTRB(0, 0, 50, 0);
 }
 
 void showDownloadOverlay(BuildContext context) {
@@ -100,37 +100,41 @@ void showDownloadOverlay(BuildContext context) {
           stream: DownloadManager().downloadStream(),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             bool hasData = snapshot.hasData;
-            String text = "";
+            int count = 0;
             if (hasData) {
               DownloadState downloadState = snapshot.data;
               List<DownloadTask> list = downloadState.tasks;
-              int count = 0;
               for (DownloadTask downloadTask in list) {
-                if (downloadTask.downloadState == DownloadTask.downloading) {
+                if (downloadTask.downloadState <= DownloadTask.downloading) {
                   count++;
                 }
               }
-              text = '$count';
             }
-            return Positioned(
-                right: 10,
-                top: 5,
-                child: badges.Badge(
-                  badgeContent: Text(text,
-                      style:
-                          const TextStyle(color: Colors.white, fontSize: 12)),
-                  position: badges.BadgePosition.topEnd(top: 0, end: 0),
-                  child: IconButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) {
-                            return const DownloadPage();
-                          }),
-                        );
-                      },
-                      icon: const Icon(Icons.download)),
-                ));
+            return SafeArea(
+                child: Stack(
+              children: [
+                Positioned(
+                    right: 10,
+                    top: 5,
+                    child: badges.Badge(
+                      showBadge: count > 0,
+                      badgeContent: Text("$count",
+                          style: const TextStyle(
+                              color: Colors.white, fontSize: 12)),
+                      position: badges.BadgePosition.topEnd(top: 0, end: 0),
+                      child: IconButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) {
+                                return const DownloadPage();
+                              }),
+                            );
+                          },
+                          icon: const Icon(Icons.download)),
+                    ))
+              ],
+            ));
           }));
   Overlay.of(context).insert(overlayEntry);
 }
