@@ -116,7 +116,7 @@ class _HomeState extends State<HomePage> {
     List<Widget> list = [];
     // list.add(_buildCopyAction(context));
     list.add(_buildOptionsAction(context, snapshot));
-    list.add(_buildDownloadAction(context));
+    // list.add(_buildDownloadAction(context));
     list.add(_buildSearchAction(context, snapshot));
     // list.add(_buildSettingsAction(context));
     return list;
