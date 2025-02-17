@@ -186,7 +186,7 @@ class PlatformAndroid implements MultiPlatform {
     String cacheDirPath = "${directory!.path}/$name";
     Directory cacheDirectory = Directory(cacheDirPath);
     if (!await cacheDirectory.exists()) {
-      await cacheDirectory.create();
+      await cacheDirectory.create(recursive: true);
     }
     return cacheDirectory;
   }

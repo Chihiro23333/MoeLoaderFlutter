@@ -18,8 +18,8 @@ class Const{
   static const String typeCustom = "custom";
 
   static const String dirHive = "hive";
-  static const String dirIcons = "icons";
-  static const String dirRules = "rules";
+  static const String dirIcons = "moeloaderrule/icons";
+  static const String dirRules = "moeloaderrule/rules";
   static const String dirDownloads = "downloads";
   static const String dirBrowserCache = "browserCache";
 

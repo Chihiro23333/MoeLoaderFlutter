@@ -26,7 +26,7 @@ class YamlRuleFactory {
   Future<void> init() async {
     if (!_init) {
       String configStr =
-          await rootBundle.loadString("assets/rules/_config.yaml");
+          await rootBundle.loadString("assets/${Const.dirRules}/_config.yaml");
       _configYamlDoc = loadYaml(configStr);
       await addRules(Const.typeDefault);
       _init = true;
@@ -74,7 +74,7 @@ class YamlRuleFactory {
   Future<void> _loadRule(Rule rule) async {
     String ruleStr;
     if (rule.type == Const.typeDefault) {
-      ruleStr = await rootBundle.loadString("assets/rules/${rule.path}");
+      ruleStr = await rootBundle.loadString("assets/${Const.dirRules}/${rule.path}");
     } else {
       Directory rulesDirectory = Global.rulesDirectory;
       ruleStr = await File("${rulesDirectory.path}/${rule.path}").readAsString();
