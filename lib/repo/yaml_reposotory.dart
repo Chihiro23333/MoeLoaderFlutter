@@ -10,18 +10,23 @@ class YamlRepository {
 
   final YamlRuleFactory _ruleFactory = YamlRuleFactory();
 
-  Future<ValidateResult<String>> home(String url, Validator validator, {Map<String, String>? headers}) async {
-    ValidateResult<String> result = await _request(url, validator, headers: headers);
+  Future<String> home(String url, {Map<String, String>? headers}) async {
+    String result = await _request(url, headers: headers);
     return result;
   }
 
-  Future<ValidateResult<String>> detail(String url, Validator validator, {Map<String, String>? headers}) async {
-    ValidateResult<String> result = await _request(url, validator, headers: headers);
+  Future<String> detail(String url, {Map<String, String>? headers}) async {
+    String result = await _request(url, headers: headers);
     return result;
   }
 
-  Future<ValidateResult<String>> poolList(String url, Validator validator, {Map<String, String>? headers}) async {
-    ValidateResult<String> result = await _request(url, validator, headers: headers);
+  Future<String> poolList(String url, {Map<String, String>? headers}) async {
+    String result = await _request(url, headers: headers);
+    return result;
+  }
+
+  Future<String> request(String url, {Map<String, String>? headers}) async {
+    String result = await _request(url, headers: headers);
     return result;
   }
 
@@ -33,9 +38,9 @@ class YamlRepository {
     return list;
   }
 
-  Future<ValidateResult<String>> _request(String url, Validator validator, {Map<String, String>? headers}) async{
+  Future<String> _request(String url, {Map<String, String>? headers}) async{
     _log.fine("url=$url");
-    ValidateResult<String> result = await RequestManager().dioRequest(url, validator, headers: headers);
+    String result = await RequestManager().dioRequest(url, headers: headers);
     return result;
   }
 }

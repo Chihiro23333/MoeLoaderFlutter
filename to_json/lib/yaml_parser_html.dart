@@ -11,38 +11,46 @@ class YamlHtmlParser extends Parser {
   static const defaultConnector = ",";
 
   @override
-  Future<String> parseUseYaml(
-      String content, YamlMap doc, String pageName) async {
+  Future<String> parseUseYaml(String content, YamlMap doc, String pageName,
+      {Map<String, String>? headers, Map<String, String>? params}) async {
     _log.fine("html=$content");
-    YamlMap? page = doc[pageName];
-    if (page == null) {
-      throw "pageName不存在";
-    }
     Document document = parse(content);
     Element? body = document.querySelector("html");
     //解析文本拿到结果
-    YamlMap onParseResult = page["onParseResult"];
-    String json = jsonEncode(_recursionQuery(body, onParseResult));
+    YamlMap onParseResult = doc["onParseResult"];
+    var object = _recursionQuery(body, onParseResult, params: params);
+    if(object is String){
+      return object;
+    }
+    String json = jsonEncode(object);
     _log.fine("json=$json");
     return json;
   }
 
-  dynamic _recursionQuery(Element? element, YamlMap rule) {
+  dynamic _recursionQuery(Element? element, YamlMap rule,
+      {Map<String, String>? params}) {
     String? dataType;
     for (var element in rule.keys) {
-      if (element.toString() == "list" || element.toString() == "object") {
+      if (element.toString() == "list" ||
+          element.toString() == "object" ||
+          element.toString() == "string") {
         dataType = element.toString();
         break;
       }
     }
     _log.fine("dataType=$dataType");
     switch (dataType) {
+      case "string":
+        YamlMap contentRule = rule[dataType];
+        _log.fine("contentRule=$contentRule");
+        String result = _queryOne(element, contentRule);
+        return result;
       case "object":
         YamlMap contentRule = rule[dataType];
         _log.fine("contentRule=$contentRule");
         var object = {};
         contentRule.forEach((key, value) {
-          dynamic result = _recursionQuery(element, value);
+          dynamic result = _recursionQuery(element, value, params: params);
           _log.fine("propName=$key;propValue=$result");
           object[key] = result;
         });
@@ -57,7 +65,7 @@ class YamlHtmlParser extends Parser {
         for (Element element in listList) {
           var item = {};
           foreachRule.forEach((key, value) {
-            dynamic result = _recursionQuery(element, value);
+            dynamic result = _recursionQuery(element, value, params: params);
             _log.fine("propName=$key;propValue=$result");
             item[key] = result;
           });
@@ -68,13 +76,6 @@ class YamlHtmlParser extends Parser {
       default:
         return _queryOne(element, rule);
     }
-  }
-
-  @override
-  Future<String> preprocess(String content, YamlMap preprocessNode) async {
-    Document document = parse(content);
-    Element? html = document.querySelector("html");
-    return _queryOne(html, preprocessNode);
   }
 
   /// 查找多个
@@ -98,8 +99,10 @@ class YamlHtmlParser extends Parser {
     String result = "";
     //第一步，定位元素并获取值
     result = _get(element, yamlMap['get']);
-    _log.fine("get=$result");
-    result = handleResult(result, yamlMap);
+    _log.info("get=$result");
+    if (result.isNotEmpty) {
+      result = handleResult(result, yamlMap);
+    }
     _log.fine("handleResult=$result");
     return result;
   }

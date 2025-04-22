@@ -98,8 +98,8 @@ class _DetailState extends State<DetailPage> {
                 bool? result = await Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) {
-                    return Global.multiPlatform.navigateToWebView(
-                        context, widget.href, detailState.code);
+                    return Global.multiPlatform.navigateToWebView(context,
+                        Global.globalParser.validateUrl(), detailState.code);
                   }),
                 );
                 _log.fine("push result=${result}");
@@ -189,6 +189,7 @@ class _DetailState extends State<DetailPage> {
               children.add(buildDownloadItem(context, url, "当前预览图片($url)", () {
                 Navigator.of(context).pop();
                 _detailViewModel.download(widget.href, url, id,
+                    _detailPageEntity!.author, _detailPageEntity!.tagList,
                     headers: detailState.headers);
               }));
             }
@@ -200,6 +201,7 @@ class _DetailState extends State<DetailPage> {
                   .add(buildDownloadItem(context, bigUrl, "大图($bigUrl)", () {
                 Navigator.of(context).pop();
                 _detailViewModel.download(widget.href, bigUrl, id,
+                    _detailPageEntity!.author, _detailPageEntity!.tagList,
                     headers: detailState.headers);
               }));
             }
@@ -211,6 +213,7 @@ class _DetailState extends State<DetailPage> {
                   .add(buildDownloadItem(context, rawUrl, "原图($rawUrl)", () {
                 Navigator.of(context).pop();
                 _detailViewModel.download(widget.href, rawUrl, id,
+                    _detailPageEntity!.author, _detailPageEntity!.tagList,
                     headers: detailState.headers);
               }));
             }
@@ -392,17 +395,8 @@ class _DetailState extends State<DetailPage> {
       child: IconButton(
           onPressed: () {
             if (loading) return;
-            showInfoSheet(
-                context,
-                detailPageEntity.url,
-                detailPageEntity.id,
-                detailPageEntity.author,
-                detailPageEntity.authorId,
-                "",
-                "",
-                detailPageEntity.dimensions,
-                "",
-                detailPageEntity.tagList, onTagTap: (context, tag) {
+            showDetailInfoSheet(context, detailPageEntity,
+                onTagTap: (context, tag) {
               Navigator.of(context).pop();
               Navigator.push(
                 context,

@@ -1,3 +1,5 @@
+import 'package:moeloaderflutter/model/detail_page_entity.dart';
+import 'package:moeloaderflutter/model/home_page_item_entity.dart';
 import 'package:moeloaderflutter/model/tag_entity.dart';
 import 'package:moeloaderflutter/ui/common/common.dart';
 import 'package:moeloaderflutter/util/common_function.dart';
@@ -5,9 +7,43 @@ import 'package:clipboard/clipboard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../../init.dart';
 import '../../util/const.dart';
 
-void showInfoSheet(
+void showDetailInfoSheet(
+    BuildContext context, DetailPageEntity detailPageEntity,
+    {TagTapCallback? onTagTap}) {
+  _showInfoSheet(
+      context,
+      detailPageEntity.url,
+      detailPageEntity.id,
+      detailPageEntity.author,
+      detailPageEntity.authorId,
+      "",
+      "",
+      detailPageEntity.dimensions,
+      "",
+      detailPageEntity.tagList,
+      onTagTap: onTagTap);
+}
+
+void showHomeInfoSheet(BuildContext context, HomePageItemEntity homePageItem,
+    {TagTapCallback? onTagTap}) {
+  _showInfoSheet(
+      context,
+      homePageItem.href,
+      homePageItem.id,
+      homePageItem.author,
+      homePageItem.authorId,
+      homePageItem.characters,
+      homePageItem.fileSize,
+      homePageItem.dimensions,
+      homePageItem.source,
+      homePageItem.tagList,
+      onTagTap: onTagTap);
+}
+
+void _showInfoSheet(
     BuildContext context,
     String url,
     String id,
@@ -22,7 +58,8 @@ void showInfoSheet(
   List<Widget> children = [];
   List<Widget> infoChildren = [];
   _fillInfoChip(context, "Id：", id, infoChildren);
-  _fillInfoChip(context, "Author：", author, infoChildren, infoId: authorId, tagType: Const.tagTypeAuthor, onTagTap: onTagTap);
+  _fillInfoChip(context, "Author：", author, infoChildren,
+      infoId: authorId, tagType: Const.tagTypeAuthor, onTagTap: onTagTap);
   _fillInfoChip(context, "Characters：", characters, infoChildren);
   _fillInfoChip(context, "File Size：", fileSize, infoChildren);
   _fillInfoChip(context, "Dimensions：", dimensions, infoChildren);
@@ -38,9 +75,7 @@ void showInfoSheet(
     children.add(Wrap(
       spacing: 8.0, // 主轴(水平)方向间距
       runSpacing: 4.0, // 纵轴（垂直）方向间距
-      children: [
-        buildUrlWidget(context, url)
-      ],
+      children: [buildUrlWidget(context, url)],
     ));
   }
   if (infoChildren.isNotEmpty) {
@@ -93,10 +128,19 @@ void showInfoSheet(
 
 void _fillInfoChip(
     BuildContext context, String prefix, String info, List<Widget> infoChildren,
-    {TagTapCallback? onTagTap, String? infoId, String tagType = Const.tagTypeDefault}) {
+    {TagTapCallback? onTagTap,
+    String? infoId,
+    String tagType = Const.tagTypeDefault}) {
+  BorderSide? borderSide;
+  if (onTagTap != null) {
+    borderSide = BorderSide(color: Global.defaultColor, width: 2);
+  } else {
+    borderSide = null;
+  }
   if (info.isNotEmpty) {
     infoChildren.add(GestureDetector(
       child: Chip(
+        side: borderSide,
         avatar: ClipOval(
           child: Icon(
             Icons.tag,
@@ -129,10 +173,17 @@ void _fillInfoChip(
 
 List<Widget> _buildTags(BuildContext context, List<TagEntity> tagList,
     {TagTapCallback? onTagTap}) {
+  BorderSide? borderSide;
+  if (onTagTap != null) {
+    borderSide = BorderSide(color: Global.defaultColor, width: 2);
+  } else {
+    borderSide = null;
+  }
   List<Widget> result = [];
   for (var tag in tagList) {
     result.add(GestureDetector(
       child: Chip(
+        side: borderSide,
         avatar: ClipOval(
           child: Icon(
             Icons.label,

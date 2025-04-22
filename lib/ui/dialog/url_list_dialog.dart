@@ -46,7 +46,7 @@ void showUrlList(BuildContext context, HomePageItemEntity homePageItem) {
                               context,
                               MaterialPageRoute(builder: (context) {
                                 return Global.multiPlatform.navigateToWebView(
-                                  context, homePageItem.href, detailState.code,
+                                  context, Global.globalParser.validateUrl(), detailState.code,
                                 );
                               }),
                             );
@@ -73,7 +73,7 @@ void showUrlList(BuildContext context, HomePageItemEntity homePageItem) {
                       children
                           .add(buildDownloadItem(context, url, "预览图($url)", () {
                         detailViewModel.download(
-                            homePageItem.href, url, detailPageEntity.id, headers: detailState.headers);
+                            homePageItem.href, url, detailPageEntity.id, detailPageEntity.author, detailPageEntity.tagList, headers: detailState.headers);
                         showToast("已将图片加入下载列表");
                         Navigator.of(context).pop();
                       }));
@@ -85,7 +85,7 @@ void showUrlList(BuildContext context, HomePageItemEntity homePageItem) {
                       children.add(
                           buildDownloadItem(context, bigUrl, "大图($bigUrl)", () {
                         detailViewModel.download(
-                            homePageItem.href, bigUrl, detailPageEntity.id, headers: detailState.headers);
+                            homePageItem.href, bigUrl, detailPageEntity.id,  detailPageEntity.author, detailPageEntity.tagList, headers: detailState.headers);
                         showToast("已将图片加入下载列表");
                         Navigator.of(context).pop();
                       }));
@@ -97,7 +97,7 @@ void showUrlList(BuildContext context, HomePageItemEntity homePageItem) {
                       children.add(
                           buildDownloadItem(context, rawUrl, "原图($rawUrl)", () {
                         detailViewModel.download(
-                            homePageItem.href, rawUrl, detailPageEntity.id, headers: detailState.headers);
+                            homePageItem.href, rawUrl, detailPageEntity.id,  detailPageEntity.author, detailPageEntity.tagList, headers: detailState.headers);
                         showToast("已将图片加入下载列表");
                         Navigator.of(context).pop();
                       }));

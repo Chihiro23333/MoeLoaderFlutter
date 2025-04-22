@@ -1,34 +1,34 @@
 import 'package:moeloaderflutter/init.dart';
 import 'package:moeloaderflutter/multiplatform/bean.dart';
 import 'package:moeloaderflutter/ui/common/common.dart';
-import 'package:moeloaderflutter/ui/viewmodel/view_model_pool_list.dart';
+import 'package:moeloaderflutter/ui/viewmodel/view_model_author.dart';
 import 'package:moeloaderflutter/util/common_function.dart';
 import 'package:moeloaderflutter/util/const.dart';
 import 'package:moeloaderflutter/widget/image_masonry_grid.dart';
-import 'package:moeloaderflutter/widget/pool_list_loading_status.dart';
+import 'package:moeloaderflutter/widget/authot_loading_status.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import '../dialog/number_input_dialog.dart';
 import 'detail_page.dart';
 
-class PoolListPage extends StatefulWidget {
-  const PoolListPage({super.key, required this.id});
+class AuthorPage extends StatefulWidget {
+  const AuthorPage({super.key, required this.authorId});
 
-  final String id;
+  final String authorId;
 
   @override
-  State<StatefulWidget> createState() => _PoolListState();
+  State<StatefulWidget> createState() => _AuthorState();
 }
 
-class _PoolListState extends State<PoolListPage> {
-  final _log = Logger("_PoolListState");
+class _AuthorState extends State<AuthorPage> {
+  final _log = Logger("_AuthorState");
 
-  final PoolListViewModel _poolListModel = PoolListViewModel();
+  final AuthorViewModel _authorModel = AuthorViewModel();
   String _url = "";
 
   void _requestData({String? page}) {
-    _poolListModel.requestData(widget.id, page: page);
+    _authorModel.requestData(widget.authorId, page: page);
   }
 
   @override
@@ -39,8 +39,8 @@ class _PoolListState extends State<PoolListPage> {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<PoolListState>(
-      stream: _poolListModel.streamPoolListController.stream,
+    return StreamBuilder<AuthorState>(
+      stream: _authorModel.streamAuthorController.stream,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         return Scaffold(
           appBar: AppBar(
@@ -73,33 +73,33 @@ class _PoolListState extends State<PoolListPage> {
 
   Widget _buildFloatActionButton(BuildContext context, AsyncSnapshot snapshot) {
     if (snapshot.connectionState == ConnectionState.active) {
-      PoolListState poolListState = snapshot.data;
+      AuthorState authorState = snapshot.data;
+      bool loading = authorState.loading;
+      bool error = authorState.error;
       return InkWell(
         onLongPress: () {
-          if (poolListState.loading) return;
-          showPageInputDialog(context, poolListState.page, (value) {
+          if (authorState.loading) return;
+          showPageInputDialog(context, authorState.page, (value) {
             _requestData(page: value);
           });
         },
         child: FloatingActionButton(
           onPressed: () {
-            if (poolListState.loading) return;
+            if (authorState.loading) return;
             _requestData();
           },
           child: Stack(
             children: [
               Visibility(
-                  visible: poolListState.loading,
+                  visible: loading,
                   child: const Center(
                     child: CircularProgressIndicator(),
                   )),
               Visibility(
-                  visible: !poolListState.loading,
+                  visible: !loading,
                   child: Center(
                     child: Icon(
-                      poolListState.error
-                          ? Icons.refresh
-                          : Icons.keyboard_double_arrow_down,
+                      error ? Icons.refresh : Icons.keyboard_double_arrow_down,
                       color: Theme.of(context).iconTheme.color,
                     ),
                   ))
@@ -115,18 +115,18 @@ class _PoolListState extends State<PoolListPage> {
   }
 
   Future<void> _filter(BuildContext context, AsyncSnapshot snapshot) async {
-    PoolListState? poolListState = snapshot.data;
-    _showOptionsSheet(context, poolListState);
+    AuthorState? authorState = snapshot.data;
+    _showOptionsSheet(context, authorState);
   }
 
-  void _showOptionsSheet(BuildContext context, PoolListState? poolListState) {
+  void _showOptionsSheet(BuildContext context, AuthorState? authorState) {
     showModalBottomSheet(
         context: context,
         builder: (context) => StatefulBuilder(builder: (context, setState) {
               List<Widget> widgets = [];
 
-              if (poolListState != null) {
-                var url = poolListState.url;
+              if (authorState != null) {
+                var url = authorState.url;
                 if (url.isNotEmpty) {
                   widgets.add(const Padding(
                     padding: EdgeInsets.only(top: 10, bottom: 10),
@@ -148,7 +148,7 @@ class _PoolListState extends State<PoolListPage> {
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ));
-                int page = poolListState.page;
+                int page = authorState.page;
                 widgets.add(pageChip(context, page));
               }
               return SingleChildScrollView(
@@ -174,14 +174,14 @@ class _PoolListState extends State<PoolListPage> {
       _requestData();
     }
 
-    actionOnPressed(poolListState) async {
+    actionOnPressed(authorState) async {
       bool? result = await Navigator.push(
         context,
         MaterialPageRoute(builder: (context) {
           return Global.multiPlatform.navigateToWebView(
             context,
             _url,
-            poolListState.code,
+            authorState.code,
           );
         }),
       );
@@ -195,15 +195,15 @@ class _PoolListState extends State<PoolListPage> {
         snapshot: snapshot,
         retryOnPressed: retryOnPressed,
         actionOnPressed: actionOnPressed,
-        builder: (poolListState) {
-          Grid homeGrid = Global.multiPlatform.homeGrid(Const.poolListPage);
+        builder: (authorState) {
+          Grid homeGrid = Global.multiPlatform.homeGrid(Const.authorPage);
           int columnCount = homeGrid.columnCount;
           double aspectRatio = homeGrid.aspectRatio;
           return ImageMasonryGrid(
             columnCount: columnCount,
             aspectRatio: aspectRatio,
-            list: poolListState.list,
-            headers: poolListState.headers,
+            list: authorState.list,
+            headers: authorState.headers,
             itemOnPressed: (homePageItem) async {
               await Navigator.push(
                 context,
@@ -226,7 +226,7 @@ class _PoolListState extends State<PoolListPage> {
 
   Widget _buildAppBatTitle(BuildContext context) {
     return StreamBuilder<UriState>(
-        stream: _poolListModel.streamUriController.stream,
+        stream: _authorModel.streamUriController.stream,
         builder: (BuildContext context, AsyncSnapshot asyncSnapshot) {
           if (asyncSnapshot.connectionState == ConnectionState.active) {
             UriState uriState = asyncSnapshot.data;

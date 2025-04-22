@@ -1,3 +1,4 @@
+import 'package:moeloaderflutter/init.dart';
 import 'package:moeloaderflutter/model/home_page_item_entity.dart';
 import 'package:moeloaderflutter/ui/dialog/info_dialog.dart';
 import 'package:moeloaderflutter/ui/dialog/url_list_dialog.dart';
@@ -60,21 +61,22 @@ class _ImageMasonryGridState extends State<ImageMasonryGrid> {
           double screenWidth = queryData.size.width;
           HomePageItemEntity homePageItem = list[index];
           double width = screenWidth / crossAxisCount;
+          double height;
           double scale = 1 / widget.aspectRatio;
           double maxScale = 2;
           if (homePageItem.height > 0 && homePageItem.width > 0) {
             scale = homePageItem.height / homePageItem.width;
           }
-          _log.fine("before scale=$scale");
+          _log.info("before scale=$scale");
           if (scale > maxScale) scale = maxScale;
-          _log.fine("after scale=$scale");
-          double height = width * scale;
+          _log.info("after scale=$scale");
+          height = width * scale;
           Color loadingBackgroundColor = const Color.fromARGB(30, 46, 176, 242);
           return Container(
             width: width,
             height: height,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5),
+              borderRadius: BorderRadius.circular(0),
               color: loadingBackgroundColor,
             ),
             child: _buildItem(context, homePageItem, index, crossAxisCount,
@@ -91,6 +93,15 @@ class _ImageMasonryGridState extends State<ImageMasonryGrid> {
       double width,
       double height,
       Map<String, String>? headers) {
+    Map<String, String> newHeaders = {};
+    if (headers != null) {
+      newHeaders.addAll(headers);
+    }
+    if (Global.globalParser.imageLoadWithHost()) {
+      Uri uri = Uri.parse(homePageItem.coverUrl);
+      String host = uri.host;
+      newHeaders["host"] = host;
+    }
     return Stack(
       fit: StackFit.expand,
       children: [
@@ -99,7 +110,7 @@ class _ImageMasonryGridState extends State<ImageMasonryGrid> {
                 child: ExtendedImage.network(
                   borderRadius: const BorderRadius.all(Radius.circular(5)),
                   shape: BoxShape.rectangle,
-                  headers: headers,
+                  headers: newHeaders,
                   width: width,
                   height: height,
                   homePageItem.coverUrl,
@@ -136,7 +147,11 @@ class _ImageMasonryGridState extends State<ImageMasonryGrid> {
                         DownloadManager().addTask(DownloadTask(
                             homePageItem.href,
                             homePageItem.href,
-                            getDownloadName(homePageItem.href, homePageItem.id),
+                            await getDownloadName(
+                                homePageItem.href,
+                                homePageItem.id,
+                                homePageItem.author,
+                                homePageItem.tagList),
                             headers: headers));
                         showToast("已将图片加入下载列表");
                       }
@@ -145,17 +160,8 @@ class _ImageMasonryGridState extends State<ImageMasonryGrid> {
                         downloadStateIcon(context, homePageItem.downloadState)),
                 IconButton(
                     onPressed: () {
-                      showInfoSheet(
-                          context,
-                          homePageItem.href,
-                          homePageItem.id,
-                          homePageItem.author,
-                          homePageItem.authorId,
-                          homePageItem.characters,
-                          homePageItem.fileSize,
-                          homePageItem.dimensions,
-                          homePageItem.source,
-                          homePageItem.tagList, onTagTap: (context, tag) {
+                      showHomeInfoSheet(context, homePageItem,
+                          onTagTap: (context, tag) {
                         Navigator.of(context).pop();
                         _log.fine("yamlTag:tag=${tag.tag};desc=${tag.desc}");
                         TagTapCallback? tagTapCallback = widget.tagTapCallback;

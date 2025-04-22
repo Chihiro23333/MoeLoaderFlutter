@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:logging/logging.dart';
 import 'package:to_json/models.dart' as jsonModels;
+import 'package:to_json/yaml_parser_base.dart';
 import '../viewmodel/view_model_home.dart';
 
 class MainPage extends StatefulWidget {
@@ -36,6 +37,7 @@ class _MainState extends State<MainPage> {
         ),
         actions: <Widget>[
           _buildSettingsAction(context),
+          _buildWebAction(context),
         ],
       ),
       body: _buildBody(context),
@@ -72,6 +74,26 @@ class _MainState extends State<MainPage> {
             );
           },
           icon: const Icon(Icons.settings)),
+    );
+  }
+
+  Widget _buildWebAction(BuildContext context) {
+    return Padding(
+      padding: appBarActionPadding(),
+      child: IconButton(
+          onPressed: () async{
+            bool? result = await Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) {
+                return Global.multiPlatform.navigateToWebView(
+                  context,
+                  "https://anime-pictures.net/posts?page=0&lang=en",
+                  Parser.needChallenge
+                );
+              }),
+            );
+          },
+          icon: const Icon(Icons.build_rounded)),
     );
   }
 

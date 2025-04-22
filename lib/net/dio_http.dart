@@ -12,13 +12,22 @@ class DioHttp {
 
   final _cookieManager = CookieManager(CookieJar());
   late Dio _dio;
-
-  DioHttp() {
-    BaseOptions baseOptions = BaseOptions(
+  final BaseOptions _baseOptions = BaseOptions(
       receiveDataWhenStatusError: true,
       responseType: ResponseType.plain,
-    );
-    _dio = _logDio(baseOptions);
+      followRedirects: true
+  );
+  final BaseOptions _noRedirectsOptions = BaseOptions(
+      receiveDataWhenStatusError: true,
+      responseType: ResponseType.plain,
+      followRedirects: false,
+      validateStatus: (status) {
+        return status != null && (status < 300 || status == 302);
+      }
+  );
+
+  DioHttp() {
+    _dio = _logDio(_baseOptions);
     _loadAllCookies();
   }
 
@@ -26,11 +35,11 @@ class DioHttp {
     var dio = Dio(options)
       ..interceptors.add(_cookieManager)
       ..interceptors.add(LogInterceptor());
-      // ..httpClientAdapter = Http2Adapter(
-      //   ConnectionManager(
-      //     idleTimeout: const Duration(seconds: 10),
-      //     onClientCreate: (_, config) => config.onBadCertificate = (_) => true,
-      //   ));
+    // ..httpClientAdapter = Http2Adapter(
+    //   ConnectionManager(
+    //     idleTimeout: const Duration(seconds: 10),
+    //     onClientCreate: (_, config) => config.onBadCertificate = (_) => true,
+    //   ));
     return dio;
   }
 
@@ -39,6 +48,17 @@ class DioHttp {
     _updateHeaders(headers);
     var response = await _dio.get(url);
     var result = response.toString();
+    _log.fine("result=$result");
+    return result;
+  }
+
+  Future<Headers> getHeaders(String url, {Map<String, String>? headers}) async {
+    _log.fine("url=$url");
+    _dio.options = _noRedirectsOptions;
+    _updateHeaders(headers);
+    Response response = await _dio.get(url);
+    _dio.options = _baseOptions;
+    var result = response.headers;
     _log.fine("result=$result");
     return result;
   }
@@ -61,14 +81,14 @@ class DioHttp {
 
   Future<Response> download(String url, String savePath,
       {ProgressCallback? onReceiveProgress,
-      CancelToken? cancelToken,
-      Map<String, String>? headers}) async {
+        CancelToken? cancelToken,
+        Map<String, String>? headers}) async {
     _updateHeaders(headers);
     return await _dio.download(url, savePath,
         onReceiveProgress: onReceiveProgress, cancelToken: cancelToken);
   }
 
-  Future<void> _transformCookies(String origin, String cookiesString) async{
+  Future<void> _transformCookies(String origin, String cookiesString) async {
     if (cookiesString.isNotEmpty) {
       await saveCookieString(origin, cookiesString);
       await _updateCookies(Uri.parse(origin), cookiesString);

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:dio/dio.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:logging/logging.dart';
 import 'package:moeloaderflutter/net/dio_http.dart';
 import 'package:to_json/validator.dart';
@@ -24,15 +25,16 @@ class RequestManager{
     _dioHttp  = DioHttp();
   }
 
-  Future<ValidateResult<String>> dioRequest(String url, Validator validator, {Map<String, String>? headers}) async {
-    try {
+  Future<String> dioRequest(String url, {Map<String, String>? headers}) async {
       var response = await _dioHttp.get(url, headers: headers);
       var result = response.toString();
-      ValidateResult<String> validateResult = await validator.validateResult(result);
-      return validateResult;
-    }catch(e){
-      return await validator.validateException(e);
-    }
+      return result;
+  }
+
+  Future<String> dioRequestRedirectUrl(String url, {Map<String, String>? headers}) async {
+    Headers responseHeaders = await _dioHttp.getHeaders(url, headers: headers);
+    String result = responseHeaders.value("location") ?? "";
+    return result;
   }
 
   Future<void> saveCookiesString(String origin, String cookiesString) async{
@@ -48,5 +50,4 @@ class RequestManager{
       return Future.value(false);
     }
   }
-
 }

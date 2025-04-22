@@ -138,3 +138,25 @@ void showDownloadOverlay(BuildContext context) {
           }));
   Overlay.of(context).insert(overlayEntry);
 }
+
+Widget pageChip(BuildContext context, int page) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    mainAxisAlignment: MainAxisAlignment.start,
+    children: [
+      const Text(
+        "小技巧:长按主界面下一页控件可页码跳转哟！",
+        style: TextStyle(fontSize: 12),
+      ),
+      Chip(
+        avatar: ClipOval(
+          child: Icon(
+            Icons.format_list_numbered,
+            color: Theme.of(context).iconTheme.color,
+          ),
+        ),
+        label: Text("第$page页"),
+      )
+    ],
+  );
+}

@@ -4,7 +4,6 @@ import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:moeloaderflutter/init.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:moeloaderflutter/util/common_function.dart';
 
 void main(List<String> args) {
   WidgetsFlutterBinding.ensureInitialized();

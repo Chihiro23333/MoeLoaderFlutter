@@ -5,7 +5,6 @@ import 'package:to_json/models.dart';
 import 'package:yaml/yaml.dart';
 import 'package:moeloaderflutter/init.dart';
 import 'package:moeloaderflutter/util/const.dart';
-import 'package:path/path.dart' as path;
 
 class YamlRuleFactory {
   final _log = Logger("YamlRuleFactory");
@@ -28,7 +27,7 @@ class YamlRuleFactory {
       String configStr =
           await rootBundle.loadString("assets/${Const.dirRules}/_config.yaml");
       _configYamlDoc = loadYaml(configStr);
-      await addRules(Const.typeDefault);
+      await _updateDefaultRules();
       _init = true;
     }
   }
@@ -59,25 +58,29 @@ class YamlRuleFactory {
     return targetWebPage!;
   }
 
-  Future<void> addRules(String type) async {
+  addCustomRule(Rule rule) {
+    _ruleList.add(rule);
+  }
+
+  Future<void> _updateDefaultRules() async {
     _configYamlDoc["rules"].forEach((element) {
       String name = element["name"];
-      String fileName = element["fileName"];
-      String favicon = element["favicon"];
+      String path = "assets/${Const.dirRules}/${element["fileName"]}";
+      String faviconPath = "assets/${Const.dirIcons}/${element["favicon"]}";
       bool canSearch = element["canSearch"];
       _log.fine(
-          "addCustomRules:name=$name;favicon=$favicon;canSearch=$canSearch");
-      _ruleList.add(Rule(type, fileName, name, favicon, canSearch));
+          "addCustomRules:name=$name;faviconPath=$faviconPath;canSearch=$canSearch");
+      _ruleList
+          .add(Rule(Const.typeDefault, path, name, faviconPath, canSearch));
     });
   }
 
   Future<void> _loadRule(Rule rule) async {
     String ruleStr;
     if (rule.type == Const.typeDefault) {
-      ruleStr = await rootBundle.loadString("assets/${Const.dirRules}/${rule.path}");
+      ruleStr = await rootBundle.loadString("${rule.path}");
     } else {
-      Directory rulesDirectory = Global.rulesDirectory;
-      ruleStr = await File("${rulesDirectory.path}/${rule.path}").readAsString();
+      ruleStr = await File("${rule.path}").readAsString();
     }
     var doc = loadYaml(ruleStr);
     _ruleMap[rule] = doc;

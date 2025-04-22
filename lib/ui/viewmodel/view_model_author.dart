@@ -17,23 +17,23 @@ import 'package:to_json/yaml_global.dart';
 import 'package:to_json/yaml_rule_factory.dart';
 import 'package:yaml/yaml.dart';
 
-class PoolListViewModel {
-  final _log = Logger('HomeViewModel');
+class AuthorViewModel {
+  final _log = Logger('AuthorViewModel');
 
-  final String _poolListPageName = "poolListPage";
+  final String _authorPageName = "authorPage";
 
   final YamlRepository repository = YamlRepository();
 
-  final StreamController<PoolListState> streamPoolListController =
+  final StreamController<AuthorState> streamAuthorController =
       StreamController();
-  final PoolListState _poolListState = PoolListState();
+  final AuthorState _authorState = AuthorState();
   final StreamController<UriState> streamUriController = StreamController();
   final UriState _uriState = UriState();
 
-  PoolListViewModel() {
+  AuthorViewModel() {
     DownloadManager().downloadStream().listen((downloadState) {
       List<DownloadTask> list = downloadState.tasks;
-      for (HomePageItemEntity item in _poolListState.list) {
+      for (HomePageItemEntity item in _authorState.list) {
         bool find = false;
         for (DownloadTask task in list) {
           if (task.id == item.href) {
@@ -46,7 +46,7 @@ class PoolListViewModel {
           item.downloadState = DownloadTask.idle;
         }
       }
-      streamPoolListController.add(_poolListState);
+      streamAuthorController.add(_authorState);
     });
   }
 
@@ -54,34 +54,34 @@ class PoolListViewModel {
       {String? page, Map<String, String>? options}) async {
     changeLoading(true);
 
-    String realPage = page ?? (_poolListState.page + 1).toString();
+    String realPage = page ?? (_authorState.page + 1).toString();
 
     var globalParser = _globalParser();
     Map<String, String> formatParams = Map.from(options ?? {});
     formatParams["page"] = realPage;
-    formatParams["id"] = id;
+    formatParams["authorId"] = id;
     _log.fine("formatParams=$formatParams");
     String url = "";
-    _poolListState.url = url;
+    _authorState.url = url;
     _updateUri(url);
 
     Map<String, String> headers = globalParser.headers();
-    _poolListState.headers = headers;
+    _authorState.headers = headers;
 
     YamlMap doc = await YamlRuleFactory().create(Global.curWebPageName);
 
     bool success = false;
     String message = "";
-    _poolListState.error = false;
+    _authorState.error = false;
     List<HomePageItemEntity>? list;
     String json =
-        await _request().request(doc, _poolListPageName, connector: ConnectorImpl(repository), params: formatParams);
+        await _request().request(doc, _authorPageName, connector: ConnectorImpl(repository), params: formatParams);
     var decode = jsonDecode(json);
     var code = decode["code"];
-    _poolListState.code = code;
+    _authorState.code = code;
     if (code == Parser.success) {
       list = jsonConvert.convertListNotNull(decode["data"]);
-      var dataList = _poolListState.list;
+      var dataList = _authorState.list;
       dataList.addAll(list ?? []);
       for (var item in dataList) {
         if (item.tagList.isEmpty && item.tagStr.isNotEmpty) {
@@ -93,26 +93,26 @@ class PoolListViewModel {
           });
         }
       }
-      _poolListState.page = int.parse(realPage);
-      streamPoolListController.add(_poolListState);
+      _authorState.page = int.parse(realPage);
+      streamAuthorController.add(_authorState);
       success = true;
     } else {
       message = decode["message"];
     }
     if (!success) {
-      _poolListState.error = true;
-      _poolListState.errorMessage = message;
-      streamPoolListController.add(_poolListState);
+      _authorState.error = true;
+      _authorState.errorMessage = message;
+      streamAuthorController.add(_authorState);
     }
     changeLoading(false);
   }
 
   void changeLoading(bool loading) {
-    _poolListState.loading = loading;
+    _authorState.loading = loading;
     if (loading) {
-      _poolListState.error = false;
+      _authorState.error = false;
     }
-    streamPoolListController.add(_poolListState);
+    streamAuthorController.add(_authorState);
   }
 
   Future<List<Rule>> webPageList() async {
@@ -133,7 +133,7 @@ class PoolListViewModel {
   }
 }
 
-class PoolListState {
+class AuthorState {
   List<HomePageItemEntity> list = [];
   int page = 0;
   String url = "";
@@ -154,7 +154,7 @@ class PoolListState {
     code = ValidateResult.success;
   }
 
-  PoolListState();
+  AuthorState();
 }
 
 class UriState {

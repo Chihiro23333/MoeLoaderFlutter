@@ -1,19 +1,20 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:gal/gal.dart';
-import 'package:moeloaderflutter/custom_rule/custom_rule_parser.dart';
 import 'package:moeloaderflutter/generated/json/base/json_convert_content.dart';
 import 'package:moeloaderflutter/model/detail_page_entity.dart';
 import 'package:moeloaderflutter/model/home_page_item_entity.dart';
 import 'package:moeloaderflutter/model/tag_entity.dart';
 import 'package:moeloaderflutter/net/download.dart';
+import 'package:moeloaderflutter/ui/viewmodel/connector_impl.dart';
 import 'package:moeloaderflutter/util/utils.dart';
 import 'package:moeloaderflutter/init.dart';
 import 'package:moeloaderflutter/repo/yaml_reposotory.dart';
 import 'package:logging/logging.dart';
-import 'package:to_json/parser_factory.dart';
+import 'package:to_json/request.dart';
+import 'package:to_json/request_factory.dart';
 import 'package:to_json/validator.dart';
 import 'package:to_json/yaml_parser_base.dart';
+import 'package:to_json/yaml_global.dart';
 import 'package:to_json/yaml_rule_factory.dart';
 import 'package:yaml/yaml.dart';
 
@@ -42,43 +43,42 @@ class DetailViewModel {
       streamDetailController.add(_detailState);
     } else {
       YamlMap doc = await YamlRuleFactory().create(Global.curWebPageName);
-      var parser = _parser();
-      var customRuleParser = _customRuleParser();
-      Map<String, String> headers = customRuleParser.headers();
+      var request = _request();
+      var globalParser = _globalParser();
+      Map<String, String> headers = globalParser.headers();
       _detailState.headers = headers;
-      Validator validator = Validator(doc, _detailPageName);
-      ValidateResult<String> result =
-          await repository.detail(url, validator, headers: headers);
       bool success = false;
       String message = "";
-      if (result.validateSuccess) {
-        _detailState.error = false;
-        String json =
-            await _parser().parseUseYaml(result.data!, doc, _detailPageName);
-        var decode = jsonDecode(json);
-        if (decode["code"] == Parser.success) {
-          _detailState.detailPageEntity =
-              jsonConvert.convert<DetailPageEntity>(decode["data"]) ??
-                  DetailPageEntity();
-          DetailPageEntity detailPageEntity = _detailState.detailPageEntity;
-          if (detailPageEntity.tagList.isEmpty && detailPageEntity.tagStr.isNotEmpty) {
-            detailPageEntity.tagStr.split(detailPageEntity.tagSplit).forEach((element) {
-              TagEntity tagEntity = TagEntity();
-              tagEntity.desc = element;
-              tagEntity.tag = element;
-              detailPageEntity.tagList.add(tagEntity);
-            });
-          }
-          streamDetailController.add(_detailState);
-          success = true;
-        } else {
-          message = decode["message"];
+      _detailState.error = false;
+      String json = await request.requestByUrl(
+          url, doc, _detailPageName, ConnectorImpl(repository));
+      var decode = jsonDecode(json);
+      var code = decode["code"];
+      _detailState.code = code;
+      if (code == Parser.success) {
+        _detailState.detailPageEntity =
+            jsonConvert.convert<DetailPageEntity>(decode["data"]) ??
+                DetailPageEntity();
+        DetailPageEntity detailPageEntity = _detailState.detailPageEntity;
+        if (detailPageEntity.tagList.isEmpty &&
+            detailPageEntity.tagStr.isNotEmpty) {
+          detailPageEntity.tagStr
+              .split(detailPageEntity.tagSplit)
+              .forEach((element) {
+            TagEntity tagEntity = TagEntity();
+            tagEntity.desc = element;
+            tagEntity.tag = element;
+            detailPageEntity.tagList.add(tagEntity);
+          });
         }
+        streamDetailController.add(_detailState);
+        success = true;
+      } else {
+        message = decode["message"];
       }
       if (!success) {
         _detailState.error = true;
         _detailState.errorMessage = "Error:$message}";
-        _detailState.code = result.code;
         streamDetailController.add(_detailState);
       }
     }
@@ -90,11 +90,22 @@ class DetailViewModel {
     streamDetailController.add(_detailState);
   }
 
-  void download(String href, String url, String id, {Map<String, String>? headers}) async {
+  void download(
+      String href, String url, String id, String author, List<TagEntity> tags,
+      {Map<String, String>? headers}) async {
     _log.fine("headers=$headers");
     bool hasAccess = await Global.multiPlatform.requestAccess();
-    if(hasAccess){
-      DownloadManager().addTask(DownloadTask(href, url, getDownloadName(url, id), headers: headers));
+    if (hasAccess) {
+      DownloadManager().addTask(DownloadTask(
+          href,
+          url,
+          await getDownloadName(
+            url,
+            id,
+            author,
+            tags
+          ),
+          headers: headers));
     }
   }
 
@@ -108,12 +119,12 @@ class DetailViewModel {
     streamDetailUriController.add(_detailUriState);
   }
 
-  Parser _parser() {
-    return ParserFactory().createParser();
+  Request _request() {
+    return RequestFactory().create();
   }
 
-  CustomRuleParser _customRuleParser() {
-    return Global.customRuleParser;
+  GlobalParser _globalParser() {
+    return Global.globalParser;
   }
 }
 

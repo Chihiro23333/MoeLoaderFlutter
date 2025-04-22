@@ -22,7 +22,6 @@ class _SettingState extends State<SettingPage> {
 
   final TextEditingController _textEditingControl = TextEditingController();
   String _dropdownValue = "";
-  String _downloadName = "";
   final SettingViewModel _settingViewModel = SettingViewModel();
 
   Future<void> _setProxy(String text) async {
@@ -37,9 +36,7 @@ class _SettingState extends State<SettingPage> {
   }
 
   void updateDownloadName(String value) {
-    setState(() {
-      _downloadName = value;
-    });
+    _settingViewModel.updateDownloadFileNameRule(value);
   }
 
   @override
@@ -171,28 +168,35 @@ class _SettingState extends State<SettingPage> {
       Const.site,
       Const.id,
       Const.tag,
-      Const.desc,
       Const.author,
       Const.date
     ];
+    String downloadFileNameRule = settingState.downloadFileNameRule ?? "";
     for (var regex in nameRegex) {
       result.add(GestureDetector(
         child: Chip(
+          backgroundColor: Colors.white,
           label: Text(regex),
+            elevation: 10
         ),
         onTap: () {
-          updateDownloadName("${_downloadName}_$regex");
+          if (downloadFileNameRule.isEmpty) {
+            updateDownloadName(regex);
+          } else {
+            updateDownloadName("${downloadFileNameRule}_$regex");
+          }
         },
       ));
     }
 
     result.add(GestureDetector(
       child: Chip(
-        backgroundColor: Global.defaultColor,
-        label: const Text("重置",
-        style: TextStyle(
-          color: Colors.white
-        ),),
+          backgroundColor: Global.defaultColor,
+          label: const Text(
+            "重置",
+            style: TextStyle(color: Colors.white),
+          ),
+          elevation: 10
       ),
       onTap: () {
         updateDownloadName("");
@@ -205,14 +209,18 @@ class _SettingState extends State<SettingPage> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const Text(
-            "下载文件名：",
+            "下载文件名(自动保存)：",
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           const SizedBox(
             height: 10,
           ),
           Text(
-            "文件名：$_downloadName",
+            style: TextStyle(color: Global.defaultColor),
+            "文件名：${downloadFileNameRule.isEmpty ? "site_author_url_date(系统默认)" : downloadFileNameRule}",
+          ),
+          const SizedBox(
+            height: 6,
           ),
           Wrap(
             spacing: 4,
@@ -274,10 +282,10 @@ class _SettingState extends State<SettingPage> {
       children.add(const Divider(
         height: 10,
       ));
-      // children.add(_buildDownloadName(context, settingState));
-      // children.add(const Divider(
-      //   height: 10,
-      // ));
+      children.add(_buildDownloadName(context, settingState));
+      children.add(const Divider(
+        height: 10,
+      ));
       children.add(
           _buildFolderItem(context, "自定义规则存储路径", Global.rulesDirectory.path));
       children.add(const Divider(

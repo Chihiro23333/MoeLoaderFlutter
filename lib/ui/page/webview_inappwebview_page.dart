@@ -7,6 +7,8 @@ import 'package:logging/logging.dart';
 import 'package:to_json/validator.dart';
 import 'dart:async';
 
+import '../../util/common_function.dart';
+
 class InAppWebViewPage extends StatefulWidget {
   InAppWebViewPage(
       {super.key, required this.url, required this.code, this.userAgent});
@@ -23,11 +25,19 @@ class _InAppWebViewState extends State<InAppWebViewPage> {
   late InAppWebViewController _webViewController;
   late String _url;
   final _log = Logger('_WebViewAndroidState');
+  int _progress = 0;
+
+  updateProgress(int progress) {
+    setState(() {
+      _progress = progress;
+    });
+  }
 
   @override
   void initState() {
     super.initState();
     _url = widget.url;
+    _log.fine("_url=$_url");
   }
 
   @override
@@ -42,16 +52,31 @@ class _InAppWebViewState extends State<InAppWebViewPage> {
         actions: _buildAppbarActions(context),
       ),
       body: Center(
-        child: InAppWebView(
-          initialUrlRequest: URLRequest(url: WebUri(_url)),
-          onWebViewCreated: (controller) {
-            _webViewController = controller;
-          },
-          onLoadStop: (controller, url) async {
-          },
+        child: Stack(
+          children: [
+            InAppWebView(
+              initialUrlRequest: URLRequest(url: WebUri(_url)),
+              onWebViewCreated: (controller) {
+                _webViewController = controller;
+              },
+              onLoadStop: (controller, url) async {},
+              onProgressChanged: (controller, progress) async {
+                updateProgress(progress);
+              },
+            ),
+            _loadingProgress()
+          ],
         ),
       ),
     );
+  }
+
+  Widget _loadingProgress() {
+    if (_progress < 100) {
+      return const LinearProgressIndicator();
+    } else {
+      return const SizedBox();
+    }
   }
 
   List<Widget> _buildAppbarActions(BuildContext context) {
@@ -65,7 +90,8 @@ class _InAppWebViewState extends State<InAppWebViewPage> {
             color: Theme.of(context).iconTheme.color,
           ),
           onTap: () {
-            _webViewController.loadUrl(urlRequest: URLRequest(url: WebUri(_url)));
+            _webViewController.loadUrl(
+                urlRequest: URLRequest(url: WebUri(_url)));
           },
         ),
       ),
@@ -83,8 +109,7 @@ class _InAppWebViewState extends State<InAppWebViewPage> {
         ),
       ),
       Padding(
-        padding:
-            const EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
+        padding: const EdgeInsets.fromLTRB(0, 0, 60, 0),
         child: GestureDetector(
           onTap: () {
             _webViewController.goForward();
@@ -99,7 +124,7 @@ class _InAppWebViewState extends State<InAppWebViewPage> {
   }
 
   Widget _buildFloatActionButton(BuildContext context) {
-    if(widget.code == ValidateResult.success){
+    if (widget.code == ValidateResult.success) {
       return const SizedBox();
     }
     return FloatingActionButton.extended(
@@ -125,7 +150,8 @@ class _InAppWebViewState extends State<InAppWebViewPage> {
   Future<void> _saveCookies(BuildContext context) async {
     // 获取指定 URL 的 Cookie
     var cookies = await CookieManager.instance().getCookies(url: WebUri(_url));
-    String cookiesResult = cookies.map((cookie) => '${cookie.name}=${cookie.value}').join('; ');
+    String cookiesResult =
+        cookies.map((cookie) => '${cookie.name}=${cookie.value}').join('; ');
     _log.fine("cookiesResult=$cookiesResult");
     if (cookiesResult.isNotEmpty) {
       String origin = Uri.parse(_url).origin;

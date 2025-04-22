@@ -7,8 +7,8 @@ class Validator {
 
   late YamlMap _pageDoc;
 
-  Validator(YamlMap yamlDoc, String pageName) {
-    _pageDoc = yamlDoc[pageName];
+  Validator(YamlMap yamlDoc) {
+    _pageDoc = yamlDoc;
   }
 
   Future<ValidateResult<String>> validateResult(String content) async {
@@ -38,36 +38,6 @@ class Validator {
       }
     }
     return ValidateResult(Parser.success, data: content);
-  }
-
-  Future<ValidateResult<String>> validateException(Object exception) async {
-    print("exception=$exception");
-    if (exception is Exception) {
-      String message = exception.toString();
-      YamlList? onValidateRule = _pageDoc["onValidateResult"];
-      if (onValidateRule != null) {
-        Iterator iterator = onValidateRule.iterator;
-        while (iterator.moveNext()) {
-          YamlMap item = iterator.current;
-          YamlMap? exceptionRule = item["exception"];
-          if (exceptionRule != null) {
-            String action = exceptionRule["action"];
-            String msgCode = exceptionRule["code"];
-            if (message.contains(msgCode)) {
-              int code;
-              String message = "";
-              if (action == "login") {
-                code = ValidateResult.needLogin;
-              } else {
-                code = ValidateResult.needChallenge;
-              }
-              return ValidateResult(code, message: message);
-            }
-          }
-        }
-      }
-    }
-    return ValidateResult(ValidateResult.fail, message: exception.toString());
   }
 }
 

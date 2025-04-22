@@ -123,7 +123,7 @@ class _MainMasonryGridState extends State<MainMasonryGrid> {
           ),
         ),
         Positioned(
-          right: 20,
+          right: 10,
           bottom: 10,
           child: Container(
             decoration: const BoxDecoration(

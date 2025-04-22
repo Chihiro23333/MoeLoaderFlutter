@@ -17,12 +17,21 @@ class SettingViewModel{
     String? downloadFileSize = await getDownloadFileSize();
     _settingState.proxy = proxy;
     _settingState.downloadFileSize = downloadFileSize;
+    String downloadFileNameRule = await getDownloadFileNameRule();
+    _settingState.downloadFileNameRule = downloadFileNameRule;
     streamSettingController.add(_settingState);
     changeDetailLoading(false);
   }
 
   void changeDetailLoading(bool loading) {
     _settingState.loading = loading;
+    streamSettingController.add(_settingState);
+  }
+
+  void updateDownloadFileNameRule(String rule) async{
+    await setDownloadFileNameRule(rule);
+    String downloadFileNameRule = await getDownloadFileNameRule();
+    _settingState.downloadFileNameRule = downloadFileNameRule;
     streamSettingController.add(_settingState);
   }
 
@@ -35,6 +44,7 @@ class SettingState {
   bool loading = true;
   String? proxy;
   String? downloadFileSize;
+  String? downloadFileNameRule;
 
   SettingState();
 }

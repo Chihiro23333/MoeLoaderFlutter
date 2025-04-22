@@ -1,8 +1,7 @@
-import 'dart:convert';
-
 import 'package:flutter/widgets.dart';
 import 'package:logging/logging.dart';
-import 'package:to_json/utils.dart';
+import 'package:to_json/models.dart';
+import 'package:to_json/yaml_global.dart';
 import 'package:yaml/yaml.dart';
 
 abstract class Parser {
@@ -12,6 +11,10 @@ abstract class Parser {
   static const success = 1;
   static const needChallenge = 2;
   static const needLogin = 3;
+  static const interrupt = 4;
+
+  late GlobalParams _globalParams;
+  ParseState _parseState = ParseState(Parser.success, "成功");
 
   String webPageName(YamlMap yamlCustomDoc) {
     return yamlCustomDoc["meta"]?["name"] ?? "";
@@ -45,8 +48,8 @@ abstract class Parser {
 
   @protected
   String regularString(String text) {
-    text = text.replaceAll("\n", "");
-    text = text.trim();
+    // text = text.replaceAll("\n", "");
+    // text = text.trim();
     return text;
   }
 
@@ -98,12 +101,70 @@ abstract class Parser {
             result = result.replaceAll(fromRule, toRule);
           }
         }
+
+        YamlMap? splitRule = rule["split"];
+        if (splitRule != null) {
+          String by = splitRule["by"] ?? " ";
+          int index = splitRule["index"] ?? 0;
+          List<String> list = result.split(by);
+          if(index >= 0){
+            if(index > list.length - 1){
+              index = 0;
+            }
+          }else{
+            index = list.length + index;
+            if(index < 0){
+              index = 0;
+            }
+          }
+          result = list[index];
+        }
       }
     }
     return result;
   }
 
-  Future<String> preprocess(String content, YamlMap preprocessNode);
+  configGlobalParams(GlobalParams globalParams) {
+    _globalParams = globalParams;
+  }
 
-  Future<String> parseUseYaml(String content, YamlMap doc, String pageName);
+  Connector? connector(){
+    return _globalParams.connector;
+  }
+
+  Map<String, String> globalParams(){
+    return _globalParams.params ?? {};
+  }
+
+  GlobalParser? globalParser(){
+    return _globalParams.globalParser;
+  }
+
+  ParseState parseState(){
+    return _parseState;
+  }
+
+  Future<void> onState(int code, String message) async {
+    _parseState = ParseState(code, message);
+  }
+
+  void reset(){
+    _parseState = ParseState(Parser.success, "成功");
+  }
+
+  Future<String> parseUseYaml(String content, YamlMap doc, String pageName, {Map<String, String>? headers, Map<String, String>? params});
+
+}
+
+abstract class Connector{
+
+  Future<String> request(String url, {Map<String, String>? headers});
+
+}
+
+class ParseState{
+  int code;
+  String message;
+
+  ParseState(this.code, this.message);
 }

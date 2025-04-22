@@ -3,6 +3,7 @@ import 'package:moeloaderflutter/model/option_entity.dart';
 import 'package:moeloaderflutter/model/tag_entity.dart';
 import 'package:moeloaderflutter/multiplatform/bean.dart';
 import 'package:moeloaderflutter/ui/common/common.dart';
+import 'package:moeloaderflutter/ui/page/author_page.dart';
 import 'package:moeloaderflutter/ui/page/download_page.dart';
 import 'package:moeloaderflutter/ui/page/pool_list_page.dart';
 import 'package:moeloaderflutter/ui/page/search_page.dart';
@@ -20,6 +21,7 @@ import 'package:moeloaderflutter/init.dart';
 import 'package:moeloaderflutter/ui/viewmodel/view_model_home.dart';
 import 'package:logging/logging.dart';
 import '../../util/const.dart';
+import '../dialog/number_input_dialog.dart';
 import 'detail_page.dart';
 import 'package:to_json/models.dart' as jsonModels;
 
@@ -133,7 +135,7 @@ class _HomeState extends State<HomePage> {
         MaterialPageRoute(builder: (context) {
           return Global.multiPlatform.navigateToWebView(
             context,
-            _url,
+            Global.globalParser.validateUrl(),
             homeState.code,
             userAgent: homeState.headers?["user-agent"],
           );
@@ -150,7 +152,7 @@ class _HomeState extends State<HomePage> {
         retryOnPressed: retryOnPressed,
         actionOnPressed: actionOnPressed,
         builder: (homeState) {
-          Grid homeGrid = Global.multiPlatform.homeGrid();
+          Grid homeGrid = Global.multiPlatform.homeGrid(Const.homePage);
           int columnCount = homeGrid.columnCount;
           double aspectRatio = homeGrid.aspectRatio;
           if (homeState.pageType.isNotEmpty) {
@@ -184,10 +186,7 @@ class _HomeState extends State<HomePage> {
                 context,
                 MaterialPageRoute(builder: (context) {
                   if (tag.type == Const.tagTypeAuthor) {
-                    return HomePage(
-                      pageName: Const.authorPage,
-                      keyword: tag.tag,
-                    );
+                    return AuthorPage(authorId: tag.tag);
                   } else {
                     return HomePage(pageName: Const.searchPage, tagEntity: tag);
                   }
@@ -326,43 +325,7 @@ class _HomeState extends State<HomePage> {
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ));
-                widgets.add(Chip(
-                  avatar: ClipOval(
-                    child: Icon(
-                      Icons.format_list_numbered,
-                      color: Theme.of(sheetContext).iconTheme.color,
-                    ),
-                  ),
-                  label: SizedBox(
-                    width: 70,
-                    height: 20,
-                    child: TextField(
-                      inputFormatters: [
-                        FilteringTextInputFormatter.digitsOnly
-                        //设置只允许输入数字
-                      ],
-                      controller: _controller,
-                      keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                          contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 13),
-                          hintText: '请输入页码',
-                          hintStyle: TextStyle(fontSize: 12),
-                          border: InputBorder.none),
-                    ),
-                  ),
-                  deleteIcon:
-                      const Icon(Icons.keyboard_double_arrow_right_rounded),
-                  deleteButtonTooltipMessage: "点击跳转",
-                  onDeleted: () {
-                    String inputText = _controller.text;
-                    if (inputText.isEmpty) {
-                      showToast("请输入正确的页码");
-                      return;
-                    }
-                    _requestData(page: inputText);
-                    Navigator.of(context).pop();
-                  },
-                ));
+                widgets.add(pageChip(context, homeState.page));
 
                 // String keyword = homeState.keyword;
                 // if (keyword.isNotEmpty) {
@@ -573,29 +536,37 @@ class _HomeState extends State<HomePage> {
   Widget _buildFloatActionButton(BuildContext context, AsyncSnapshot snapshot) {
     if (snapshot.connectionState == ConnectionState.active) {
       HomeState homeState = snapshot.data;
-      return FloatingActionButton(
-        onPressed: () {
+      return InkWell(
+        onLongPress: () {
           if (homeState.loading) return;
-          _requestData();
+          showPageInputDialog(context, homeState.page, (value) {
+            _requestData(page: value);
+          });
         },
-        child: Stack(
-          children: [
-            Visibility(
-                visible: homeState.loading,
-                child: const Center(
-                  child: CircularProgressIndicator(),
-                )),
-            Visibility(
-                visible: !homeState.loading,
-                child: Center(
-                  child: Icon(
-                    homeState.error
-                        ? Icons.refresh
-                        : Icons.keyboard_double_arrow_down,
-                    color: Theme.of(context).iconTheme.color,
-                  ),
-                ))
-          ],
+        child: FloatingActionButton(
+          onPressed: () {
+            if (homeState.loading) return;
+            _requestData();
+          },
+          child: Stack(
+            children: [
+              Visibility(
+                  visible: homeState.loading,
+                  child: const Center(
+                    child: CircularProgressIndicator(),
+                  )),
+              Visibility(
+                  visible: !homeState.loading,
+                  child: Center(
+                    child: Icon(
+                      homeState.error
+                          ? Icons.refresh
+                          : Icons.keyboard_double_arrow_down,
+                      color: Theme.of(context).iconTheme.color,
+                    ),
+                  ))
+            ],
+          ),
         ),
       );
     } else {

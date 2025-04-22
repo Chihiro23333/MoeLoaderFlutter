@@ -2,7 +2,6 @@ import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:moeloaderflutter/custom_rule/custom_rule_parser.dart';
 import 'package:moeloaderflutter/multiplatform/multi_platform.dart';
 import 'package:moeloaderflutter/util/const.dart';
 import 'package:moeloaderflutter/util/sharedpreferences_utils.dart';
@@ -11,11 +10,13 @@ import 'package:flutter_socks_proxy/socks_proxy.dart';
 import 'package:hive/hive.dart';
 import 'package:logging/logging.dart';
 import 'package:to_json/models.dart';
-import 'package:to_json/parser_factory.dart';
-import 'package:to_json/yaml_parser_base.dart';
+import 'package:to_json/request.dart';
+import 'package:to_json/request_factory.dart';
+import 'package:to_json/yaml_global.dart';
 import 'package:yaml/yaml.dart';
 import 'package:to_json/yaml_rule_factory.dart';
 import 'package:moeloaderflutter/multiplatform/multi_platform_factory.dart';
+import 'package:path/path.dart' as path;
 
 class Global {
   static Global? _cache;
@@ -28,7 +29,7 @@ class Global {
 
   static late WebPage _curWebPage;
   bool _proxyInited = false;
-  static late CustomRuleParser _customRuleParser;
+  static late GlobalParser _globalParser;
   static late MultiPlatform _multiPlatform;
 
   static late Directory _hiveDirectory;
@@ -40,7 +41,7 @@ class Global {
   Future<void> init() async {
     initPlatform();
     await initPath();
-    _multiPlatform.webViewInit(browserCacheDirectory.path);
+    await _multiPlatform.webViewInit(browserCacheDirectory.path);
     Logger.root.level = Level.INFO; // defaults to Level.INFO
     Logger.root.onRecord.listen((record) {
       print(
@@ -50,7 +51,34 @@ class Global {
     await RequestManager().init();
     await updateProxy();
     await YamlRuleFactory().init();
+    await updateCustomRules();
     await updateCurWebPage(YamlRuleFactory().webPageList()[0]);
+  }
+
+  Future<void> updateCustomRules() async {
+    bool exist = await _rulesDirectory.existsSync();
+    if (exist) {
+      _rulesDirectory.listSync().forEach((fileSystemEntity) async {
+        if (fileSystemEntity is File) {
+          bool exist = await _imagesDirectory.existsSync();
+          FileSystemEntity? iconFile;
+          if (exist) {
+            for (FileSystemEntity element in _imagesDirectory.listSync()) {
+              if (path.basenameWithoutExtension(element.path) ==
+                  path.basenameWithoutExtension(fileSystemEntity.path)) {
+                iconFile = element;
+              }
+            }
+          }
+          YamlRuleFactory().addCustomRule(Rule(
+              Const.typeCustom,
+              fileSystemEntity.path,
+              path.basenameWithoutExtension(fileSystemEntity.path),
+              iconFile != null ? iconFile.path : "",
+              false));
+        }
+      });
+    }
   }
 
   void initPlatform() {
@@ -69,9 +97,8 @@ class Global {
     YamlMap webPage = await YamlRuleFactory().create(rule.fileName);
     _curWebPage = WebPage(webPage, rule);
 
-    Parser parser = ParserFactory().createParser();
-    var customRuleDoc = parser.customRule(webPage);
-    _customRuleParser = CustomRuleParser(customRuleDoc);
+    Request request = RequestFactory().create();
+    _globalParser = request.globalParser(webPage);
   }
 
   Future<void> updateProxy() async {
@@ -100,7 +127,7 @@ class Global {
     Hive.init(hiveDirectory.path);
   }
 
-  static CustomRuleParser get customRuleParser => _customRuleParser;
+  static GlobalParser get globalParser => _globalParser;
 
   static get curWebPage => _curWebPage;
 
