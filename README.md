@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://github.com/Chihiro23333/MoeLoaderFlutter/blob/master/assets/images/icon_round.png?raw=true" width="100" />
+  <img src="https://github.com/Chihiro23333/MoeLoaderFlutter/blob/master/assets/images/icon_round.png?raw=true" width="200" />
 </div>
 
 [![GitHub license](https://raw.githubusercontent.com/Chihiro23333/MoeLoaderFlutter/c8f4acf60a7a277944ba27699fd130040471a26f/screenshot/icons/pywxdump.svg)](https://github.com/Chihiro23333/MoeLoaderFlutter/blob/master/LICENSE)
