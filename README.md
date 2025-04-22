@@ -15,7 +15,6 @@
 * [wallpaperscraft](https://wallpaperscraft.com/)
 * [Konchan_CHS](https://gelbooru.wjcodes.com/)
 * [mjv-art.org](https://anime-pictures.net)
-* [pixivhttps://lolibooru.moe)
 
 ### 预览
 #### windows桌面端
