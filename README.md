@@ -33,7 +33,7 @@
 
 #### android移动端
 
-![android_all](https://github.com/Chihiro23333/MoeLoaderFlutter/blob/master/screenshot/android_all.png?raw=true){:width="50%"}
+![android_all](https://github.com/Chihiro23333/MoeLoaderFlutter/blob/master/screenshot/android_all.png?raw=true)
 
 
 ### 免责声明
