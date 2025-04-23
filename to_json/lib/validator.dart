@@ -25,12 +25,18 @@ class Validator {
             String action = regexRule["action"];
             int code;
             String message = "";
-            if (action == "login") {
-              code = Parser.needLogin;
-              message = "需要登录";
-            } else {
-              code = Parser.needChallenge;
-              message = "需要安全挑战";
+            switch (action) {
+              case "login":
+                code = Parser.needLogin;
+                message = "需要登录";
+                break;
+              case "redirect":
+                code = Parser.needRedirect;
+                message = "需要重定向";
+                break;
+              default:
+                code = Parser.needChallenge;
+                message = "需要安全挑战";
             }
             return ValidateResult(code, message: message, data: content);
           }
@@ -46,6 +52,7 @@ class ValidateResult<T> {
   static const success = 1;
   static const needChallenge = 2;
   static const needLogin = 3;
+  static const needRedirect = 4;
 
   int code;
   String? message;
@@ -58,6 +65,8 @@ class ValidateResult<T> {
   bool get validateNeedChallenge => code == needChallenge;
 
   bool get validateNeedLogin => code == needLogin;
+
+  bool get validateNeedRedirect => code == needRedirect;
 
   ValidateResult(this.code, {this.message, this.data});
 }

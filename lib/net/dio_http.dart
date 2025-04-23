@@ -17,13 +17,18 @@ class DioHttp {
       responseType: ResponseType.plain,
       followRedirects: true
   );
-  final BaseOptions _noRedirectsOptions = BaseOptions(
+  final BaseOptions _redirectsYesOptions = BaseOptions(
       receiveDataWhenStatusError: true,
       responseType: ResponseType.plain,
       followRedirects: false,
       validateStatus: (status) {
-        return status != null && (status < 300 || status == 302);
+        return status != null && (status < 300 || status == 302|| status == 301);
       }
+  );
+  final BaseOptions _redirectsNoOptions = BaseOptions(
+      receiveDataWhenStatusError: true,
+      responseType: ResponseType.plain,
+      followRedirects: false
   );
 
   DioHttp() {
@@ -52,15 +57,22 @@ class DioHttp {
     return result;
   }
 
-  Future<Headers> getHeaders(String url, {Map<String, String>? headers}) async {
+  Future<Response> redirectYestGet(String url, {Map<String, String>? headers}) async {
     _log.fine("url=$url");
-    _dio.options = _noRedirectsOptions;
+    _dio.options = _redirectsYesOptions;
     _updateHeaders(headers);
     Response response = await _dio.get(url);
     _dio.options = _baseOptions;
-    var result = response.headers;
-    _log.fine("result=$result");
-    return result;
+    return response;
+  }
+
+  Future<Response> redirectNotGet(String url, {Map<String, String>? headers}) async {
+    _log.fine("url=$url");
+    _dio.options = _redirectsNoOptions;
+    _updateHeaders(headers);
+    Response response = await _dio.get(url);
+    _dio.options = _baseOptions;
+    return response;
   }
 
   void _updateHeaders(Map<String, String>? headers) {

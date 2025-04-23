@@ -7,6 +7,7 @@ import 'package:to_json/yaml_parser_html.dart';
 import 'package:to_json/yaml_parser_json.dart';
 import 'package:to_json/yaml_parser_json_transform.dart';
 import 'package:to_json/yaml_parser_request.dart';
+import 'package:to_json/yaml_parser_request_redirect.dart';
 import 'package:yaml/yaml.dart';
 import 'package:logging/logging.dart';
 
@@ -16,11 +17,13 @@ class ListParser extends Parser {
   final Parser _yamlHtmlParser = YamlHtmlParser();
   final Parser _yamlJsonParser = YamlJsonParser();
   final Parser _yamlRequestParser = YamlRequestParser();
+  final Parser _yamlRedirectParser = YamlRedirectParser();
   final Parser _jsonTransformParser = JsonTransformParser();
 
   @override
   configGlobalParams(GlobalParams globalParams) {
     _yamlRequestParser.configGlobalParams(globalParams);
+    _yamlRedirectParser.configGlobalParams(globalParams);
     _yamlJsonParser.configGlobalParams(globalParams);
   }
 
@@ -44,6 +47,9 @@ class ListParser extends Parser {
           break;
         case "request":
           parserNodes.add(ParserNode(parserDoc, _yamlRequestParser));
+          break;
+        case "no_redirect_request":
+          parserNodes.add(ParserNode(parserDoc, _yamlRedirectParser));
           break;
         case "json_transform":
           parserNodes.add(ParserNode(parserDoc, _jsonTransformParser));

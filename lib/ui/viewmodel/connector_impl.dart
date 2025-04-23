@@ -12,4 +12,14 @@ class ConnectorImpl extends Connector{
     return await repository.request(url, headers: headers);
   }
 
+  @override
+  Future<String> dioRequestRedirectUrl(String url, {Map<String, String>? headers}) async{
+    return await repository.dioRequestRedirectUrl(url, headers: headers);
+  }
+
+  @override
+  Future<String> redirectNoRequest(String url, {Map<String, String>? headers}) async{
+    return await repository.dioRequestNoRedirect(url, headers: headers);
+  }
+
 }

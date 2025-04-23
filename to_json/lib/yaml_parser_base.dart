@@ -11,7 +11,8 @@ abstract class Parser {
   static const success = 1;
   static const needChallenge = 2;
   static const needLogin = 3;
-  static const interrupt = 4;
+  static const needRedirect = 4;
+  static const interrupt = 10;
 
   late GlobalParams _globalParams;
   ParseState _parseState = ParseState(Parser.success, "成功");
@@ -159,6 +160,10 @@ abstract class Parser {
 abstract class Connector{
 
   Future<String> request(String url, {Map<String, String>? headers});
+
+  Future<String> redirectNoRequest(String url, {Map<String, String>? headers});
+
+  Future<String> dioRequestRedirectUrl(String url, {Map<String, String>? headers});
 
 }
 

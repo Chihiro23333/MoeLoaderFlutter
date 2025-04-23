@@ -30,6 +30,16 @@ class YamlRepository {
     return result;
   }
 
+  Future<String> dioRequestRedirectUrl(String url, {Map<String, String>? headers}) async {
+    String result = await _dioRequestRedirectUrl(url, headers: headers);
+    return result;
+  }
+
+  Future<String> dioRequestNoRedirect(String url, {Map<String, String>? headers}) async {
+    String result = await _dioRequestNoRedirect(url, headers: headers);
+    return result;
+  }
+
   List<Rule> webPageList() {
     List<Rule> list = [];
     _ruleFactory.webPageList().forEach((element) {
@@ -41,6 +51,18 @@ class YamlRepository {
   Future<String> _request(String url, {Map<String, String>? headers}) async{
     _log.fine("url=$url");
     String result = await RequestManager().dioRequest(url, headers: headers);
+    return result;
+  }
+
+  Future<String> _dioRequestRedirectUrl(String url, {Map<String, String>? headers}) async{
+    _log.fine("url=$url");
+    String result = await RequestManager().dioRequestRedirectUrl(url, headers: headers);
+    return result;
+  }
+
+  Future<String> _dioRequestNoRedirect(String url, {Map<String, String>? headers}) async{
+    _log.fine("url=$url");
+    String result = await RequestManager().dioRequestNoRedirect(url, headers: headers);
     return result;
   }
 }

@@ -135,10 +135,10 @@ class _ImageMasonryGridState extends State<ImageMasonryGrid> {
               children: [
                 IconButton(
                     onPressed: () async {
-                      if (homePageItem.downloadState != DownloadTask.idle &&
-                          homePageItem.downloadState != DownloadTask.error) {
-                        return;
-                      }
+                      // if (homePageItem.downloadState != DownloadTask.idle &&
+                      //     homePageItem.downloadState != DownloadTask.error) {
+                      //   return;
+                      // }
                       String? downloadFileSize = await getDownloadFileSize();
                       if (downloadFileSize == Const.choose ||
                           downloadFileSize == null) {

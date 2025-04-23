@@ -75,7 +75,7 @@ void showUrlList(BuildContext context, HomePageItemEntity homePageItem) {
                         detailViewModel.download(
                             homePageItem.href, url, detailPageEntity.id, detailPageEntity.author, detailPageEntity.tagList, headers: detailState.headers);
                         showToast("已将图片加入下载列表");
-                        Navigator.of(context).pop();
+                        // Navigator.of(context).pop();
                       }));
                     }
                     if (bigUrl.isNotEmpty) {
@@ -87,7 +87,7 @@ void showUrlList(BuildContext context, HomePageItemEntity homePageItem) {
                         detailViewModel.download(
                             homePageItem.href, bigUrl, detailPageEntity.id,  detailPageEntity.author, detailPageEntity.tagList, headers: detailState.headers);
                         showToast("已将图片加入下载列表");
-                        Navigator.of(context).pop();
+                        // Navigator.of(context).pop();
                       }));
                     }
                     if (rawUrl.isNotEmpty) {
@@ -99,7 +99,7 @@ void showUrlList(BuildContext context, HomePageItemEntity homePageItem) {
                         detailViewModel.download(
                             homePageItem.href, rawUrl, detailPageEntity.id,  detailPageEntity.author, detailPageEntity.tagList, headers: detailState.headers);
                         showToast("已将图片加入下载列表");
-                        Navigator.of(context).pop();
+                        // Navigator.of(context).pop();
                       }));
                     }
                     if (children.isEmpty) {
