@@ -1,5 +1,4 @@
 import 'package:to_json/validator.dart';
-import 'package:to_json/yaml_parser_request.dart';
 import 'package:to_json/yaml_parser_request_base.dart';
 import 'package:yaml/yaml.dart';
 import 'package:logging/logging.dart';

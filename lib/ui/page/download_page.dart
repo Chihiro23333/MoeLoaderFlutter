@@ -121,6 +121,7 @@ class _DownloadState extends State<DownloadPage> {
             progress = 100;
           } else if (downloadState == DownloadTask.error) {}
           return ListTile(
+            isThreeLine: true,
             leading: GestureDetector(
               child: downloadStateIcon(context, downloadState),
               onTap: () {
@@ -131,13 +132,13 @@ class _DownloadState extends State<DownloadPage> {
                 }
               },
             ),
-            title: Text(
+            title: downloadProgress(progress),
+            subtitle: Text(
               downloadTask.name,
-              maxLines: 1,
+              maxLines: 2,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontSize: 12, height: 1.2),
+              style: const TextStyle(fontSize: 14, height: 1.5),
             ),
-            subtitle: downloadProgress(progress),
           );
         },
         separatorBuilder: (BuildContext context, int index) {
@@ -152,11 +153,18 @@ class _DownloadState extends State<DownloadPage> {
   }
 
   Widget downloadProgress(double progress) {
-    return LinearProgressIndicator(
-      value: progress,
-      color: Global.defaultColor,
-      minHeight: 3,
-      borderRadius: BorderRadius.circular(20),
+    // return Text(
+    //   "${progress.toInt()}%",
+    //   style: const TextStyle(fontWeight: FontWeight.bold),
+    // );
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0, 0, 0, 6),
+      child: LinearProgressIndicator(
+        minHeight: 4,
+        value: progress,
+        color: Global.defaultColor,
+        borderRadius: BorderRadius.circular(10),
+      ),
     );
   }
 }

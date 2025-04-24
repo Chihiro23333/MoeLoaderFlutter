@@ -28,6 +28,7 @@ class Const{
   static const String tag = "tag";
   static const String desc = "desc";
   static const String author = "author";
+  static const String authorId = "authorId";
   static const String date = "date";
 
   static const String tagTypeDefault = "default";
