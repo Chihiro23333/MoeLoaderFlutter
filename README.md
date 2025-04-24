@@ -1,3 +1,7 @@
+<div align="center">
+  <img src="https://github.com/Chihiro23333/MoeLoaderFlutter/blob/master/assets/images/icon_round.png?raw=true" width="200" />
+</div>
+
 [![GitHub license](https://raw.githubusercontent.com/Chihiro23333/MoeLoaderFlutter/c8f4acf60a7a277944ba27699fd130040471a26f/screenshot/icons/pywxdump.svg)](https://github.com/Chihiro23333/MoeLoaderFlutter/blob/master/LICENSE)
 ### About MoeLoaderFlutter
 **MoeLoaderFlutter**是基于**Flutter**开发的ACG图片浏览工具，目前支持**windows/安卓**，灵感来自[moe-loader-v7](https://github.com/esonic/moe-loader-v7)
@@ -15,7 +19,6 @@
 * [wallpaperscraft](https://wallpaperscraft.com/)
 * [Konchan_CHS](https://gelbooru.wjcodes.com/)
 * [mjv-art.org](https://anime-pictures.net)
-* [pixivhttps://lolibooru.moe)
 
 ### 预览
 #### windows桌面端
