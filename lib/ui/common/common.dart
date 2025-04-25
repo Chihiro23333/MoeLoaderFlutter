@@ -7,8 +7,6 @@ import 'package:to_json/validator.dart';
 
 Widget buildUrlWidget(BuildContext context, String url) {
   return Chip(
-    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-    visualDensity: VisualDensity.compact,
     // avatar: ClipOval(
     //   child: Icon(
     //     Icons.label,

@@ -49,6 +49,7 @@ class _AuthorState extends State<AuthorPage> {
               toolbarHeight: UIConst.toolbarHeight,
               iconTheme: Theme.of(context).iconTheme,
               //导航栏
+              titleSpacing: 0,
               title: _buildNewAppBartTitle(context),
               actions: _buildActions(context, snapshot)),
           body: _buildListBody(snapshot),
@@ -221,9 +222,9 @@ class _AuthorState extends State<AuthorPage> {
   }
 
   Widget _buildNewAppBartTitle(BuildContext context) {
-    return const Text(
-      "列表",
-      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+    return Text(
+      widget.authorId,
+      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
     );
   }
 

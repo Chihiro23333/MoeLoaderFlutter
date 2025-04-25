@@ -103,7 +103,7 @@ class YamlHtmlParser extends Parser {
     if (result.isNotEmpty) {
       result = handleResult(result, yamlMap);
     }
-    _log.fine("handleResult=$result");
+    _log.warning("handleResult=$result");
     return result;
   }
 

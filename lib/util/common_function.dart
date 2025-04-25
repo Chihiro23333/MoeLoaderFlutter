@@ -38,7 +38,7 @@ Widget downloadStateIcon(BuildContext context, int downloadState) {
       break;
     case DownloadTask.error:
       icon = const Icon(
-        Icons.restart_alt,
+        Icons.error_outline,
         color: Colors.red,
       );
       break;
@@ -59,29 +59,42 @@ Widget downloadStateIcon(BuildContext context, int downloadState) {
 }
 
 Widget buildDownloadItem(
-    BuildContext context, String url, String desc, VoidCallback? callback) {
-  return ListTile(
-    leading:
-        Icon(Icons.image_outlined, color: Theme.of(context).iconTheme.color),
-    trailing: Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        IconButton(
-          icon: Icon(Icons.copy, color: Theme.of(context).iconTheme.color),
-          onPressed: () {
-            FlutterClipboard.copy(url).then((value) => showToast("链接已复制"));
-          },
-        ),
-        IconButton(
-          icon: Icon(Icons.download, color: Theme.of(context).iconTheme.color),
-          onPressed: callback,
-        )
-      ],
-    ),
-    title: Text(
-      desc,
-      overflow: TextOverflow.ellipsis,
-      softWrap: false,
+    BuildContext context, String url, String title, String desc, VoidCallback? callback) {
+  return SizedBox(
+    height: 65,
+    child: ListTile(
+      contentPadding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+      visualDensity: VisualDensity.compact,
+      // leading:
+      //     Icon(Icons.image_outlined, color: Theme.of(context).iconTheme.color),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IconButton(
+            icon: Icon(Icons.copy, color: Theme.of(context).iconTheme.color),
+            onPressed: () {
+              FlutterClipboard.copy(url).then((value) => showToast("链接已复制"));
+            },
+          ),
+          IconButton(
+            icon: Icon(Icons.download, color: Theme.of(context).iconTheme.color),
+            onPressed: callback,
+          )
+        ],
+      ),
+      title: Text(
+        style: const TextStyle(fontSize: 14),
+        title,
+        overflow: TextOverflow.ellipsis,
+        softWrap: false,
+      ),
+      subtitle: Text(
+        style: const TextStyle(fontSize: 12),
+        maxLines: 2,
+        desc,
+        overflow: TextOverflow.ellipsis,
+        softWrap: false,
+      ),
     ),
   );
 }

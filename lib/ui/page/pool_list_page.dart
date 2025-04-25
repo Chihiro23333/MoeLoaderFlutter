@@ -49,6 +49,7 @@ class _PoolListState extends State<PoolListPage> {
               toolbarHeight: UIConst.toolbarHeight,
               iconTheme: Theme.of(context).iconTheme,
               //导航栏
+              titleSpacing: 0,
               title: _buildNewAppBartTitle(context),
               actions: _buildActions(context, snapshot)),
           body: _buildListBody(snapshot),
@@ -223,7 +224,7 @@ class _PoolListState extends State<PoolListPage> {
   Widget _buildNewAppBartTitle(BuildContext context) {
     return const Text(
       "列表",
-      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
     );
   }
 

@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:moeloaderflutter/init.dart';
 import 'package:moeloaderflutter/model/detail_page_entity.dart';
 import 'package:moeloaderflutter/model/home_page_item_entity.dart';
+import 'package:moeloaderflutter/ui/common/ui_const.dart';
 import 'package:moeloaderflutter/ui/dialog/info_dialog.dart';
 import 'package:moeloaderflutter/ui/page/download_page.dart';
 import 'package:moeloaderflutter/ui/page/home_page.dart';
@@ -70,6 +71,8 @@ class _DetailState extends State<DetailPage> {
 
   AppBar _buildAppBar(BuildContext context, AsyncSnapshot snapshot) {
     return AppBar(
+      toolbarHeight: UIConst.toolbarHeight,
+      titleSpacing: 0,
       title: _buildAppBatTitle(context),
       iconTheme: Theme.of(context).iconTheme,
       elevation: 10,
@@ -271,7 +274,7 @@ class _DetailState extends State<DetailPage> {
     List<Widget> children = [];
     children.add(const Text(
       "图片详情",
-      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
     ));
     return FittedBox(
       child: Row(

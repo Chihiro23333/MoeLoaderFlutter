@@ -108,6 +108,7 @@ class _HomeState extends State<HomePage> {
               toolbarHeight: UIConst.toolbarHeight,
               iconTheme: Theme.of(context).iconTheme,
               //导航栏
+              titleSpacing: 0,
               title: _buildNewAppBartTitle(context),
               actions: _buildActions(context, snapshot)),
           body: _buildListBody(context, snapshot),
@@ -590,13 +591,13 @@ class _HomeState extends State<HomePage> {
               return Text(
                 keyword,
                 style:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
               );
             }
           }
           return const Text(
             "首页",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
           );
         });
   }

@@ -30,9 +30,10 @@ class _MainState extends State<MainPage> {
         toolbarHeight: UIConst.toolbarHeight,
         iconTheme: Theme.of(context).iconTheme,
         //导航栏
+        titleSpacing: 0,
         title: _buildAppBatTitle(context),
         leading: IconButton(
-          padding: const EdgeInsets.fromLTRB(15, 12, 0, 12),
+          padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
           icon: Image.asset(
             'assets/images/icon_round.png',
           ),
@@ -84,15 +85,14 @@ class _MainState extends State<MainPage> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
       child: IconButton(
-          onPressed: () async{
+          onPressed: () async {
             bool? result = await Navigator.push(
               context,
               CupertinoPageRoute(builder: (context) {
                 return Global.multiPlatform.navigateToWebView(
-                  context,
-                  "https://anime-pictures.net/posts?page=0&lang=en",
-                  Parser.needChallenge
-                );
+                    context,
+                    "https://anime-pictures.net/posts?page=0&lang=en",
+                    Parser.needChallenge);
               }),
             );
           },
@@ -101,12 +101,9 @@ class _MainState extends State<MainPage> {
   }
 
   _buildAppBatTitle(BuildContext context) {
-    return const Center(
-      child: Text(
-        "站点",
-        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-      ),
+    return const Text(
+      "站点",
+      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
     );
   }
-
 }

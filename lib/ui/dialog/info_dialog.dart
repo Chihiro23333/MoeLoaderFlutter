@@ -73,8 +73,6 @@ void _showInfoSheet(
       ),
     ));
     children.add(Wrap(
-      spacing: 8.0, // 主轴(水平)方向间距
-      runSpacing: 8.0, // 纵轴（垂直）方向间距
       children: [buildUrlWidget(context, url)],
     ));
   }
@@ -206,9 +204,7 @@ List<Widget> _buildTags(BuildContext context, List<TagEntity> tagList,
           //     color: Theme.of(context).iconTheme.color,
           //   ),
           // ),
-          label: Text(
-            tag.desc
-          ),
+          label: Text(tag.desc),
           deleteButtonTooltipMessage: "复制",
           deleteIcon: ClipOval(
             clipBehavior: Clip.antiAlias,

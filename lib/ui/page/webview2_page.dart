@@ -139,6 +139,7 @@ class _WebView2State extends State<WebView2Page> {
       floatingActionButton: _buildFloatActionButton(context),
       appBar: AppBar(
         toolbarHeight: UIConst.toolbarHeight,
+        titleSpacing: 0,
         title: StreamBuilder<String>(
           stream: _controller.url,
           builder: (context, snapshot) {

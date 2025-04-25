@@ -47,9 +47,10 @@ class _InAppWebViewState extends State<InAppWebViewPage> {
       floatingActionButton: _buildFloatActionButton(context),
       appBar: AppBar(
         toolbarHeight: UIConst.toolbarHeight,
+        titleSpacing: 0,
         title: const Text(
           "网页访问",
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
         actions: _buildAppbarActions(context),
       ),

@@ -1,5 +1,6 @@
 import 'package:moeloaderflutter/net/download.dart';
 import 'package:moeloaderflutter/ui/common/common.dart';
+import 'package:moeloaderflutter/ui/common/ui_const.dart';
 import 'package:moeloaderflutter/util/common_function.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
@@ -35,9 +36,11 @@ class _DownloadState extends State<DownloadPage> {
     List<Widget> children = [];
     children.add(const Text(
       "下载列表",
-      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
     ));
     return AppBar(
+      toolbarHeight: UIConst.toolbarHeight,
+      titleSpacing: 0,
       title: FittedBox(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -120,36 +123,57 @@ class _DownloadState extends State<DownloadPage> {
           } else if (downloadState == DownloadTask.complete) {
             progress = 100;
           } else if (downloadState == DownloadTask.error) {}
-          return ListTile(
-            isThreeLine: true,
-            leading: downloadStateIcon(context, downloadState),
-            trailing: Wrap(
-              children: [
-                IconButton(
-                    onPressed: () {
-                      DownloadManager().retryTask(downloadTask);
-                    },
-                    icon: Icon(
-                      Icons.restart_alt,
-                      color: Global.defaultColor,
-                    )),
-                IconButton(
-                  icon: Icon(
-                    Icons.delete,
-                    color: Global.defaultColor,
+          return SizedBox(
+            height: 50,
+            child: ListTile(
+              visualDensity: const VisualDensity(
+                vertical: -3, // 垂直方向紧凑度(-4是最小值)
+              ),
+              contentPadding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+              minLeadingWidth: 0,
+              // 去除 leading 的最小宽度约束
+              leading: SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: downloadStateIcon(context, downloadState)),
+              trailing: Wrap(
+                children: [
+                  SizedBox(
+                    width: 30,
+                    child: IconButton(
+                        iconSize: 20,
+                        onPressed: () {
+                          DownloadManager().retryTask(downloadTask);
+                        },
+                        icon: Icon(
+                          Icons.restart_alt,
+                          color: Global.defaultColor,
+                        )),
                   ),
-                  onPressed: () {
-                    DownloadManager().cancelTask(downloadTask);
-                  },
-                ),
-              ],
-            ),
-            title: downloadProgress(progress),
-            subtitle: Text(
-              downloadTask.name,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontSize: 13, height: 1.5),
+                  SizedBox(
+                    width: 30,
+                    child: IconButton(
+                      iconSize: 20,
+                      icon: Icon(
+                        Icons.delete,
+                        color: Global.defaultColor,
+                      ),
+                      onPressed: () {
+                        DownloadManager().cancelTask(downloadTask);
+                      },
+                    ),
+                  ),
+                ],
+              ),
+              subtitle: Padding(
+                  padding: const EdgeInsets.only(top: 6), // 调整这个值来控制间距
+                  child: downloadProgress(progress)),
+              title: Text(
+                downloadTask.name,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(fontSize: 10, height: 1.3),
+              ),
             ),
           );
         },
@@ -173,9 +197,9 @@ class _DownloadState extends State<DownloadPage> {
       children: [
         Expanded(
             child: Padding(
-          padding: EdgeInsets.fromLTRB(0, 0, 0, 8),
+          padding: const EdgeInsets.fromLTRB(0, 0, 0, 8),
           child: LinearProgressIndicator(
-            minHeight: 3,
+            minHeight: 2,
             value: progress,
             color: Global.defaultColor,
             borderRadius: BorderRadius.circular(10),

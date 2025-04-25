@@ -17,7 +17,7 @@ void showUrlList(BuildContext context, HomePageItemEntity homePageItem) {
       context: context,
       builder: (context) {
         return SizedBox(
-            height: 170,
+            height: 240,
             child: StreamBuilder<DetailState>(
                 stream: detailViewModel.streamDetailController.stream,
                 builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -47,13 +47,16 @@ void showUrlList(BuildContext context, HomePageItemEntity homePageItem) {
                               context,
                               CupertinoPageRoute(builder: (context) {
                                 return Global.multiPlatform.navigateToWebView(
-                                  context, Global.globalParser.validateUrl(), detailState.code,
+                                  context,
+                                  Global.globalParser.validateUrl(),
+                                  detailState.code,
                                 );
                               }),
                             );
                             _log.fine("push result=${result}");
                             if (result != null && result) {
-                              detailViewModel.requestDetailData(homePageItem.href,
+                              detailViewModel.requestDetailData(
+                                  homePageItem.href,
                                   homePageItem: homePageItem);
                             }
                           },
@@ -64,7 +67,8 @@ void showUrlList(BuildContext context, HomePageItemEntity homePageItem) {
                       child: Text(detailState.errorMessage),
                     );
                   } else {
-                    DetailPageEntity detailPageEntity = detailState.detailPageEntity;
+                    DetailPageEntity detailPageEntity =
+                        detailState.detailPageEntity;
                     String? url = detailPageEntity.url;
                     String? bigUrl = detailPageEntity.bigUrl;
                     String? rawUrl = detailPageEntity.rawUrl;
@@ -72,9 +76,14 @@ void showUrlList(BuildContext context, HomePageItemEntity homePageItem) {
                     List<Widget> children = [];
                     if (isImageUrl(url) && url.isNotEmpty) {
                       children
-                          .add(buildDownloadItem(context, url, "预览图($url)", () {
+                          .add(buildDownloadItem(context, url, "预览图", url, () {
                         detailViewModel.download(
-                            homePageItem.href, url, detailPageEntity.id, detailPageEntity.author, detailPageEntity.tagList, headers: detailState.headers);
+                            homePageItem.href,
+                            url,
+                            detailPageEntity.id,
+                            detailPageEntity.author,
+                            detailPageEntity.tagList,
+                            headers: detailState.headers);
                         showToast("已将图片加入下载列表");
                         // Navigator.of(context).pop();
                       }));
@@ -84,9 +93,14 @@ void showUrlList(BuildContext context, HomePageItemEntity homePageItem) {
                         height: 10,
                       ));
                       children.add(
-                          buildDownloadItem(context, bigUrl, "大图($bigUrl)", () {
+                          buildDownloadItem(context, bigUrl, "大图", bigUrl, () {
                         detailViewModel.download(
-                            homePageItem.href, bigUrl, detailPageEntity.id,  detailPageEntity.author, detailPageEntity.tagList, headers: detailState.headers);
+                            homePageItem.href,
+                            bigUrl,
+                            detailPageEntity.id,
+                            detailPageEntity.author,
+                            detailPageEntity.tagList,
+                            headers: detailState.headers);
                         showToast("已将图片加入下载列表");
                         // Navigator.of(context).pop();
                       }));
@@ -96,9 +110,14 @@ void showUrlList(BuildContext context, HomePageItemEntity homePageItem) {
                         height: 10,
                       ));
                       children.add(
-                          buildDownloadItem(context, rawUrl, "原图($rawUrl)", () {
+                          buildDownloadItem(context, rawUrl, "原图", rawUrl, () {
                         detailViewModel.download(
-                            homePageItem.href, rawUrl, detailPageEntity.id,  detailPageEntity.author, detailPageEntity.tagList, headers: detailState.headers);
+                            homePageItem.href,
+                            rawUrl,
+                            detailPageEntity.id,
+                            detailPageEntity.author,
+                            detailPageEntity.tagList,
+                            headers: detailState.headers);
                         showToast("已将图片加入下载列表");
                         // Navigator.of(context).pop();
                       }));

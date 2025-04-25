@@ -62,9 +62,10 @@ class _SettingState extends State<SettingPage> {
 
   AppBar _buildAppBar(BuildContext context) {
     return AppBar(
+      titleSpacing: 0,
       title: const Text(
         "设置",
-        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
       ),
       iconTheme: Theme.of(context).iconTheme,
       elevation: 10,
