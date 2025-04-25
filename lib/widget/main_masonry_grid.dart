@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:moeloaderflutter/ui/page/home_page.dart';
 import 'package:moeloaderflutter/util/common_function.dart';
 import 'package:flutter/material.dart';
@@ -53,10 +54,10 @@ class _MainMasonryGridState extends State<MainMasonryGrid> {
           double height = width * scale;
           Color loadingBackgroundColor = const Color.fromARGB(30, 46, 176, 242);
           return Padding(
-            padding: const EdgeInsets.fromLTRB(8, 0, 8, 16),
+            padding: const EdgeInsets.fromLTRB(8, 0, 8, 12),
             child: Container(
               width: width,
-              height: height,
+              height: 70,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(5),
                 color: loadingBackgroundColor,
@@ -70,80 +71,60 @@ class _MainMasonryGridState extends State<MainMasonryGrid> {
 
   Widget _buildItem(BuildContext context, Rule rule, int index,
       int crossAxisCount, double width, double height) {
-    List<Widget> actions = [];
+    List<Widget> rowList = [];
+    rowList.add(SizedBox(
+      height: 30,
+      width: 50,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+        child: Global.multiPlatform.favicon(rule),
+      ),
+    ));
+    rowList.add(Expanded(
+        child: Text(
+      rule.fileName,
+      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+    )));
     if (rule.canSearch) {
-      actions.add(IconButton(
-          onPressed: () async {
-            await _updateCurWebPage(rule);
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) {
-                return const SearchPage(
-                  keyword: "",
-                );
-              }),
-            );
-          },
-          icon: const Icon(Icons.image_search)));
+      rowList.add(Padding(
+        padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
+        child: IconButton(
+            onPressed: () async {
+              await _updateCurWebPage(rule);
+              Navigator.push(
+                context,
+                CupertinoPageRoute(builder: (context) {
+                  return const SearchPage(
+                    keyword: "",
+                  );
+                }),
+              );
+            },
+            icon: const Icon(Icons.image_search)),
+      ));
     }
-    actions.add(IconButton(
-        onPressed: () async {
-          await _updateCurWebPage(rule);
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) {
-              return const HomePage();
-            }),
-          );
-        },
-        icon: const Icon(
-          Icons.arrow_circle_right,
-        )));
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        Align(
-          alignment: Alignment.center,
-          child: Row(
-            children: [
-              SizedBox(
-                height: 30,
-                width: 50,
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                  child: Global.multiPlatform.favicon(rule),
-                ),
-              ),
-              Text(
-                rule.fileName,
-                style:
-                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              )
-            ],
-          ),
-        ),
-        Positioned(
-          right: 10,
-          bottom: 10,
-          child: Container(
-            decoration: const BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(20)),
-                color: Colors.white70,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black12,
-                    spreadRadius: 5,
-                    blurRadius: 20,
-                    offset: Offset(0, 3), // 阴影的偏移量
-                  )
-                ]),
+    ;
+    return GestureDetector(
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          Align(
+            alignment: Alignment.center,
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: actions,
+              children: rowList,
             ),
           ),
-        ),
-      ],
+        ],
+      ),
+      onTap: () async {
+        await _updateCurWebPage(rule);
+        Navigator.push(
+          context,
+          CupertinoPageRoute(builder: (context) {
+            return const HomePage();
+          }),
+        );
+      },
     );
   }
 

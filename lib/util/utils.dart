@@ -1,6 +1,7 @@
 import 'package:intl/intl.dart';
 import 'package:moeloaderflutter/init.dart';
 import 'package:moeloaderflutter/model/tag_entity.dart';
+import 'package:moeloaderflutter/util/const.dart';
 import 'package:moeloaderflutter/util/sharedpreferences_utils.dart';
 import 'package:to_json/validator.dart';
 
@@ -76,19 +77,18 @@ Future<String> getDownloadName(
     infoMap["tag"] = tagStr;
   }
   String rule = await getDownloadFileNameRule();
-  String name = "";
-  if (rule.isEmpty) {
-    name = "${Global.globalParser.webPageName()}_${author}_${url}_$formattedTime";
-  } else {
-    List<String> ruleList = rule.split("_");
-    ruleList.asMap().forEach((index, value) {
-      String info = infoMap[value] ?? "null";
-      if (index == 0) {
-        name = info;
-      } else {
-        name = "${name}_$info";
-      }
-    });
+  if(rule.isEmpty){
+    rule = Const.defaultFileNameRule;
   }
+  String name = "";
+  List<String> ruleList = rule.split(Const.fileNameConnector);
+  ruleList.asMap().forEach((index, value) {
+    String info = infoMap[value] ?? "null";
+    if (index == 0) {
+      name = info;
+    } else {
+      name = "${name}${Const.fileNameConnector}$info";
+    }
+  });
   return Global.multiPlatform.encodeFileName(name);
 }

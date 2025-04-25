@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:moeloaderflutter/init.dart';
 import 'package:moeloaderflutter/model/detail_page_entity.dart';
 import 'package:moeloaderflutter/model/home_page_item_entity.dart';
@@ -44,7 +45,7 @@ void showUrlList(BuildContext context, HomePageItemEntity homePageItem) {
                           onPressed: () async {
                             bool? result = await Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) {
+                              CupertinoPageRoute(builder: (context) {
                                 return Global.multiPlatform.navigateToWebView(
                                   context, Global.globalParser.validateUrl(), detailState.code,
                                 );

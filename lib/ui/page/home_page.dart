@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:moeloaderflutter/model/option_entity.dart';
 import 'package:moeloaderflutter/model/tag_entity.dart';
 import 'package:moeloaderflutter/multiplatform/bean.dart';
@@ -132,7 +133,7 @@ class _HomeState extends State<HomePage> {
     actionOnPressed(homeState) async {
       bool? result = await Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) {
+        CupertinoPageRoute(builder: (context) {
           return Global.multiPlatform.navigateToWebView(
             context,
             Global.globalParser.validateUrl(),
@@ -164,7 +165,7 @@ class _HomeState extends State<HomePage> {
               itemOnPressed: (yamlHomePageItem) async {
                 NaviResult<TagEntity>? naviResult = await Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) {
+                  CupertinoPageRoute(builder: (context) {
                     return PoolListPage(id: yamlHomePageItem.id);
                   }),
                 );
@@ -184,7 +185,7 @@ class _HomeState extends State<HomePage> {
             tagTapCallback: (context, tag) {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) {
+                CupertinoPageRoute(builder: (context) {
                   if (tag.type == Const.tagTypeAuthor) {
                     return AuthorPage(authorId: tag.tag);
                   } else {
@@ -196,7 +197,7 @@ class _HomeState extends State<HomePage> {
             itemOnPressed: (homePageItem) async {
               NaviResult<TagEntity>? naviResult = await Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) {
+                CupertinoPageRoute(builder: (context) {
                   return DetailPage(
                       href: homePageItem.href, homePageItem: homePageItem);
                 }),
@@ -277,7 +278,7 @@ class _HomeState extends State<HomePage> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) {
+            CupertinoPageRoute(builder: (context) {
               return const SettingPage();
             }),
           );
@@ -431,7 +432,7 @@ class _HomeState extends State<HomePage> {
   void _download() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) {
+      CupertinoPageRoute(builder: (context) {
         return const DownloadPage();
       }),
     );
@@ -448,7 +449,7 @@ class _HomeState extends State<HomePage> {
         if (homeState.canSearch) {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) {
+            CupertinoPageRoute(builder: (context) {
               return SearchPage(keyword: _keyword ?? "");
             }),
           );

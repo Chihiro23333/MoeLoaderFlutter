@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:moeloaderflutter/init.dart';
 import 'package:moeloaderflutter/multiplatform/bean.dart';
 import 'package:moeloaderflutter/ui/page/settings_page.dart';
@@ -36,8 +37,8 @@ class _MainState extends State<MainPage> {
           onPressed: null,
         ),
         actions: <Widget>[
-          _buildSettingsAction(context),
           _buildWebAction(context),
+          _buildSettingsAction(context),
         ],
       ),
       body: _buildBody(context),
@@ -68,7 +69,7 @@ class _MainState extends State<MainPage> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) {
+              CupertinoPageRoute(builder: (context) {
                 return const SettingPage();
               }),
             );
@@ -79,12 +80,12 @@ class _MainState extends State<MainPage> {
 
   Widget _buildWebAction(BuildContext context) {
     return Padding(
-      padding: appBarActionPadding(),
+      padding: const EdgeInsets.fromLTRB(0, 0, 5, 0),
       child: IconButton(
           onPressed: () async{
             bool? result = await Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) {
+              CupertinoPageRoute(builder: (context) {
                 return Global.multiPlatform.navigateToWebView(
                   context,
                   "https://anime-pictures.net/posts?page=0&lang=en",
@@ -93,7 +94,7 @@ class _MainState extends State<MainPage> {
               }),
             );
           },
-          icon: const Icon(Icons.build_rounded)),
+          icon: const Icon(Icons.dashboard_rounded)),
     );
   }
 

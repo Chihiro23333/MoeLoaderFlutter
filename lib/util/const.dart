@@ -33,4 +33,7 @@ class Const{
 
   static const String tagTypeDefault = "default";
   static const String tagTypeAuthor = "author";
+
+  static const String fileNameConnector = "&";
+  static const String defaultFileNameRule = "site&id&tag&author&date";
 }

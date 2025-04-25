@@ -122,22 +122,34 @@ class _DownloadState extends State<DownloadPage> {
           } else if (downloadState == DownloadTask.error) {}
           return ListTile(
             isThreeLine: true,
-            leading: GestureDetector(
-              child: downloadStateIcon(context, downloadState),
-              onTap: () {
-                switch (downloadState) {
-                  case DownloadTask.error:
-                    DownloadManager().retryTask(downloadTask);
-                    break;
-                }
-              },
+            leading: downloadStateIcon(context, downloadState),
+            trailing: Wrap(
+              children: [
+                IconButton(
+                    onPressed: () {
+                      DownloadManager().retryTask(downloadTask);
+                    },
+                    icon: Icon(
+                      Icons.restart_alt,
+                      color: Global.defaultColor,
+                    )),
+                IconButton(
+                  icon: Icon(
+                    Icons.delete,
+                    color: Global.defaultColor,
+                  ),
+                  onPressed: () {
+                    DownloadManager().cancelTask(downloadTask);
+                  },
+                ),
+              ],
             ),
             title: downloadProgress(progress),
             subtitle: Text(
               downloadTask.name,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontSize: 14, height: 1.5),
+              style: const TextStyle(fontSize: 13, height: 1.5),
             ),
           );
         },
@@ -157,14 +169,26 @@ class _DownloadState extends State<DownloadPage> {
     //   "${progress.toInt()}%",
     //   style: const TextStyle(fontWeight: FontWeight.bold),
     // );
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 0, 0, 6),
-      child: LinearProgressIndicator(
-        minHeight: 4,
-        value: progress,
-        color: Global.defaultColor,
-        borderRadius: BorderRadius.circular(10),
-      ),
+    return Row(
+      children: [
+        Expanded(
+            child: Padding(
+          padding: EdgeInsets.fromLTRB(0, 0, 0, 8),
+          child: LinearProgressIndicator(
+            minHeight: 3,
+            value: progress,
+            color: Global.defaultColor,
+            borderRadius: BorderRadius.circular(10),
+          ),
+        )),
+        // Padding(
+        //   padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+        //   child: Text(
+        //     "${progress.toInt()}%",
+        //     style: TextStyle(fontSize: 12),
+        //   ),
+        // )
+      ],
     );
   }
 }

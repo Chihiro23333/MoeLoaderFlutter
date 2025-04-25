@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:moeloaderflutter/init.dart';
 import 'package:moeloaderflutter/model/detail_page_entity.dart';
 import 'package:moeloaderflutter/model/home_page_item_entity.dart';
@@ -97,7 +98,7 @@ class _DetailState extends State<DetailPage> {
               onPressed: () async {
                 bool? result = await Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) {
+                  CupertinoPageRoute(builder: (context) {
                     return Global.multiPlatform.navigateToWebView(context,
                         Global.globalParser.validateUrl(), detailState.code);
                   }),
@@ -379,7 +380,7 @@ class _DetailState extends State<DetailPage> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) {
+            CupertinoPageRoute(builder: (context) {
               return const DownloadPage();
             }),
           );
@@ -400,7 +401,7 @@ class _DetailState extends State<DetailPage> {
               Navigator.of(context).pop();
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) {
+                CupertinoPageRoute(builder: (context) {
                   return HomePage(pageName: _searchPageName, tagEntity: tag);
                 }),
               );

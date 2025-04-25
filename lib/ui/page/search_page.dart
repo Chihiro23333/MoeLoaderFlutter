@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:moeloaderflutter/init.dart';
 import 'package:moeloaderflutter/ui/page/home_page.dart';
 import 'package:flutter/material.dart';
@@ -127,7 +128,7 @@ class _SearchState extends State<SearchPage> {
     Navigator.of(context).pop();
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) {
+      CupertinoPageRoute(builder: (context) {
         return HomePage(
           pageName: _searchPageName,
           keyword: _textEditingControl.text,

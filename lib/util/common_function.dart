@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:moeloaderflutter/model/tag_entity.dart';
 import 'package:moeloaderflutter/net/download.dart';
 import 'package:bot_toast/bot_toast.dart';
@@ -115,7 +116,7 @@ void showDownloadOverlay(BuildContext context) {
               children: [
                 Positioned(
                     right: 10,
-                    top: 5,
+                    top: 10,
                     child: badges.Badge(
                       showBadge: count > 0,
                       badgeContent: Text("$count",
@@ -126,7 +127,7 @@ void showDownloadOverlay(BuildContext context) {
                           onPressed: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) {
+                              CupertinoPageRoute(builder: (context) {
                                 return const DownloadPage();
                               }),
                             );

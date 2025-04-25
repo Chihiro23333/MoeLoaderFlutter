@@ -183,7 +183,7 @@ class _SettingState extends State<SettingPage> {
           if (downloadFileNameRule.isEmpty) {
             updateDownloadName(regex);
           } else {
-            updateDownloadName("${downloadFileNameRule}_$regex");
+            updateDownloadName("${downloadFileNameRule}${Const.fileNameConnector}$regex");
           }
         },
       ));
@@ -217,7 +217,7 @@ class _SettingState extends State<SettingPage> {
           ),
           Text(
             style: TextStyle(color: Global.defaultColor),
-            "文件名：${downloadFileNameRule.isEmpty ? "site_author_url_date(系统默认)" : downloadFileNameRule}",
+            "文件名：${downloadFileNameRule.isEmpty ? "${Const.defaultFileNameRule}(默认)" : downloadFileNameRule}",
           ),
           const SizedBox(
             height: 6,

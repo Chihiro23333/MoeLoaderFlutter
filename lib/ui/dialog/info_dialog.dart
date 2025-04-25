@@ -74,7 +74,7 @@ void _showInfoSheet(
     ));
     children.add(Wrap(
       spacing: 8.0, // 主轴(水平)方向间距
-      runSpacing: 4.0, // 纵轴（垂直）方向间距
+      runSpacing: 8.0, // 纵轴（垂直）方向间距
       children: [buildUrlWidget(context, url)],
     ));
   }
@@ -88,7 +88,7 @@ void _showInfoSheet(
     ));
     children.add(Wrap(
       spacing: 8.0, // 主轴(水平)方向间距
-      runSpacing: 4.0, // 纵轴（垂直）方向间距
+      runSpacing: 8.0, // 纵轴（垂直）方向间距
       children: infoChildren,
     ));
   }
@@ -102,7 +102,7 @@ void _showInfoSheet(
     ));
     children.add(Wrap(
       spacing: 8.0, // 主轴(水平)方向间距
-      runSpacing: 4.0, // 纵轴（垂直）方向间距
+      runSpacing: 8.0, // 纵轴（垂直）方向间距
       children: _buildTags(context, tagList, onTagTap: onTagTap),
     ));
   }
@@ -140,6 +140,8 @@ void _fillInfoChip(
   if (info.isNotEmpty) {
     infoChildren.add(GestureDetector(
       child: Chip(
+        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        visualDensity: VisualDensity.compact,
         side: borderSide,
         avatar: ClipOval(
           child: Icon(
@@ -175,40 +177,44 @@ List<Widget> _buildTags(BuildContext context, List<TagEntity> tagList,
     {TagTapCallback? onTagTap}) {
   BorderSide? borderSide;
   if (onTagTap != null) {
-    borderSide = BorderSide(color: Global.defaultColor, width: 2);
+    borderSide = BorderSide(color: Global.defaultColor, width: 1);
   } else {
     borderSide = null;
   }
   List<Widget> result = [];
   for (var tag in tagList) {
-    result.add(GestureDetector(
-      child: Chip(
-        side: borderSide,
-        avatar: ClipOval(
-          child: Icon(
-            Icons.label,
-            color: Theme.of(context).iconTheme.color,
+    result.add(
+      GestureDetector(
+        child: Chip(
+          side: borderSide,
+          avatar: ClipOval(
+            child: Icon(
+              Icons.label,
+              color: Theme.of(context).iconTheme.color,
+            ),
           ),
-        ),
-        label: Text(tag.desc),
-        deleteButtonTooltipMessage: "复制",
-        deleteIcon: ClipOval(
-          clipBehavior: Clip.antiAlias,
-          child: Icon(
-            Icons.copy,
-            color: Theme.of(context).iconTheme.color,
+          label: Text(
+            tag.desc
           ),
+          deleteButtonTooltipMessage: "复制",
+          deleteIcon: ClipOval(
+            clipBehavior: Clip.antiAlias,
+            child: Icon(
+              Icons.copy,
+              color: Theme.of(context).iconTheme.color,
+            ),
+          ),
+          onDeleted: () {
+            FlutterClipboard.copy(tag.desc).then((value) => showToast("文字已复制"));
+          },
         ),
-        onDeleted: () {
-          FlutterClipboard.copy(tag.desc).then((value) => showToast("文字已复制"));
+        onTap: () {
+          if (onTagTap != null) {
+            onTagTap(context, tag);
+          }
         },
       ),
-      onTap: () {
-        if (onTagTap != null) {
-          onTagTap(context, tag);
-        }
-      },
-    ));
+    );
   }
   return result;
 }

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:moeloaderflutter/init.dart';
 import 'package:moeloaderflutter/multiplatform/bean.dart';
 import 'package:moeloaderflutter/ui/common/common.dart';
@@ -177,7 +178,7 @@ class _PoolListState extends State<PoolListPage> {
     actionOnPressed(poolListState) async {
       bool? result = await Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) {
+        CupertinoPageRoute(builder: (context) {
           return Global.multiPlatform.navigateToWebView(
             context,
             _url,
@@ -207,7 +208,7 @@ class _PoolListState extends State<PoolListPage> {
             itemOnPressed: (homePageItem) async {
               await Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) {
+                CupertinoPageRoute(builder: (context) {
                   return DetailPage(
                       href: homePageItem.href, homePageItem: homePageItem);
                 }),

@@ -42,17 +42,26 @@ class ImageMasonryGrid extends StatefulWidget {
 
 class _ImageMasonryGridState extends State<ImageMasonryGrid> {
   final _log = Logger("_MasonryGridState");
+  final CancellationToken _cancelToken = CancellationToken();
 
   @override
   Widget build(BuildContext context) {
     return _buildMasonryGrid(widget.list, widget.headers);
   }
 
+  @override
+  void dispose() {
+    _cancelToken.cancel();
+    super.dispose();
+  }
+
   Widget _buildMasonryGrid(
       List<HomePageItemEntity> list, Map<String, String>? headers) {
     int crossAxisCount = widget.columnCount;
-    return MasonryGridView.count(
-        crossAxisCount: crossAxisCount,
+    return MasonryGridView.builder(
+        gridDelegate: SliverSimpleGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: crossAxisCount,
+        ),
         crossAxisSpacing: 10,
         mainAxisSpacing: 10,
         itemCount: list.length,
@@ -115,6 +124,7 @@ class _ImageMasonryGridState extends State<ImageMasonryGrid> {
                   height: height,
                   homePageItem.coverUrl,
                   fit: BoxFit.cover,
+                  cancelToken: _cancelToken,
                 ),
                 onTap: () async {
                   var itemOnPressed = widget.itemOnPressed;
@@ -127,7 +137,7 @@ class _ImageMasonryGridState extends State<ImageMasonryGrid> {
           bottom: 3,
           child: Container(
             decoration: const BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(20)),
+              borderRadius: BorderRadius.all(Radius.circular(15)),
               color: Colors.white70,
             ),
             child: Row(

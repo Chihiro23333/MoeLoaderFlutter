@@ -7,6 +7,8 @@ import 'package:to_json/validator.dart';
 
 Widget buildUrlWidget(BuildContext context, String url) {
   return Chip(
+    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+    visualDensity: VisualDensity.compact,
     avatar: ClipOval(
       child: Icon(
         Icons.label,
@@ -22,7 +24,7 @@ Widget buildUrlWidget(BuildContext context, String url) {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) {
+          CupertinoPageRoute(builder: (context) {
             return Global.multiPlatform.navigateToWebView(
               context,
               url,
