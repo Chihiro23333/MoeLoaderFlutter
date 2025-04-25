@@ -30,65 +30,65 @@ class ListParser extends Parser {
   @override
   Future<String> parseUseYaml(String content, YamlMap doc, String pageName,
       {Map<String, String>? headers, Map<String, String>? params}) async {
-    // try {
-    YamlList? pageDocList = doc[pageName]["chain"];
-    if (pageDocList == null) {
-      throw "pageName或chain找不到";
-    }
-
-    List<ParserNode> parserNodes = [];
-    for (var parserDoc in pageDocList) {
-      YamlMap onParseResult = parserDoc["onParseResult"];
-      String contentType = onParseResult["contentType"] ?? "html";
-      _log.fine("contentType=${contentType}");
-      switch (contentType) {
-        case "json":
-          parserNodes.add(ParserNode(parserDoc, _yamlJsonParser));
-          break;
-        case "request":
-          parserNodes.add(ParserNode(parserDoc, _yamlRequestParser));
-          break;
-        case "no_redirect_request":
-          parserNodes.add(ParserNode(parserDoc, _yamlRedirectParser));
-          break;
-        case "json_transform":
-          parserNodes.add(ParserNode(parserDoc, _jsonTransformParser));
-          break;
-        default:
-          parserNodes.add(ParserNode(parserDoc, _yamlHtmlParser));
+    try {
+      YamlList? pageDocList = doc[pageName]["chain"];
+      if (pageDocList == null) {
+        throw "pageName或chain找不到";
       }
-    }
 
-    String data = content;
-    Map<String, String> parseParams = {};
-    Map<String, String> parseHeaders = {};
-    for (var parserNode in parserNodes) {
-      parserNode.parser.reset();
-      Validator validator = Validator(parserNode.doc);
-      ValidateResult<String> validateResult =
-          await validator.validateResult(data);
-      if (validateResult.validateSuccess) {
-        data = await parserNode.parser.parseUseYaml(
-            data, parserNode.doc, pageName,
-            headers: parseHeaders, params: parseParams);
-        switch (parserNode.parser.parseState().code) {
-          case Parser.interrupt:
-            return toResult(
-                Parser.success, parserNode.parser.parseState().message, null);
-          case Parser.success:
-            continue;
+      List<ParserNode> parserNodes = [];
+      for (var parserDoc in pageDocList) {
+        YamlMap onParseResult = parserDoc["onParseResult"];
+        String contentType = onParseResult["contentType"] ?? "html";
+        _log.fine("contentType=${contentType}");
+        switch (contentType) {
+          case "json":
+            parserNodes.add(ParserNode(parserDoc, _yamlJsonParser));
+            break;
+          case "request":
+            parserNodes.add(ParserNode(parserDoc, _yamlRequestParser));
+            break;
+          case "no_redirect_request":
+            parserNodes.add(ParserNode(parserDoc, _yamlRedirectParser));
+            break;
+          case "json_transform":
+            parserNodes.add(ParserNode(parserDoc, _jsonTransformParser));
+            break;
           default:
-            return toResult(validateResult.code, data, "");
+            parserNodes.add(ParserNode(parserDoc, _yamlHtmlParser));
         }
-      } else {
-        return toResult(validateResult.code, "解析失败或者需要更多操作", "");
       }
-    }
 
-    return toResult(Parser.success, "解析成功", jsonDecode(data));
-    // } catch (e) {
-    //   return toResult(Parser.fail, "$e", "");
-    // }
+      String data = content;
+      Map<String, String> parseParams = {};
+      Map<String, String> parseHeaders = {};
+      for (var parserNode in parserNodes) {
+        parserNode.parser.reset();
+        Validator validator = Validator(parserNode.doc);
+        ValidateResult<String> validateResult =
+            await validator.validateResult(data);
+        if (validateResult.validateSuccess) {
+          data = await parserNode.parser.parseUseYaml(
+              data, parserNode.doc, pageName,
+              headers: parseHeaders, params: parseParams);
+          switch (parserNode.parser.parseState().code) {
+            case Parser.interrupt:
+              return toResult(
+                  Parser.success, parserNode.parser.parseState().message, null);
+            case Parser.success:
+              continue;
+            default:
+              return toResult(validateResult.code, data, "");
+          }
+        } else {
+          return toResult(validateResult.code, data, "");
+        }
+      }
+
+      return toResult(Parser.success, "解析成功", jsonDecode(data));
+    } catch (e) {
+      return toResult(Parser.fail, "$e", "");
+    }
   }
 }
 

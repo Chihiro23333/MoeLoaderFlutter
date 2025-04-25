@@ -43,6 +43,11 @@ class Validator {
         }
       }
     }
+
+    if(content.contains("DioException")){
+      return ValidateResult(Parser.fail, data: content);
+    }
+
     return ValidateResult(Parser.success, data: content);
   }
 }
