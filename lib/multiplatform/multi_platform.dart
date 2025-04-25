@@ -46,7 +46,7 @@ class MultiPlatform {
   }
 
   Size designSize() {
-    return const Size(1280, 720);
+    return const Size(1266, 683);
   }
 
   Widget favicon(Rule rule) {
@@ -138,7 +138,7 @@ class PlatformWindows implements MultiPlatform {
 
   @override
   Size designSize() {
-    return const Size(1280, 720);
+    return const Size(1266, 683);
   }
 
   @override
