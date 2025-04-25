@@ -9,12 +9,12 @@ Widget buildUrlWidget(BuildContext context, String url) {
   return Chip(
     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
     visualDensity: VisualDensity.compact,
-    avatar: ClipOval(
-      child: Icon(
-        Icons.label,
-        color: Theme.of(context).iconTheme.color,
-      ),
-    ),
+    // avatar: ClipOval(
+    //   child: Icon(
+    //     Icons.label,
+    //     color: Theme.of(context).iconTheme.color,
+    //   ),
+    // ),
     label: GestureDetector(
       child: Text(
         url,

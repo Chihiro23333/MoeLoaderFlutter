@@ -9,6 +9,7 @@ import 'package:flutter/widgets.dart';
 import 'package:logging/logging.dart';
 import 'package:to_json/models.dart' as jsonModels;
 import 'package:to_json/yaml_parser_base.dart';
+import '../common/ui_const.dart';
 import '../viewmodel/view_model_home.dart';
 
 class MainPage extends StatefulWidget {
@@ -26,6 +27,7 @@ class _MainState extends State<MainPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        toolbarHeight: UIConst.toolbarHeight,
         iconTheme: Theme.of(context).iconTheme,
         //导航栏
         title: _buildAppBatTitle(context),
@@ -80,7 +82,7 @@ class _MainState extends State<MainPage> {
 
   Widget _buildWebAction(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 0, 5, 0),
+      padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
       child: IconButton(
           onPressed: () async{
             bool? result = await Navigator.push(

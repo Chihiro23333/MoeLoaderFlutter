@@ -105,6 +105,7 @@ class _MainMasonryGridState extends State<MainMasonryGrid> {
     }
     ;
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       child: Stack(
         fit: StackFit.expand,
         children: [

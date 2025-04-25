@@ -116,7 +116,7 @@ void showDownloadOverlay(BuildContext context) {
               children: [
                 Positioned(
                     right: 10,
-                    top: 10,
+                    top: Global.multiPlatform.downloadOverlayTopOffset(),
                     child: badges.Badge(
                       showBadge: count > 0,
                       badgeContent: Text("$count",

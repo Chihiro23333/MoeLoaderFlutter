@@ -143,12 +143,12 @@ void _fillInfoChip(
         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
         visualDensity: VisualDensity.compact,
         side: borderSide,
-        avatar: ClipOval(
-          child: Icon(
-            Icons.tag,
-            color: Theme.of(context).iconTheme.color,
-          ),
-        ),
+        // avatar: ClipOval(
+        //   child: Icon(
+        //     Icons.tag,
+        //     color: Theme.of(context).iconTheme.color,
+        //   ),
+        // ),
         label: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -159,6 +159,17 @@ void _fillInfoChip(
             Text(info)
           ],
         ),
+        deleteButtonTooltipMessage: "复制",
+        deleteIcon: ClipOval(
+          clipBehavior: Clip.antiAlias,
+          child: Icon(
+            Icons.copy,
+            color: Theme.of(context).iconTheme.color,
+          ),
+        ),
+        onDeleted: () {
+          FlutterClipboard.copy(info).then((value) => showToast("文字已复制"));
+        },
       ),
       onTap: () {
         if (onTagTap != null) {
@@ -186,13 +197,15 @@ List<Widget> _buildTags(BuildContext context, List<TagEntity> tagList,
     result.add(
       GestureDetector(
         child: Chip(
+          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          visualDensity: VisualDensity.compact,
           side: borderSide,
-          avatar: ClipOval(
-            child: Icon(
-              Icons.label,
-              color: Theme.of(context).iconTheme.color,
-            ),
-          ),
+          // avatar: ClipOval(
+          //   child: Icon(
+          //     Icons.label,
+          //     color: Theme.of(context).iconTheme.color,
+          //   ),
+          // ),
           label: Text(
             tag.desc
           ),

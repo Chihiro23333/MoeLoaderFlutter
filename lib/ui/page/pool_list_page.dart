@@ -10,6 +10,7 @@ import 'package:moeloaderflutter/widget/pool_list_loading_status.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
+import '../common/ui_const.dart';
 import '../dialog/number_input_dialog.dart';
 import 'detail_page.dart';
 
@@ -45,6 +46,7 @@ class _PoolListState extends State<PoolListPage> {
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         return Scaffold(
           appBar: AppBar(
+              toolbarHeight: UIConst.toolbarHeight,
               iconTheme: Theme.of(context).iconTheme,
               //导航栏
               title: _buildNewAppBartTitle(context),

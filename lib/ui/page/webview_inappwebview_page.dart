@@ -8,6 +8,7 @@ import 'package:to_json/validator.dart';
 import 'dart:async';
 
 import '../../util/common_function.dart';
+import '../common/ui_const.dart';
 
 class InAppWebViewPage extends StatefulWidget {
   InAppWebViewPage(
@@ -45,6 +46,7 @@ class _InAppWebViewState extends State<InAppWebViewPage> {
     return Scaffold(
       floatingActionButton: _buildFloatActionButton(context),
       appBar: AppBar(
+        toolbarHeight: UIConst.toolbarHeight,
         title: const Text(
           "网页访问",
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),

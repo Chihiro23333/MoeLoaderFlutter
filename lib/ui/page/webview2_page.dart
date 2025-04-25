@@ -8,6 +8,8 @@ import 'dart:async';
 import 'package:webview_windows/webview_windows.dart';
 import 'package:window_manager/window_manager.dart';
 
+import '../common/ui_const.dart';
+
 class WebView2Page extends StatefulWidget {
   WebView2Page({super.key, required this.url, required this.code, this.userAgent});
 
@@ -136,6 +138,7 @@ class _WebView2State extends State<WebView2Page> {
     return Scaffold(
       floatingActionButton: _buildFloatActionButton(context),
       appBar: AppBar(
+        toolbarHeight: UIConst.toolbarHeight,
         title: StreamBuilder<String>(
           stream: _controller.url,
           builder: (context, snapshot) {

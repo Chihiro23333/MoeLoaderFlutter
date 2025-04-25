@@ -137,53 +137,65 @@ class _ImageMasonryGridState extends State<ImageMasonryGrid> {
           bottom: 3,
           child: Container(
             decoration: const BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(15)),
+              borderRadius: BorderRadius.all(Radius.circular(30)),
               color: Colors.white70,
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                IconButton(
-                    onPressed: () async {
-                      // if (homePageItem.downloadState != DownloadTask.idle &&
-                      //     homePageItem.downloadState != DownloadTask.error) {
-                      //   return;
-                      // }
-                      String? downloadFileSize = await getDownloadFileSize();
-                      if (downloadFileSize == Const.choose ||
-                          downloadFileSize == null) {
-                        showUrlList(context, homePageItem);
-                      } else {
-                        DownloadManager().addTask(DownloadTask(
-                            homePageItem.href,
-                            homePageItem.href,
-                            await getDownloadName(
-                                homePageItem.href,
-                                homePageItem.id,
-                                homePageItem.author,
-                                homePageItem.tagList),
-                            headers: headers));
-                        showToast("已将图片加入下载列表");
-                      }
-                    },
-                    icon:
-                        downloadStateIcon(context, homePageItem.downloadState)),
-                IconButton(
-                    onPressed: () {
-                      showHomeInfoSheet(context, homePageItem,
-                          onTagTap: (context, tag) {
-                        Navigator.of(context).pop();
-                        _log.fine("yamlTag:tag=${tag.tag};desc=${tag.desc}");
-                        TagTapCallback? tagTapCallback = widget.tagTapCallback;
-                        if (tagTapCallback != null) {
-                          tagTapCallback(context, tag);
+                SizedBox(
+                  width: 40,
+                  height: 35,
+                  child: IconButton(
+                    padding: EdgeInsets.zero,
+                      iconSize: 20,
+                      onPressed: () async {
+                        // if (homePageItem.downloadState != DownloadTask.idle &&
+                        //     homePageItem.downloadState != DownloadTask.error) {
+                        //   return;
+                        // }
+                        String? downloadFileSize = await getDownloadFileSize();
+                        if (downloadFileSize == Const.choose ||
+                            downloadFileSize == null) {
+                          showUrlList(context, homePageItem);
+                        } else {
+                          DownloadManager().addTask(DownloadTask(
+                              homePageItem.href,
+                              homePageItem.href,
+                              await getDownloadName(
+                                  homePageItem.href,
+                                  homePageItem.id,
+                                  homePageItem.author,
+                                  homePageItem.tagList),
+                              headers: headers));
+                          showToast("已将图片加入下载列表");
                         }
-                      });
-                    },
-                    icon: const Icon(
-                      Icons.info,
-                      color: Colors.black,
-                    ))
+                      },
+                      icon:
+                          downloadStateIcon(context, homePageItem.downloadState)),
+                ),
+                SizedBox(
+                  width: 40,
+                  height: 35,
+                  child: IconButton(
+                      iconSize: 20,
+                      padding: EdgeInsets.zero,
+                      onPressed: () {
+                        showHomeInfoSheet(context, homePageItem,
+                            onTagTap: (context, tag) {
+                          Navigator.of(context).pop();
+                          _log.fine("yamlTag:tag=${tag.tag};desc=${tag.desc}");
+                          TagTapCallback? tagTapCallback = widget.tagTapCallback;
+                          if (tagTapCallback != null) {
+                            tagTapCallback(context, tag);
+                          }
+                        });
+                      },
+                      icon: const Icon(
+                        Icons.info,
+                        color: Colors.black,
+                      )),
+                )
               ],
             ),
           ),

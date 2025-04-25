@@ -77,6 +77,10 @@ class MultiPlatform {
   String decodeFileName(String encoded) {
     return encoded;
   }
+
+  double downloadOverlayTopOffset() {
+    return 0;
+  }
 }
 
 class PlatformWindows implements MultiPlatform {
@@ -252,6 +256,11 @@ class PlatformWindows implements MultiPlatform {
     }
     return result;
   }
+
+  @override
+  double downloadOverlayTopOffset() {
+    return 1;
+  }
 }
 
 class PlatformAndroid implements MultiPlatform {
@@ -407,5 +416,10 @@ class PlatformAndroid implements MultiPlatform {
     }
 
     return input.substring(0, index);
+  }
+
+  @override
+  double downloadOverlayTopOffset() {
+    return -2;
   }
 }

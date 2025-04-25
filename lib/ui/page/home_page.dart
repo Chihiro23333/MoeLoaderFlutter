@@ -22,6 +22,7 @@ import 'package:moeloaderflutter/init.dart';
 import 'package:moeloaderflutter/ui/viewmodel/view_model_home.dart';
 import 'package:logging/logging.dart';
 import '../../util/const.dart';
+import '../common/ui_const.dart';
 import '../dialog/number_input_dialog.dart';
 import 'detail_page.dart';
 import 'package:to_json/models.dart' as jsonModels;
@@ -104,6 +105,7 @@ class _HomeState extends State<HomePage> {
         return Scaffold(
           key: _scaffoldGlobalKey,
           appBar: AppBar(
+              toolbarHeight: UIConst.toolbarHeight,
               iconTheme: Theme.of(context).iconTheme,
               //导航栏
               title: _buildNewAppBartTitle(context),
