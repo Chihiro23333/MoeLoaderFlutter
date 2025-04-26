@@ -21,9 +21,13 @@ class Request{
   }
 
   Future<String> requestByUrl(String url, YamlMap doc, String pageName, Connector connector) async{
-    String content = await connector.request(url, headers: globalParser(doc).headers());
+    String content;
+    try{
+      content = await connector.request(url, headers: globalParser(doc).headers());
+    }catch(e){
+      content =  "$e";
+    }
     String data = await _listParser.parseUseYaml(content, doc, pageName);
-
     return data;
   }
 

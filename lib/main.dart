@@ -46,6 +46,6 @@ class MyApp extends StatelessWidget {
   void _printInfo(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-    _log.warning("width=${width};height=${height}");
+    _log.fine("width=${width};height=${height}");
   }
 }

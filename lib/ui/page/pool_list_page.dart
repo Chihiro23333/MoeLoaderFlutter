@@ -12,7 +12,9 @@ import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import '../common/ui_const.dart';
 import '../dialog/number_input_dialog.dart';
+import 'author_page.dart';
 import 'detail_page.dart';
+import 'home_page.dart';
 
 class PoolListPage extends StatefulWidget {
   const PoolListPage({super.key, required this.id});
@@ -208,15 +210,27 @@ class _PoolListState extends State<PoolListPage> {
             aspectRatio: aspectRatio,
             list: poolListState.list,
             headers: poolListState.headers,
-            itemOnPressed: (homePageItem) async {
+            itemOnPressed: (poolListState) async {
               await Navigator.push(
                 context,
                 CupertinoPageRoute(builder: (context) {
                   return DetailPage(
-                      href: homePageItem.href, homePageItem: homePageItem);
+                      href: poolListState.href, homePageItem: poolListState);
                 }),
               );
             },
+            // tagTapCallback: (context, tag) {
+            //   Navigator.push(
+            //     context,
+            //     CupertinoPageRoute(builder: (context) {
+            //       if (tag.type == Const.tagTypeAuthor) {
+            //         return AuthorPage(authorId: tag.tag);
+            //       } else {
+            //         return HomePage(pageName: Const.searchPage, tagEntity: tag);
+            //       }
+            //     }),
+            //   );
+            // },
           );
         });
   }

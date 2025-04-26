@@ -50,7 +50,7 @@ abstract class Parser {
   @protected
   String regularString(String text) {
     // text = text.replaceAll("\n", "");
-    // text = text.trim();
+    text = text.trim();
     return text;
   }
 
