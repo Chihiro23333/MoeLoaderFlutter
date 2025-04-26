@@ -259,7 +259,7 @@ class PlatformWindows implements MultiPlatform {
 
   @override
   double downloadOverlayTopOffset() {
-    return 1;
+    return 3;
   }
 }
 
@@ -420,6 +420,6 @@ class PlatformAndroid implements MultiPlatform {
 
   @override
   double downloadOverlayTopOffset() {
-    return -2;
+    return 0;
   }
 }

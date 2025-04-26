@@ -1,3 +1,3 @@
 class UIConst{
-  static const double toolbarHeight = 40;
+  static const double toolbarHeight = 45;
 }

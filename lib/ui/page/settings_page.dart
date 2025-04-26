@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:moeloaderflutter/ui/common/ui_const.dart';
 import 'package:moeloaderflutter/ui/viewmodel/view_model_setting.dart';
 import 'package:moeloaderflutter/util/common_function.dart';
 import 'package:moeloaderflutter/util/const.dart';
@@ -62,6 +63,7 @@ class _SettingState extends State<SettingPage> {
 
   AppBar _buildAppBar(BuildContext context) {
     return AppBar(
+      toolbarHeight: UIConst.toolbarHeight,
       titleSpacing: 0,
       title: const Text(
         "设置",
