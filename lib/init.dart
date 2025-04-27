@@ -42,7 +42,7 @@ class Global {
     initPlatform();
     await initPath();
     await _multiPlatform.webViewInit(browserCacheDirectory.path);
-    Logger.root.level = Level.INFO; // defaults to Level.INFO
+    Logger.root.level = Level.OFF; // defaults to Level.INFO
     Logger.root.onRecord.listen((record) {
       print(
           '${record.loggerName}:${record.level.name}: ${record.time}: ${record.message}');
