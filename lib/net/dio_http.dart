@@ -22,7 +22,8 @@ class DioHttp {
       responseType: ResponseType.plain,
       followRedirects: false,
       validateStatus: (status) {
-        return status != null && (status < 300 || status == 302|| status == 301);
+        return status != null &&
+            (status < 300 || status == 302 || status == 301);
       }
   );
   final BaseOptions _redirectsNoOptions = BaseOptions(
@@ -39,7 +40,8 @@ class DioHttp {
   Dio _logDio([BaseOptions? options, bool http2 = false]) {
     var dio = Dio(options)
       ..interceptors.add(_cookieManager)
-      ..interceptors.add(LogInterceptor());
+      ..interceptors.add(LogInterceptor())
+      ..interceptors.add(HeaderInterceptor());
     // ..httpClientAdapter = Http2Adapter(
     //   ConnectionManager(
     //     idleTimeout: const Duration(seconds: 10),
@@ -57,7 +59,8 @@ class DioHttp {
     return result;
   }
 
-  Future<Response> redirectYestGet(String url, {Map<String, String>? headers}) async {
+  Future<Response> redirectYestGet(String url,
+      {Map<String, String>? headers}) async {
     _log.fine("url=$url");
     _dio.options = _redirectsYesOptions;
     _updateHeaders(headers);
@@ -66,7 +69,8 @@ class DioHttp {
     return response;
   }
 
-  Future<Response> redirectNotGet(String url, {Map<String, String>? headers}) async {
+  Future<Response> redirectNotGet(String url,
+      {Map<String, String>? headers}) async {
     _log.fine("url=$url");
     _dio.options = _redirectsNoOptions;
     _updateHeaders(headers);
@@ -134,5 +138,13 @@ class DioHttp {
       _log.fine("cookiesMap:key=$key,value=$value");
       await _updateCookies(Uri.parse(key), value);
     });
+  }
+}
+
+class HeaderInterceptor extends Interceptor {
+  @override
+  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+    options.headers['X-Platform'] = 'web';
+    super.onRequest(options, handler);
   }
 }
