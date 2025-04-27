@@ -6,42 +6,46 @@ import 'package:moeloaderflutter/util/common_function.dart';
 import 'package:to_json/validator.dart';
 
 Widget buildUrlWidget(BuildContext context, String url) {
-  return Chip(
-    // avatar: ClipOval(
-    //   child: Icon(
-    //     Icons.label,
-    //     color: Theme.of(context).iconTheme.color,
-    //   ),
-    // ),
-    label: GestureDetector(
-      child: Text(
-        url,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
+  return Container(
+    alignment: Alignment.topLeft,
+    constraints: BoxConstraints(minWidth: MediaQuery.of(context).size.width),
+    child: Chip(
+      // avatar: ClipOval(
+      //   child: Icon(
+      //     Icons.label,
+      //     color: Theme.of(context).iconTheme.color,
+      //   ),
+      // ),
+      label: GestureDetector(
+        child: Text(
+          url,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        onTap: () {
+          Navigator.push(
+            context,
+            CupertinoPageRoute(builder: (context) {
+              return Global.multiPlatform.navigateToWebView(
+                context,
+                url,
+                ValidateResult.success,
+              );
+            }),
+          );
+        },
       ),
-      onTap: () {
-        Navigator.push(
-          context,
-          CupertinoPageRoute(builder: (context) {
-            return Global.multiPlatform.navigateToWebView(
-              context,
-              url,
-              ValidateResult.success,
-            );
-          }),
-        );
+      deleteButtonTooltipMessage: "复制",
+      deleteIcon: ClipOval(
+        clipBehavior: Clip.antiAlias,
+        child: Icon(
+          Icons.copy,
+          color: Theme.of(context).iconTheme.color,
+        ),
+      ),
+      onDeleted: () {
+        FlutterClipboard.copy(url).then((value) => showToast("链接已复制"));
       },
     ),
-    deleteButtonTooltipMessage: "复制",
-    deleteIcon: ClipOval(
-      clipBehavior: Clip.antiAlias,
-      child: Icon(
-        Icons.copy,
-        color: Theme.of(context).iconTheme.color,
-      ),
-    ),
-    onDeleted: () {
-      FlutterClipboard.copy(url).then((value) => showToast("链接已复制"));
-    },
   );
 }

@@ -40,7 +40,7 @@ class _MainState extends State<MainPage> {
           onPressed: null,
         ),
         actions: <Widget>[
-          _buildWebAction(context),
+          // _buildWebAction(context),
           _buildSettingsAction(context),
         ],
       ),
