@@ -1,3 +1,4 @@
+import 'package:flutter_avif/flutter_avif.dart';
 import 'package:moeloaderflutter/init.dart';
 import 'package:moeloaderflutter/model/home_page_item_entity.dart';
 import 'package:moeloaderflutter/ui/dialog/info_dialog.dart';
@@ -111,21 +112,33 @@ class _ImageMasonryGridState extends State<ImageMasonryGrid> {
       String host = uri.host;
       newHeaders["host"] = host;
     }
+    Widget image;
+    if (homePageItem.coverUrl.endsWith(".avif")) {
+      image = AvifImage.network(
+        width: width,
+        height: height,
+        homePageItem.coverUrl,
+        fit: BoxFit.cover,
+        headers: newHeaders,
+      );
+    } else {
+      image = ExtendedImage.network(
+        borderRadius: const BorderRadius.all(Radius.circular(5)),
+        shape: BoxShape.rectangle,
+        headers: newHeaders,
+        width: width,
+        height: height,
+        homePageItem.coverUrl,
+        fit: BoxFit.cover,
+        cancelToken: _cancelToken,
+      );
+    }
     return Stack(
       fit: StackFit.expand,
       children: [
         Positioned.fill(
             child: GestureDetector(
-                child: ExtendedImage.network(
-                  borderRadius: const BorderRadius.all(Radius.circular(5)),
-                  shape: BoxShape.rectangle,
-                  headers: newHeaders,
-                  width: width,
-                  height: height,
-                  homePageItem.coverUrl,
-                  fit: BoxFit.cover,
-                  cancelToken: _cancelToken,
-                ),
+                child: image,
                 onTap: () async {
                   var itemOnPressed = widget.itemOnPressed;
                   if (itemOnPressed != null) {
@@ -147,7 +160,7 @@ class _ImageMasonryGridState extends State<ImageMasonryGrid> {
                   width: 40,
                   height: 35,
                   child: IconButton(
-                    padding: EdgeInsets.zero,
+                      padding: EdgeInsets.zero,
                       iconSize: 20,
                       onPressed: () async {
                         // if (homePageItem.downloadState != DownloadTask.idle &&
@@ -171,8 +184,8 @@ class _ImageMasonryGridState extends State<ImageMasonryGrid> {
                           showToast("已将图片加入下载列表");
                         }
                       },
-                      icon:
-                          downloadStateIcon(context, homePageItem.downloadState)),
+                      icon: downloadStateIcon(
+                          context, homePageItem.downloadState)),
                 ),
                 SizedBox(
                   width: 40,
@@ -185,7 +198,8 @@ class _ImageMasonryGridState extends State<ImageMasonryGrid> {
                             onTagTap: (context, tag) {
                           Navigator.of(context).pop();
                           _log.fine("yamlTag:tag=${tag.tag};desc=${tag.desc}");
-                          TagTapCallback? tagTapCallback = widget.tagTapCallback;
+                          TagTapCallback? tagTapCallback =
+                              widget.tagTapCallback;
                           if (tagTapCallback != null) {
                             tagTapCallback(context, tag);
                           }

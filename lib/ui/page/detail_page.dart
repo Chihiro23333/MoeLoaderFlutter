@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_avif/flutter_avif.dart';
 import 'package:moeloaderflutter/init.dart';
 import 'package:moeloaderflutter/model/detail_page_entity.dart';
 import 'package:moeloaderflutter/model/home_page_item_entity.dart';
@@ -292,41 +293,50 @@ class _DetailState extends State<DetailPage> {
     for (int i = 0; i < urlList.length; ++i) {
       String url = urlList[i];
       //只需要用 KeepAliveWrapper 包装一下即可
-      children.add(KeepAliveWrapper(
-        child: ExtendedImage.network(url,
-            headers: headers,
-            fit: BoxFit.contain,
-            mode: ExtendedImageMode.gesture,
-            loadStateChanged: (ExtendedImageState state) {
-          switch (state.extendedImageLoadState) {
-            case LoadState.loading:
-              double progress = 0;
-              var loadingProgress = state.loadingProgress;
-              print("loadingProgress=$loadingProgress");
-              if (null == loadingProgress) {
-                progress = 1;
-              } else {
-                var cumulativeBytesLoaded =
-                    loadingProgress.cumulativeBytesLoaded;
-                var expectedTotalBytes = loadingProgress.expectedTotalBytes;
-                print(
-                    "expectedTotalBytes=$expectedTotalBytes；cumulativeBytesLoaded=$cumulativeBytesLoaded");
-                if (null == expectedTotalBytes || expectedTotalBytes == 0) {
+      if (url.endsWith(".avif")) {
+        children.add(KeepAliveWrapper(
+            child: AvifImage.network(
+          url,
+          fit: BoxFit.contain,
+          headers: headers,
+        )));
+      } else {
+        children.add(KeepAliveWrapper(
+          child: ExtendedImage.network(url,
+              headers: headers,
+              fit: BoxFit.contain,
+              mode: ExtendedImageMode.gesture,
+              loadStateChanged: (ExtendedImageState state) {
+            switch (state.extendedImageLoadState) {
+              case LoadState.loading:
+                double progress = 0;
+                var loadingProgress = state.loadingProgress;
+                print("loadingProgress=$loadingProgress");
+                if (null == loadingProgress) {
                   progress = 1;
                 } else {
-                  progress = cumulativeBytesLoaded * 1.0 / expectedTotalBytes;
+                  var cumulativeBytesLoaded =
+                      loadingProgress.cumulativeBytesLoaded;
+                  var expectedTotalBytes = loadingProgress.expectedTotalBytes;
+                  print(
+                      "expectedTotalBytes=$expectedTotalBytes；cumulativeBytesLoaded=$cumulativeBytesLoaded");
+                  if (null == expectedTotalBytes || expectedTotalBytes == 0) {
+                    progress = 1;
+                  } else {
+                    progress = cumulativeBytesLoaded * 1.0 / expectedTotalBytes;
+                  }
                 }
-              }
-              print("progress=$progress");
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            case LoadState.completed:
-            case LoadState.failed:
-              return null;
-          }
-        }),
-      ));
+                print("progress=$progress");
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              case LoadState.completed:
+              case LoadState.failed:
+                return null;
+            }
+          }),
+        ));
+      }
     }
     print("children.length=${children.length}");
     return PageView(

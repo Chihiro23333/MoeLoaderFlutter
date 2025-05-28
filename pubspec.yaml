@@ -65,6 +65,7 @@ dependencies:
   flutter_inappwebview: ^6.1.5
   badges: ^3.1.2
   intl: ^0.20.2
+  flutter_avif: ^3.0.0
 
 dev_dependencies:
   flutter_test:

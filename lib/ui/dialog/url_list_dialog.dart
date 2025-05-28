@@ -89,9 +89,11 @@ void showUrlList(BuildContext context, HomePageItemEntity homePageItem) {
                       }));
                     }
                     if (bigUrl.isNotEmpty) {
-                      children.add(const Divider(
-                        height: 10,
-                      ));
+                      if(children.isNotEmpty){
+                        children.add(const Divider(
+                          height: 10,
+                        ));
+                      }
                       children.add(
                           buildDownloadItem(context, bigUrl, "大图", bigUrl, () {
                         detailViewModel.download(
@@ -106,9 +108,11 @@ void showUrlList(BuildContext context, HomePageItemEntity homePageItem) {
                       }));
                     }
                     if (rawUrl.isNotEmpty) {
-                      children.add(const Divider(
-                        height: 10,
-                      ));
+                      if(children.isNotEmpty){
+                        children.add(const Divider(
+                          height: 10,
+                        ));
+                      }
                       children.add(
                           buildDownloadItem(context, rawUrl, "原图", rawUrl, () {
                         detailViewModel.download(

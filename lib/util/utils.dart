@@ -33,7 +33,8 @@ bool isImageUrl(String url) {
       url.toLowerCase().contains(".jpeg") ||
       url.toLowerCase().contains(".png") ||
       url.toLowerCase().contains(".gif") ||
-      url.toLowerCase().contains(".webp");
+      url.toLowerCase().contains(".webp") ||
+      url.toLowerCase().contains(".avif");
 }
 
 String tipsByCode(int code) {
