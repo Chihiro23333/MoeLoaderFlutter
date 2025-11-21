@@ -11,7 +11,6 @@
 * [danbooru.donmai.us](https://danbooru.donmai.us) 支持图片查看、图集查看、按tag搜索、结果筛选
 * ~~[behoimi.org](http://behoimi.org)~~ 网页无法访问，已移除
 * [safebooru.org](http://safebooru.org) 支持图片查看、按tag搜索、结果筛选
-* [safebooru.org](http://safebooru.org) 支持图片查看、按tag搜索、结果筛选
 * [gelbooru.com](https://gelbooru.com/index.php?page=post&s=list) 支持图片查看、按tag搜索、结果筛选
 * [e-shuushuu.net](http://e-shuushuu.net) 支持图片查看、作者图片查看、按tag搜索、结果筛选
 * [zerochan](www.zerochan.net) 支持图片查看、作者图片查看、按tag搜索、结果筛选
