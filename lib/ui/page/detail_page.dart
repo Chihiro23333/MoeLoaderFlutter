@@ -8,6 +8,7 @@ import 'package:moeloaderflutter/ui/dialog/info_dialog.dart';
 import 'package:moeloaderflutter/ui/page/download_page.dart';
 import 'package:moeloaderflutter/ui/page/home_page.dart';
 import 'package:moeloaderflutter/util/common_function.dart';
+import 'package:moeloaderflutter/util/sharedpreferences_utils.dart';
 import 'package:moeloaderflutter/util/utils.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:extended_image/extended_image.dart';
@@ -51,6 +52,8 @@ class _DetailState extends State<DetailPage> {
   @override
   void initState() {
     super.initState();
+    // 添加浏览历史记录
+    addViewedImage(widget.href);
     _requestDetailData();
   }
 

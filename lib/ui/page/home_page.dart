@@ -209,6 +209,9 @@ class _HomeState extends State<HomePage> {
               if (naviResult?.data != null) {
                 _updateTag(naviResult?.data);
                 _requestData(clearAll: true);
+              } else {
+                // 从详情页返回时，重新请求数据以更新浏览状态
+                _requestData();
               }
             },
           );

@@ -133,88 +133,107 @@ class _ImageMasonryGridState extends State<ImageMasonryGrid> {
         cancelToken: _cancelToken,
       );
     }
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        Positioned.fill(
-            child: GestureDetector(
-                child: image,
-                onTap: () async {
-                  var itemOnPressed = widget.itemOnPressed;
-                  if (itemOnPressed != null) {
-                    itemOnPressed(homePageItem);
-                  }
-                })),
-        Positioned(
-          right: 2,
-          bottom: 3,
-          child: Container(
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(30)),
-              color: Colors.white70,
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                SizedBox(
-                  width: 40,
-                  height: 35,
-                  child: IconButton(
-                      padding: EdgeInsets.zero,
-                      iconSize: 20,
-                      onPressed: () async {
-                        // if (homePageItem.downloadState != DownloadTask.idle &&
-                        //     homePageItem.downloadState != DownloadTask.error) {
-                        //   return;
-                        // }
-                        String? downloadFileSize = await getDownloadFileSize();
-                        if (downloadFileSize == Const.choose ||
-                            downloadFileSize == null) {
-                          showUrlList(context, homePageItem);
-                        } else {
-                          DownloadManager().addTask(DownloadTask(
-                              homePageItem.href,
-                              homePageItem.href,
-                              await getDownloadName(
-                                  homePageItem.href,
-                                  homePageItem.id,
-                                  homePageItem.author,
-                                  homePageItem.tagList),
-                              headers: headers));
-                          showToast("已将图片加入下载列表");
-                        }
-                      },
-                      icon: downloadStateIcon(
-                          context, homePageItem.downloadState)),
+    
+    // 检查图片是否被浏览过
+    return FutureBuilder<bool>(
+      future: isImageViewed(homePageItem.href),
+      builder: (context, snapshot) {
+        bool isViewed = snapshot.data ?? false;
+        return Stack(
+          fit: StackFit.expand,
+          children: [
+            Positioned.fill(
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.all(Radius.circular(5)),
+                  border: isViewed ? Border.all(
+                    color: Global.defaultColor,
+                    width: 1.5,
+                  ) : null,
                 ),
-                SizedBox(
-                  width: 40,
-                  height: 35,
-                  child: IconButton(
-                      iconSize: 20,
-                      padding: EdgeInsets.zero,
-                      onPressed: () {
-                        showHomeInfoSheet(context, homePageItem,
-                            onTagTap: (context, tag) {
-                          Navigator.of(context).pop();
-                          _log.fine("yamlTag:tag=${tag.tag};desc=${tag.desc}");
-                          TagTapCallback? tagTapCallback =
-                              widget.tagTapCallback;
-                          if (tagTapCallback != null) {
-                            tagTapCallback(context, tag);
-                          }
-                        });
-                      },
-                      icon: const Icon(
-                        Icons.info,
-                        color: Colors.black,
-                      )),
-                )
-              ],
+                child: GestureDetector(
+                  child: image,
+                  onTap: () async {
+                    var itemOnPressed = widget.itemOnPressed;
+                    if (itemOnPressed != null) {
+                      itemOnPressed(homePageItem);
+                    }
+                  },
+                ),
+              ),
             ),
-          ),
-        ),
-      ],
+            Positioned(
+              right: 2,
+              bottom: 3,
+              child: Container(
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(30)),
+                  color: Colors.white70,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    SizedBox(
+                      width: 40,
+                      height: 35,
+                      child: IconButton(
+                          padding: EdgeInsets.zero,
+                          iconSize: 20,
+                          onPressed: () async {
+                            // if (homePageItem.downloadState != DownloadTask.idle &&
+                            //     homePageItem.downloadState != DownloadTask.error) {
+                            //   return;
+                            // }
+                            String? downloadFileSize = await getDownloadFileSize();
+                            if (downloadFileSize == Const.choose ||
+                                downloadFileSize == null) {
+                              showUrlList(context, homePageItem);
+                            } else {
+                              DownloadManager().addTask(DownloadTask(
+                                  homePageItem.href,
+                                  homePageItem.href,
+                                  await getDownloadName(
+                                      homePageItem.href,
+                                      homePageItem.id,
+                                      homePageItem.author,
+                                      homePageItem.tagList),
+                                  headers: headers));
+                              showToast("已将图片加入下载列表");
+                            }
+                          },
+                          icon: downloadStateIcon(
+                              context, homePageItem.downloadState)),
+                    ),
+                    SizedBox(
+                      width: 40,
+                      height: 35,
+                      child: IconButton(
+                          iconSize: 20,
+                          padding: EdgeInsets.zero,
+                          onPressed: () {
+                            showHomeInfoSheet(context, homePageItem,
+                                onTagTap: (context, tag) {
+                              Navigator.of(context).pop();
+                              _log.fine("yamlTag:tag=${tag.tag};desc=${tag.desc}");
+                              TagTapCallback? tagTapCallback =
+                                  widget.tagTapCallback;
+                              if (tagTapCallback != null) {
+                                tagTapCallback(context, tag);
+                              }
+                            });
+                          },
+                          icon: const Icon(
+                            Icons.info,
+                            color: Colors.black,
+                          )),
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

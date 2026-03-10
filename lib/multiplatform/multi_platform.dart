@@ -311,8 +311,14 @@ class PlatformAndroid implements MultiPlatform {
 
   @override
   Grid homeGrid(String pageName) {
+    WebPage webPage = Global.curWebPage;
+    String name = webPage.rule.fileName;
+    int columnCount = 2;
+    if(name.contains("konachan")){
+      columnCount = 1;
+    }
     double aspectRatio = Global.globalParser.aspectRatio(pageName);
-    return Grid(2, aspectRatio);
+    return Grid(columnCount, aspectRatio);
   }
 
   @override

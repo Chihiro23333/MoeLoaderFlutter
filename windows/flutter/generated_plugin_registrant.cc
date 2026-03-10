@@ -6,6 +6,7 @@
 
 #include "generated_plugin_registrant.h"
 
+#include <flutter_avif_windows/flutter_avif_windows_plugin.h>
 #include <flutter_inappwebview_windows/flutter_inappwebview_windows_plugin_c_api.h>
 #include <gal/gal_plugin_c_api.h>
 #include <screen_retriever/screen_retriever_plugin.h>
@@ -13,6 +14,8 @@
 #include <window_manager/window_manager_plugin.h>
 
 void RegisterPlugins(flutter::PluginRegistry* registry) {
+  FlutterAvifWindowsPluginRegisterWithRegistrar(
+      registry->GetRegistrarForPlugin("FlutterAvifWindowsPlugin"));
   FlutterInappwebviewWindowsPluginCApiRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("FlutterInappwebviewWindowsPluginCApi"));
   GalPluginCApiRegisterWithRegistrar(

@@ -3,6 +3,7 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  flutter_avif_windows
   flutter_inappwebview_windows
   gal
   screen_retriever
