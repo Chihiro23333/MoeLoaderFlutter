@@ -4,7 +4,8 @@ import 'package:moeloaderflutter/generated/json/base/json_convert_content.dart';
 import 'package:moeloaderflutter/model/detail_page_entity.dart';
 import 'package:moeloaderflutter/model/home_page_item_entity.dart';
 import 'package:moeloaderflutter/model/tag_entity.dart';
-import 'package:moeloaderflutter/net/download.dart';
+import 'package:moeloaderflutter/model/download/download.dart';
+import 'package:moeloaderflutter/net/download_new.dart';
 import 'package:moeloaderflutter/ui/viewmodel/connector_impl.dart';
 import 'package:moeloaderflutter/util/utils.dart';
 import 'package:moeloaderflutter/init.dart';
@@ -97,15 +98,16 @@ class DetailViewModel {
     bool hasAccess = await Global.multiPlatform.requestAccess();
     if (hasAccess) {
       DownloadManager().addTask(DownloadTask(
-          href,
+        id: href,
+        url: url,
+        name: await getDownloadName(
           url,
-          await getDownloadName(
-            url,
-            id,
-            author,
-            tags
-          ),
-          headers: headers));
+          id,
+          author,
+          tags
+        ),
+        headers: headers,
+      ));
     }
   }
 

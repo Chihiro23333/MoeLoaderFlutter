@@ -2,8 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:moeloaderflutter/generated/json/base/json_convert_content.dart';
 import 'package:moeloaderflutter/init.dart';
+import 'package:moeloaderflutter/model/download/download.dart';
 import 'package:moeloaderflutter/model/tag_entity.dart';
-import 'package:moeloaderflutter/net/download.dart';
+import 'package:moeloaderflutter/net/download_new.dart';
 import 'package:moeloaderflutter/repo/yaml_reposotory.dart';
 import 'package:logging/logging.dart';
 import 'package:moeloaderflutter/ui/viewmodel/connector_impl.dart';
@@ -29,19 +30,25 @@ class HomeViewModel {
   final UriState _uriState = UriState();
 
   HomeViewModel() {
+    _initDownloadListener();
+  }
+
+  Future<void> _initDownloadListener() async {
+    await DownloadManager.ensureInitialized();
     DownloadManager().downloadStream().listen((downloadState) {
       List<DownloadTask> list = downloadState.tasks;
+      _log.fine("Received download state update with ${list.length} tasks");
       for (HomePageItemEntity item in _homeState.list) {
         bool find = false;
         for (DownloadTask task in list) {
           if (task.id == item.href) {
-            item.downloadState = task.downloadState;
-            _log.fine("id=${task.id};task.downloadState=${task.downloadState}");
+            item.downloadState = task.status.value;
+            _log.fine("id=${task.id};task.downloadState=${task.status.value}");
             find = true;
           }
         }
         if (!find) {
-          item.downloadState = DownloadTask.idle;
+          item.downloadState = DownloadStatus.idle.value;
         }
       }
       streamHomeController.add(_homeState);

@@ -3,7 +3,7 @@ import 'package:moeloaderflutter/generated/json/home_page_item_entity.g.dart';
 import 'package:moeloaderflutter/model/tag_entity.dart';
 import 'dart:convert';
 
-import 'package:moeloaderflutter/net/download.dart';
+import 'package:moeloaderflutter/model/download/download.dart';
 export 'package:moeloaderflutter/generated/json/home_page_item_entity.g.dart';
 
 @JsonSerializable()
@@ -27,7 +27,7 @@ class HomePageItemEntity {
 	late String desc = '';
 	late List<TagEntity> tagList = [];
 
-	late int downloadState = DownloadTask.idle;
+	late int downloadState = DownloadStatus.idle.value;
 
 	HomePageItemEntity();
 

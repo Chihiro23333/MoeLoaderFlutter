@@ -42,12 +42,13 @@ class Global {
     initPlatform();
     await initPath();
     await _multiPlatform.webViewInit(browserCacheDirectory.path);
-    Logger.root.level = Level.OFF; // defaults to Level.INFO
+    // 只打印下载相关的日志
+    Logger.root.level = Level.ALL;
     Logger.root.onRecord.listen((record) {
-      print(
-          '${record.loggerName}:${record.level.name}: ${record.time}: ${record.message}');
+      // 只打印下载相关的日志
+        print('${record.loggerName}:${record.level.name}: ${record.time}: ${record.message}');
     });
-    _initHive();
+    await _initHive();
     await RequestManager().init();
     await updateProxy();
     await YamlRuleFactory().init();
@@ -123,8 +124,10 @@ class Global {
     }
   }
 
-  void _initHive() async {
+  Future<void> _initHive() async {
+    print("Hive directory: ${hiveDirectory.path}");
     Hive.init(hiveDirectory.path);
+    print("Hive initialized");
   }
 
   static GlobalParser get globalParser => _globalParser;

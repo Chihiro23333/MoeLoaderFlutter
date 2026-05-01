@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
+import 'package:moeloaderflutter/model/download/download.dart';
 import 'package:moeloaderflutter/model/tag_entity.dart';
-import 'package:moeloaderflutter/net/download.dart';
+import 'package:moeloaderflutter/net/download_new.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +21,7 @@ void showToast(String toastString) {
 Widget downloadStateIcon(BuildContext context, int downloadState) {
   Widget icon;
   switch (downloadState) {
-    case DownloadTask.downloading:
+    case 2:
       icon = SizedBox(
         width: 20,
         height: 20,
@@ -30,25 +31,25 @@ Widget downloadStateIcon(BuildContext context, int downloadState) {
         ),
       );
       break;
-    case DownloadTask.complete:
+    case 3:
       icon = Icon(
         Icons.file_download_done,
         color: Global.defaultColor,
       );
       break;
-    case DownloadTask.error:
+    case 4:
       icon = const Icon(
         Icons.error_outline,
         color: Colors.red,
       );
       break;
-    case DownloadTask.waiting:
+    case 1:
       icon = Icon(
         Icons.watch_later_outlined,
         color: Global.defaultColor,
       );
       break;
-    case DownloadTask.idle:
+    case 0:
     default:
       icon = const Icon(
         Icons.download,
@@ -107,23 +108,12 @@ EdgeInsets appBarActionPadding() {
 }
 
 void showDownloadOverlay(BuildContext context) {
-  // 创建OverlayEntry
+  // 创建 OverlayEntry
   OverlayEntry overlayEntry = OverlayEntry(
-      builder: (context) => StreamBuilder<DownloadState>(
-          initialData: DownloadManager().curState(),
-          stream: DownloadManager().downloadStream(),
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            bool hasData = snapshot.hasData;
-            int count = 0;
-            if (hasData) {
-              DownloadState downloadState = snapshot.data;
-              List<DownloadTask> list = downloadState.tasks;
-              for (DownloadTask downloadTask in list) {
-                if (downloadTask.downloadState <= DownloadTask.downloading) {
-                  count++;
-                }
-              }
-            }
+      builder: (context) => FutureBuilder<void>(
+        future: DownloadManager.ensureInitialized(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
             return SafeArea(
                 child: Stack(
               children: [
@@ -131,9 +121,8 @@ void showDownloadOverlay(BuildContext context) {
                     right: 10,
                     top: Global.multiPlatform.downloadOverlayTopOffset(),
                     child: badges.Badge(
-                      showBadge: count > 0,
-                      badgeContent: Text("$count",
-                          style: const TextStyle(
+                      badgeContent: const Text("0",
+                          style: TextStyle(
                               color: Colors.white, fontSize: 12)),
                       position: badges.BadgePosition.topEnd(top: 0, end: 0),
                       child: IconButton(
@@ -149,7 +138,52 @@ void showDownloadOverlay(BuildContext context) {
                     ))
               ],
             ));
-          }));
+          }
+          
+          return StreamBuilder<DownloadState>(
+            initialData: DownloadManager().curState(),
+            stream: DownloadManager().downloadStream(),
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              bool hasData = snapshot.hasData;
+              int count = 0;
+              if (hasData) {
+                DownloadState downloadState = snapshot.data;
+                List<DownloadTask> list = downloadState.tasks;
+                for (DownloadTask downloadTask in list) {
+                  if (downloadTask.status.value <= DownloadStatus.downloading.value) {
+                    count++;
+                  }
+                }
+              }
+              return SafeArea(
+                  child: Stack(
+                children: [
+                  Positioned(
+                      right: 10,
+                      top: Global.multiPlatform.downloadOverlayTopOffset(),
+                      child: badges.Badge(
+                        showBadge: count > 0,
+                        badgeContent: Text("$count",
+                            style: const TextStyle(
+                                color: Colors.white, fontSize: 12)),
+                        position: badges.BadgePosition.topEnd(top: 0, end: 0),
+                        child: IconButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                CupertinoPageRoute(builder: (context) {
+                                  return const DownloadPage();
+                                }),
+                              );
+                            },
+                            icon: const Icon(Icons.download)),
+                      ))
+                ],
+              ));
+            },
+          );
+        },
+      ));
   Overlay.of(context).insert(overlayEntry);
 }
 

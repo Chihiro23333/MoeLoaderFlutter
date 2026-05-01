@@ -15,7 +15,18 @@ class DioHttp {
   final BaseOptions _baseOptions = BaseOptions(
       receiveDataWhenStatusError: true,
       responseType: ResponseType.plain,
-      followRedirects: true
+      followRedirects: true,
+      validateStatus: (status) {
+        return status != null && status < 400;
+      }
+  );
+  late final BaseOptions _downloadOptions = BaseOptions(
+      receiveDataWhenStatusError: true,
+      responseType: ResponseType.bytes,
+      followRedirects: true,
+      validateStatus: (status) {
+        return status != null && status < 400;
+      }
   );
   final BaseOptions _redirectsYesOptions = BaseOptions(
       receiveDataWhenStatusError: true,
@@ -51,17 +62,14 @@ class DioHttp {
   }
 
   Future<String> get(String url, {Map<String, String>? headers}) async {
-    _log.fine("url=$url");
     _updateHeaders(headers);
     var response = await _dio.get(url);
     var result = response.toString();
-    _log.fine("result=$result");
     return result;
   }
 
   Future<Response> redirectYestGet(String url,
       {Map<String, String>? headers}) async {
-    _log.fine("url=$url");
     _dio.options = _redirectsYesOptions;
     _updateHeaders(headers);
     Response response = await _dio.get(url);
@@ -71,7 +79,6 @@ class DioHttp {
 
   Future<Response> redirectNotGet(String url,
       {Map<String, String>? headers}) async {
-    _log.fine("url=$url");
     _dio.options = _redirectsNoOptions;
     _updateHeaders(headers);
     Response response = await _dio.get(url);
@@ -88,7 +95,6 @@ class DioHttp {
         nowHeaders[key] = value;
       });
     }
-    _log.fine("nowHeaders=${nowHeaders}");
   }
 
   Future<void> saveCookiesString(String origin, String cookiesString) async {
@@ -100,8 +106,34 @@ class DioHttp {
         CancelToken? cancelToken,
         Map<String, String>? headers}) async {
     _updateHeaders(headers);
-    return await _dio.download(url, savePath,
-        onReceiveProgress: onReceiveProgress, cancelToken: cancelToken);
+    // 创建一个专门用于下载的 Dio 实例，支持重定向
+    final downloadDio = Dio(_downloadOptions);
+    downloadDio.interceptors.add(_cookieManager);
+    
+    try {
+      return await downloadDio.download(
+        url, 
+        savePath,
+        onReceiveProgress: onReceiveProgress, 
+        cancelToken: cancelToken
+      );
+    } on DioException catch (e) {
+      // 如果是 307 重定向错误，手动处理
+      if (e.response?.statusCode == 307) {
+        final location = e.response?.headers.value('location');
+        if (location != null && location.isNotEmpty) {
+          _log.info('307 redirect to: $location');
+          // 使用重定向后的 URL 重新下载
+          return await downloadDio.download(
+            location, 
+            savePath,
+            onReceiveProgress: onReceiveProgress, 
+            cancelToken: cancelToken
+          );
+        }
+      }
+      rethrow;
+    }
   }
 
   Future<void> _transformCookies(String origin, String cookiesString) async {
@@ -122,20 +154,17 @@ class DioHttp {
         // 去除键和值中的双引号和两端的空格（如果有）
         final String cleanedKey = key.replaceAll('"', '').trim();
         final String cleanedValue = value.replaceAll('"', '').trim();
-        _log.fine("_updateCookies:key=$key;value=$value");
         cookies.add(Cookie(cleanedKey, cleanedValue));
       }
     }
     if (cookies.isNotEmpty) {
       await _cookieManager.cookieJar.saveFromResponse(uri, cookies);
-      _log.fine("saveFromResponse,uri=$uri");
     }
   }
 
   Future<void> _loadAllCookies() async {
     Map<String, String> cookiesMap = await getAllCookieString();
     cookiesMap.forEach((key, value) async {
-      _log.fine("cookiesMap:key=$key,value=$value");
       await _updateCookies(Uri.parse(key), value);
     });
   }

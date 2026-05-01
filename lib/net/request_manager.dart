@@ -61,7 +61,6 @@ class RequestManager {
           headers: headers);
       return Future.value(true);
     } catch (e) {
-      _log.fine(e);
       return Future.value(false);
     }
   }

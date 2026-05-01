@@ -1,5 +1,6 @@
 import 'package:flutter_avif/flutter_avif.dart';
 import 'package:moeloaderflutter/init.dart';
+import 'package:moeloaderflutter/model/download/download.dart';
 import 'package:moeloaderflutter/model/home_page_item_entity.dart';
 import 'package:moeloaderflutter/ui/dialog/info_dialog.dart';
 import 'package:moeloaderflutter/ui/dialog/url_list_dialog.dart';
@@ -11,7 +12,7 @@ import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:logging/logging.dart';
-import '../net/download.dart';
+import '../net/download_new.dart';
 import '../ui/viewmodel/view_model_home.dart';
 
 typedef ExceptionActionCallback = void Function(HomeState homeState);
@@ -190,14 +191,16 @@ class _ImageMasonryGridState extends State<ImageMasonryGrid> {
                               showUrlList(context, homePageItem);
                             } else {
                               DownloadManager().addTask(DownloadTask(
-                                  homePageItem.href,
-                                  homePageItem.href,
-                                  await getDownloadName(
-                                      homePageItem.href,
-                                      homePageItem.id,
-                                      homePageItem.author,
-                                      homePageItem.tagList),
-                                  headers: headers));
+                                id: homePageItem.href,
+                                url: homePageItem.href,
+                                name: await getDownloadName(
+                                    homePageItem.href,
+                                    homePageItem.id,
+                                    homePageItem.author,
+                                    homePageItem.tagList),
+                                headers: headers,
+                              ));
+                              Navigator.pop(context);
                               showToast("已将图片加入下载列表");
                             }
                           },
